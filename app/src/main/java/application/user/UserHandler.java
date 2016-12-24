@@ -1,4 +1,4 @@
-package application;
+package application.user;
 
 import java.util.ArrayList;
 
@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * Created by Federico-PC on 05/12/2016.
  */
 
-public class User {
+public class UserHandler {
     private String macAddress;
     private String username;
     private String nome;
@@ -14,7 +14,7 @@ public class User {
     //private ArrayList<Beacon> beacons;
 
 
-    public User(){
+    public UserHandler(){
         // TODO devo prendere il macadress del dispositivo
     }
 

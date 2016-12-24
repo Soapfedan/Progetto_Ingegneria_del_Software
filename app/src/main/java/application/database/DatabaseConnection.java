@@ -11,11 +11,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseConnection extends SQLiteOpenHelper {
 
-        private static final String DATABASE_NAME = "mydatabase.db";
+        private static final String DATABASE_NAME = "dbingsoft.db";
         private static final int DATABASE_VERSION = 1;
 
         // Lo statement SQL di creazione del database
-        private static final String DATABASE_CREATE = "create table contact (_id integer primary key autoincrement, name text not null, surname text not null, sex text not null, birth_date text not null);";
+        private static final String DATABASE_CREATE = "create table User (email text primary key, password text not null, nome text not null, cognome text not null, data_nascita text not null," +
+                                                       "luogo_nascita text not null,provincia text not null,stato text not null," +
+                                                       "telefono, text not null, sex text not null, cod_fis text not null);";
 
         // Costruttore
         public DatabaseConnection(Context context) {
@@ -32,7 +34,7 @@ public class DatabaseConnection extends SQLiteOpenHelper {
         @Override
         public void onUpgrade( SQLiteDatabase database, int oldVersion, int newVersion ) {
 
-            database.execSQL("DROP TABLE IF EXISTS contact");
+            database.execSQL("DROP TABLE IF EXISTS User");
             onCreate(database);
 
         }

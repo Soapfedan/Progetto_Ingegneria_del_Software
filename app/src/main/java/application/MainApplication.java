@@ -10,8 +10,18 @@ import application.maps.Floor;
 
 public class MainApplication {
 
-    private ArrayList<Floor> map;
+    /**
+     * array dinamico che contiene tutti i piani di una mappa scaricata
+    */
+    // TODO: 06/12/2016  in teoria io potrei switchare tra più mappe es. medicinia o ingengeria ...
+            // devo prevedere come gestire le diverse mappe scaricate, tenendone in memoria solo una???
+            // lasciando le altre sul db??
+    private ArrayList<Floor> edi;
 
+    /**
+     * Method used t
+     * @param n
+     */
     public void researchNode(Node n){
 
     }

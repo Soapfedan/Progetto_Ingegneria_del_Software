@@ -1,5 +1,6 @@
 package com.core.progettoingegneriadelsoftware;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,9 +13,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    public boolean logged;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,26 +29,43 @@ public class Home extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
+        //imposta le voci sul menu
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.getMenu().findItem(R.id.nav1).setTitle("Login");
+        navigationView.getMenu().findItem(R.id.nav2).setTitle("Iscriviti");
         navigationView.setNavigationItemSelectedListener(this);
+
+
     }
 
-    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    protected void onResume() {
+        super.onResume();
+    }
+
+    protected void onPause() {
+        super.onPause();
+    }
+
+
+    protected void onStop() {
+        super.onStop();
+    }
+
+
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override   //toglie il focus dal menu quando si clicca su altro layer
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -52,46 +75,78 @@ public class Home extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    public void login() {
+        //provo qua se funziona il bottone di login, ma poi andrà messo meglio da altre parti
+        //fa comparire elementi del login
+        Button b_log = (Button) findViewById(R.id.but_log);
+        b_log.setVisibility(View.VISIBLE);
+        TextView t_user = (TextView) findViewById(R.id.edit_user);
+        t_user.setVisibility(View.VISIBLE);
+        TextView t_pass = (TextView) findViewById(R.id.edit_pass);
+        t_pass.setVisibility(View.VISIBLE);
+
+        //deve fare un controllo
+        b_log.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //imposta la scritta dopo benvenuto
+                TextView tv = (TextView)findViewById(R.id.text_logName);
+                TextView t_user = (TextView) findViewById(R.id.edit_user);
+                t_user.setVisibility(View.INVISIBLE);
+                TextView t_pass = (TextView) findViewById(R.id.edit_pass);
+                t_pass.setVisibility(View.INVISIBLE);
+                Button b_log = (Button)findViewById(R.id.but_log);
+                b_log.setVisibility(View.INVISIBLE);
+                tv.setText(t_user.getText().toString());
+                logged = true;
+                //modifica le voci del menu al momento del login
+                NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+                navigationView.getMenu().findItem(R.id.nav1).setTitle("Modifica Profilo");
+                navigationView.getMenu().findItem(R.id.nav2).setTitle("Logout");
+                Toast.makeText(getApplicationContext(),
+                        "benvenuto " + t_user.getText().toString(),Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    public void logout() {
+        logged = false;
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.getMenu().findItem(R.id.nav1).setTitle("Login");
+        navigationView.getMenu().findItem(R.id.nav2).setTitle("Iscriviti");
+        TextView tv = (TextView)findViewById(R.id.text_logName);
+        tv.setText("utente non registrato");
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
+
         int id = item.getItemId();
+        if (logged) {
+            if (id == R.id.nav_maps) {
+                //passa ad activity maps (per ora vuota)
+                Intent intent = new Intent (getApplicationContext(),
+                        ActivityMaps.class);
+                startActivity(intent);
+            } else if (id == R.id.nav1) {
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+            } else if (id == R.id.nav2) {
+                logout();
+            }
+        }
+        else {
 
-        } else if (id == R.id.nav_slideshow) {
+            if (id == R.id.nav_maps) {
+                //passa ad activity maps (per ora vuota)
+                Intent intent = new Intent (getApplicationContext(),
+                        ActivityMaps.class);
+                startActivity(intent);
+                //modifica il profilo
+            } else if (id == R.id.nav1) {
+                login();
+            } else if (id == R.id.nav2) {
 
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+            }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

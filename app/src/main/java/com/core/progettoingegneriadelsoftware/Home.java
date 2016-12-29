@@ -40,7 +40,6 @@ public class Home extends AppCompatActivity
         navigationView.getMenu().findItem(R.id.nav2).setTitle("Iscriviti");
         navigationView.setNavigationItemSelectedListener(this);
 
-
     }
 
     protected void onStart() {
@@ -135,7 +134,6 @@ public class Home extends AppCompatActivity
             }
         }
         else {
-
             if (id == R.id.nav_maps) {
                 //passa ad activity maps (per ora vuota)
                 Intent intent = new Intent (getApplicationContext(),

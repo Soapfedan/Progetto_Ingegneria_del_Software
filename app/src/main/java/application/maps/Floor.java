@@ -11,6 +11,7 @@ import java.util.HashMap;
 
 public class Floor {
 
+    private ArrayList<Room> rooms;
     private ArrayList<Node> nodes;
     private String floorName;
     private ImageView mapName;
@@ -18,6 +19,15 @@ public class Floor {
 
     public Floor(){
         // TODO: 06/12/2016  carico tutti i nodi di un piano
+    }
+
+    public Floor(String name){
+        floorName = name;
+        rooms = new ArrayList<>();
+    }
+
+    public ArrayList<Room> getRooms() {
+        return rooms;
     }
 
     public void addNode(Node n){
@@ -35,4 +45,25 @@ public class Floor {
     public void deleteNotification(String n){
 
     }
+
+    public void addRoom(Room r) {
+        rooms.add(r);
+    }
+
+    public void addRoom(String s) {
+        rooms.add(new Room(s));
+    }
+
+    public ArrayList<String> nameStringRoom() {
+        ArrayList<String> s = new ArrayList();
+        for (Room f : rooms) {
+            s.add(f.getName());
+        }
+        return s;
+    }
+
+    public String getName() {
+        return floorName;
+    }
+
 }

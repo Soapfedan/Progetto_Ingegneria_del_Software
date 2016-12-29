@@ -9,10 +9,10 @@
         <item
             android:id="@+id/nav1"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="" />
+            android:title="Login" />
         <item
             android:id="@+id/nav2"
             android:icon="@drawable/ic_menu_slideshow"
-            android:title="" />
+            android:title="Iscriviti" />
     </group>
 </menu>

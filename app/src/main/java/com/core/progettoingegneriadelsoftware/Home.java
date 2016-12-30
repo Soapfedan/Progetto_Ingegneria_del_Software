@@ -144,7 +144,9 @@ public class Home extends AppCompatActivity
             } else if (id == R.id.nav1) {
                 login();
             } else if (id == R.id.nav2) {
-
+                Intent intent = new Intent (getApplicationContext(),
+                        InformationsHandler.class);
+                startActivity(intent);
             }
         }
 

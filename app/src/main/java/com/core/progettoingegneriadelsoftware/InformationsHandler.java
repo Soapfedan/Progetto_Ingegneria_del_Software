@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -34,7 +36,7 @@ public class InformationsHandler extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_informations);
 
-        infoTxt = new HashMap<>();
+        infoTxt = new HashMap<String,TextView>();
         loadResources();
         loadEvents();
 
@@ -67,18 +69,41 @@ public class InformationsHandler extends AppCompatActivity {
 
     private void loadResources(){
 
+        TextView tv;
         // creo una hashmap con tutti gli elementi di una form
-        infoTxt.put("email",(TextView)findViewById(R.id.email_txt));
-        infoTxt.put("pass1",(TextView)findViewById(R.id.pass_txt1));
-        infoTxt.put("pass2",(TextView)findViewById(R.id.pass_txt2));
-        infoTxt.put("name",(TextView)findViewById(R.id.name_txt));
-        infoTxt.put("surname",(TextView)findViewById(R.id.surname_txt));
-        infoTxt.put("birth_date",(TextView)findViewById(R.id.birth_date_txt));
-        infoTxt.put("birth_city",(TextView)findViewById(R.id.birth_city_txt));
-        infoTxt.put("province",(TextView)findViewById(R.id.province_txt));
-        infoTxt.put("state",(TextView)findViewById(R.id.state_txt));
-        infoTxt.put("phone",(TextView)findViewById(R.id.phone_txt));
-        infoTxt.put("personal_number",(TextView)findViewById(R.id.personal_number_txt));
+        tv = (TextView)findViewById(R.id.email_txt);
+        infoTxt.put("email",tv);
+
+        tv = (TextView)findViewById(R.id.pass_txt1);
+        infoTxt.put("pass1",tv);
+
+        tv = (TextView)findViewById(R.id.pass_txt2);
+        infoTxt.put("pass2",tv);
+
+        tv = (TextView)findViewById(R.id.name_txt);
+        infoTxt.put("name", tv);
+
+        tv = (TextView)findViewById(R.id.surname_txt);
+        infoTxt.put("surname",tv);
+
+        tv = (TextView)findViewById(R.id.birth_date_txt);
+        infoTxt.put("birth_date",tv);
+
+        tv = (TextView)findViewById(R.id.birth_city_txt);
+        infoTxt.put("birth_city",tv);
+
+        tv = (TextView)findViewById(R.id.province_txt);
+        infoTxt.put("province",tv);
+
+        tv = (TextView)findViewById(R.id.state_txt);
+        infoTxt.put("state",tv);
+
+        tv = (TextView)findViewById(R.id.phone_txt);
+        infoTxt.put("phone",tv);
+
+        tv = (TextView)findViewById(R.id.personal_number_txt);
+        infoTxt.put("personal_number",tv);
+
 
         send_b = (Button) findViewById(R.id.profile_button);
         sex_spinner = (Spinner) findViewById(R.id.sex_spinner);
@@ -99,7 +124,7 @@ public class InformationsHandler extends AppCompatActivity {
 
     private void loadEvents(){
 
-        Iterator it = infoTxt.entrySet().iterator();
+       /* Iterator it = infoTxt.entrySet().iterator();
         while (it.hasNext()) {
             final Map.Entry pair = (Map.Entry)it.next();
 
@@ -115,7 +140,7 @@ public class InformationsHandler extends AppCompatActivity {
 
             it.remove(); // avoids a ConcurrentModificationException
 
-        }
+        }*/
 
 
         send_b.setOnClickListener(new View.OnClickListener() {

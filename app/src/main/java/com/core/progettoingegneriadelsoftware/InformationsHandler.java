@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import application.user.UserHandler;
+
 /**
  * Created by Federico-PC on 28/12/2016.
  */
@@ -26,6 +28,7 @@ public class InformationsHandler extends AppCompatActivity {
     private AlertDialog alert;
     private Button send_b;
     private Spinner sex_spinner;
+    private boolean[] emptyValue;
 
     public static final String null_msg = "Hai inserito un campo vuoto!";
     public static final String error_msg = "Hai inserito un campo errato!";
@@ -37,6 +40,8 @@ public class InformationsHandler extends AppCompatActivity {
         setContentView(R.layout.activity_informations);
 
         infoTxt = new HashMap<String,TextView>();
+        emptyValue = new boolean[11];
+
         loadResources();
         loadEvents();
 
@@ -124,23 +129,177 @@ public class InformationsHandler extends AppCompatActivity {
 
     private void loadEvents(){
 
-       /* Iterator it = infoTxt.entrySet().iterator();
-        while (it.hasNext()) {
-            final Map.Entry pair = (Map.Entry)it.next();
+        final int errorColor = Color.rgb(255,255,153);
+        final int worthColor = Color.WHITE;
 
-            infoTxt.get(pair.getKey()).setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        infoTxt.get("email").setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
 
-                    if(infoTxt.get(pair.getKey()).getText().toString().isEmpty())
-                        infoTxt.get(pair.getKey()).setBackgroundColor(Color.RED);
-                        infoTxt.get(pair.getKey()).setHint("Campo vuoto");
+                    if( infoTxt.get("email").getText().toString().isEmpty()){
+                        infoTxt.get("email").setBackgroundColor(errorColor);
+                        emptyValue[0] = true;
+
+                    }
+                    else{
+                        infoTxt.get("email").setBackgroundColor(worthColor);
+                        emptyValue[0] = false;
+
+                    }
                 }
             });
 
-            it.remove(); // avoids a ConcurrentModificationException
+        infoTxt.get("pass1").setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
 
-        }*/
+                if( infoTxt.get("pass1").getText().toString().isEmpty()){
+                    infoTxt.get("pass1").setBackgroundColor(errorColor);
+                    emptyValue[1] = true;
+                }
+                else{
+                    infoTxt.get("pass1").setBackgroundColor(worthColor);
+                    emptyValue[1] = false;
+                }
+            }
+        });
+
+        infoTxt.get("pass2").setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+
+                if( infoTxt.get("pass1").getText().toString().isEmpty()){
+                    infoTxt.get("pass1").setBackgroundColor(errorColor);
+                    emptyValue[2] = true;
+                }
+                else{
+                    infoTxt.get("pass1").setBackgroundColor(worthColor);
+                    emptyValue[2] = false;
+                }
+            }
+        });
+
+        infoTxt.get("name").setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+
+                if( infoTxt.get("name").getText().toString().isEmpty()){
+                    infoTxt.get("name").setBackgroundColor(errorColor);
+                    emptyValue[3] = true;
+                }
+                else{
+                    infoTxt.get("name").setBackgroundColor(worthColor);
+                    emptyValue[3] = false;
+                }
+            }
+        });
+
+        infoTxt.get("surname").setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+
+                if( infoTxt.get("surname").getText().toString().isEmpty()){
+                    infoTxt.get("surname").setBackgroundColor(errorColor);
+                    emptyValue[4] = true;
+                }
+                else{
+                    infoTxt.get("surname").setBackgroundColor(worthColor);
+                    emptyValue[4] = false;
+                }
+            }
+        });
+
+
+        infoTxt.get("birth_date").setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+
+                if( infoTxt.get("birth_date").getText().toString().isEmpty()){
+                    infoTxt.get("birth_date").setBackgroundColor(errorColor);
+                    emptyValue[5] = true;
+                }
+                else{
+                    infoTxt.get("birth_date").setBackgroundColor(worthColor);
+                    emptyValue[5] = false;
+                }
+            }
+        });
+
+        infoTxt.get("birth_city").setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+
+                if( infoTxt.get("birth_city").getText().toString().isEmpty()){
+                    infoTxt.get("birth_city").setBackgroundColor(errorColor);
+                    emptyValue[6] = true;
+                }
+                else{
+                    infoTxt.get("birth_city").setBackgroundColor(worthColor);
+                    emptyValue[6] = false;
+                }
+            }
+        });
+
+        infoTxt.get("province").setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+
+                if( infoTxt.get("province").getText().toString().isEmpty()){
+                    infoTxt.get("province").setBackgroundColor(errorColor);
+                    emptyValue[7] = true;
+                }
+                else{
+                    infoTxt.get("province").setBackgroundColor(worthColor);
+                    emptyValue[7] = false;
+                }
+            }
+        });
+
+        infoTxt.get("state").setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+
+                if( infoTxt.get("state").getText().toString().isEmpty()){
+                    infoTxt.get("state").setBackgroundColor(errorColor);
+                    emptyValue[8] = true;
+                }
+                else{
+                    infoTxt.get("state").setBackgroundColor(worthColor);
+                    emptyValue[8] = false;
+                }
+            }
+        });
+
+
+        infoTxt.get("phone").setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+
+                if( infoTxt.get("phone").getText().toString().isEmpty()){
+                    infoTxt.get("phone").setBackgroundColor(errorColor);
+                    emptyValue[9] = true;
+                }
+                else{
+                    infoTxt.get("phone").setBackgroundColor(worthColor);
+                    emptyValue[9] = true;
+                }
+            }
+        });
+
+        infoTxt.get("personal_number").setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+
+                if( infoTxt.get("personal_number").getText().toString().isEmpty()){
+                    infoTxt.get("personal_number").setBackgroundColor(errorColor);
+                    emptyValue[10] = true;
+                }
+                else{
+                    infoTxt.get("personal_number").setBackgroundColor(worthColor);
+                    emptyValue[10] = false;
+                }
+            }
+        });
 
 
         send_b.setOnClickListener(new View.OnClickListener() {
@@ -148,7 +307,7 @@ public class InformationsHandler extends AppCompatActivity {
                 //devo aggiungere che prende i dati
                 //11 text 1 spinner e un'immagine
 
-                alert.show();
+                gatheringInformation();
 
                 /*
                 Intent intent = new Intent (getApplicationContext(),
@@ -158,7 +317,7 @@ public class InformationsHandler extends AppCompatActivity {
         });
 
 
-
+        /*
         infoTxt.get("pass2").setOnFocusChangeListener(new View.OnFocusChangeListener(){
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -174,7 +333,53 @@ public class InformationsHandler extends AppCompatActivity {
                     //se sono uguali
                 }
             }
-        });
+        });*/
+    }
+
+    private void gatheringInformation(){
+
+        //campo vuoto
+        boolean error = false;
+        //check if some value is empty
+        for(int i=0;i<11;i++){
+            if(emptyValue[i]==true){
+                error = true;
+            }
+        }
+
+        if(error==true){
+            alert.setMessage(email_msg);
+            alert.show();
+        }
+
+        //controllo password
+
+        if(infoTxt.get("pass1").getText().toString().equals(infoTxt.get("pass2").getText().toString())){
+            alert.setMessage(pass_msg);
+            alert.show();
+        }
+
+        if(!UserHandler.checkUser(infoTxt.get("email").getText().toString())){
+            HashMap<String,String> info = new HashMap<>();
+            info.put("email",infoTxt.get("email").getText().toString());
+            info.put("pass",infoTxt.get("pass1").getText().toString());
+            info.put("name",infoTxt.get("name").getText().toString());
+            info.put("surname",infoTxt.get("surname").getText().toString());
+            info.put("birth_date",infoTxt.get("birth_date").getText().toString());
+            info.put("birth_city",infoTxt.get("birth_city").getText().toString());
+            info.put("province",infoTxt.get("province").getText().toString());
+            info.put("state",infoTxt.get("state").getText().toString());
+            info.put("phone",infoTxt.get("phone").getText().toString());
+            info.put("personal_number",infoTxt.get("personal_number").getText().toString());
+            info.put("sex",sex_spinner.getSelectedItem().toString());
+
+            UserHandler.logup(info);
+        }else{
+            alert.setMessage(email_msg);
+            alert.show();
+        }
+
+
     }
 }
 

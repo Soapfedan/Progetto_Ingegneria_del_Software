@@ -23,8 +23,14 @@ public class UserHandler {
     public static String getMail() {
         return email;
     }
+    
+    public static boolean checkUser(String e){
+        
+        //// TODO: 02/01/2017  devo controllare se esiste email
+        return false;
+    }
 
-    public static void logup(){
+    public static void logup(HashMap<String,String> info){
         // TODO: 05/12/2016  procedura di iscrizione
     }
 

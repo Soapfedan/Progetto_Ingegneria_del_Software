@@ -37,15 +37,6 @@ public class ActivityMaps extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        Button b_exit = (Button) findViewById(R.id.but_map_exit);
-        b_exit.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent (getApplicationContext(),
-                        Home.class);
-                startActivity(intent);
-            }
-        });
-
         ArrayList b = new ArrayList<Floor>();
 
         selectedFloor = new Floor();

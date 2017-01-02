@@ -13,38 +13,4 @@
     tools:context="com.core.progettoingegneriadelsoftware.Home"
     tools:showIn="@layout/app_bar_home">
 
-    <Button
-        android:text="Login"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="68dp"
-        android:id="@+id/but_log"
-        android:visibility="invisible" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:layout_above="@+id/but_log"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="155dp"
-        android:id="@+id/edit_user"
-        android:visibility="invisible"
-        tools:text="Name" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:ems="10"
-        android:layout_above="@+id/but_log"
-        android:layout_alignLeft="@+id/edit_user"
-        android:layout_alignStart="@+id/edit_user"
-        android:layout_marginBottom="60dp"
-        android:id="@+id/edit_pass"
-        android:visibility="invisible"
-        tools:text="Password" />
 </RelativeLayout>

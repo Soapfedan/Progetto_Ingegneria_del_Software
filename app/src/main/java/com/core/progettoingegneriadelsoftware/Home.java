@@ -14,23 +14,25 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.app.Dialog;
+
+import application.MainApplication;
+import application.user.UserHandler;
 
 public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    public boolean logged;
-        //elementi grafici dell'activity
-    private Button b_log;
-    private TextView t_user;
-    private TextView t_pass;
+        //menu laterale
     private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+            //impostazione dei vari componenti grafici
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -41,12 +43,10 @@ public class Home extends AppCompatActivity
         toggle.syncState();
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
-        b_log = (Button) findViewById(R.id.but_log);
-        t_user = (TextView) findViewById(R.id.edit_user);
-        t_pass = (TextView) findViewById(R.id.edit_pass);
-
         navigationView.setNavigationItemSelectedListener(this);
 
+            //vengono effettuate alcune configurazioni a livello di utente e si software
+        MainApplication.start();
     }
 
     protected void onStart() {
@@ -61,11 +61,9 @@ public class Home extends AppCompatActivity
         super.onPause();
     }
 
-
     protected void onStop() {
         super.onStop();
     }
-
 
     public void onDestroy() {
         super.onDestroy();
@@ -81,40 +79,62 @@ public class Home extends AppCompatActivity
         }
     }
 
-    public void login() {
-        //provo qua se funziona il bottone di login, ma poi andrà messo meglio da altre parti
-        //fa comparire elementi del login
-        b_log.setVisibility(View.VISIBLE);
-        t_user.setVisibility(View.VISIBLE);
-        t_pass.setVisibility(View.VISIBLE);
+    private void login() {
+            //crea un dialog per la form di login
+        final Dialog loginDialog = new Dialog(this);
+        loginDialog.setContentView(R.layout.login_dialog);
+        loginDialog.setTitle("Login");
+            //inizializzo componenti del dialog
+        Button btnCancel = (Button) loginDialog.findViewById(R.id.btnLoginCancel);
+        Button btnLogin = (Button) loginDialog.findViewById(R.id.btnLoginEnter);
+        final EditText txtUser = (EditText) loginDialog.findViewById(R.id.txtLoginUsername);
+        final EditText txtPass = (EditText) loginDialog.findViewById(R.id.txtLoginPassword);
 
-        //deve fare un controllo
-        b_log.setOnClickListener(new View.OnClickListener() {
+        btnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
-                //imposta la scritta dopo benvenuto
-                TextView tv = (TextView)findViewById(R.id.text_logName);
-                t_user.setVisibility(View.INVISIBLE);
-                t_pass.setVisibility(View.INVISIBLE);
-                b_log.setVisibility(View.INVISIBLE);
-                tv.setText(t_user.getText().toString());
-                logged = true;
-                //modifica le voci del menu al momento del login
-                //NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-                navigationView.getMenu().findItem(R.id.nav1).setTitle("Modifica Profilo");
-                navigationView.getMenu().findItem(R.id.nav2).setTitle("Logout");
+                    //richiama il metodo dello user per gestire i dati inerenti il login
+                UserHandler.login(txtUser.getText().toString());
+                setOptionMenu();
+
                 Toast.makeText(getApplicationContext(),
-                        "benvenuto " + t_user.getText().toString(),Toast.LENGTH_SHORT).show();
+                        "benvenuto " + txtUser.getText().toString(),Toast.LENGTH_SHORT).show();
+                loginDialog.dismiss();
             }
         });
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loginDialog.dismiss();
+            }
+        });
+
+            //rende visibile il dialog
+        loginDialog.show();
+
     }
 
-    public void logout() {
-        logged = false;
-        //NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.getMenu().findItem(R.id.nav1).setTitle("Login");
-        navigationView.getMenu().findItem(R.id.nav2).setTitle("Iscriviti");
+
+    private void logout() {
+            //richiama il metodo dello user per gestire i dati inerenti il logout
+        UserHandler.logout();
+        setOptionMenu();
+    }
+
+        //richiamato quando effettuo login e logout, imposta le voci del menu
+    private void setOptionMenu() {
         TextView tv = (TextView)findViewById(R.id.text_logName);
-        tv.setText("utente non registrato");
+
+        if(UserHandler.isLogged()) {
+            navigationView.getMenu().findItem(R.id.nav1).setTitle("Modifica Profilo");
+            navigationView.getMenu().findItem(R.id.nav2).setTitle("Logout");
+            tv.setText(UserHandler.getMail());
+        }
+        else {
+            navigationView.getMenu().findItem(R.id.nav1).setTitle("Login");
+            navigationView.getMenu().findItem(R.id.nav2).setTitle("Iscriviti");
+            tv.setText("utente non registrato");
+        }
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -122,7 +142,7 @@ public class Home extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
 
         int id = item.getItemId();
-        if (logged) {
+        if (UserHandler.isLogged()) {
             if (id == R.id.nav_maps) {
                 //passa ad activity maps (per ora vuota)
                 Intent intent = new Intent (getApplicationContext(),

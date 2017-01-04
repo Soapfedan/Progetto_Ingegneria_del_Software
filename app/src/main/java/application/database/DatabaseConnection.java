@@ -11,33 +11,33 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseConnection extends SQLiteOpenHelper {
 
-        private static final String DATABASE_NAME = "dbingsoft.db";
-        private static final int DATABASE_VERSION = 1;
+    private static final String DATABASE_NAME = "dbingsoft.db";
+    private static final int DATABASE_VERSION = 4;
 
-        // Lo statement SQL di creazione del database
-        private static final String DATABASE_CREATE = "create table User (email text primary key, password text not null, nome text not null, cognome text not null, data_nascita text not null," +
-                                                       "luogo_nascita text not null,provincia text not null,stato text not null," +
-                                                       "telefono, text not null, sex text not null, cod_fis text not null);";
+    // Lo statement SQL di creazione del database
+    private static final String DATABASE_CREATE = "create table User (email text primary key, password text not null, nome text not null, cognome text not null, data_nascita text not null, " +
+            "luogo_nascita text not null, provincia text not null, stato text not null," +
+            " telefono text , sesso text not null, cod_fis text not null);";
 
-        // Costruttore
-        public DatabaseConnection(Context context) {
-            super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        }
-
-        // Questo metodo viene chiamato durante la creazione del database
-        @Override
-        public void onCreate(SQLiteDatabase database) {
-            database.execSQL(DATABASE_CREATE);
-        }
-
-        // Questo metodo viene chiamato durante l'upgrade del database, ad esempio quando viene incrementato il numero di versione
-        @Override
-        public void onUpgrade( SQLiteDatabase database, int oldVersion, int newVersion ) {
-
-            database.execSQL("DROP TABLE IF EXISTS User");
-            onCreate(database);
-
-        }
+    // Costruttore
+    public DatabaseConnection(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
+
+    // Questo metodo viene chiamato durante la creazione del database
+    @Override
+    public void onCreate(SQLiteDatabase database) {
+        database.execSQL(DATABASE_CREATE);
+    }
+
+    // Questo metodo viene chiamato durante l'upgrade del database, ad esempio quando viene incrementato il numero di versione
+    @Override
+    public void onUpgrade( SQLiteDatabase database, int oldVersion, int newVersion ) {
+
+        database.execSQL("DROP TABLE IF EXISTS User");
+        onCreate(database);
+
+    }
+}
 
 

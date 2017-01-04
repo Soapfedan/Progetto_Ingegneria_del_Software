@@ -25,14 +25,14 @@ import application.user.UserHandler;
 public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-        //menu laterale
+    //menu laterale
     private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-            //impostazione dei vari componenti grafici
+        //impostazione dei vari componenti grafici
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -45,8 +45,8 @@ public class Home extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-            //vengono effettuate alcune configurazioni a livello di utente e si software
-        MainApplication.start();
+        //vengono effettuate alcune configurazioni a livello di utente e si software
+        MainApplication.start(this);
     }
 
     protected void onStart() {
@@ -80,11 +80,11 @@ public class Home extends AppCompatActivity
     }
 
     private void login() {
-            //crea un dialog per la form di login
+        //crea un dialog per la form di login
         final Dialog loginDialog = new Dialog(this);
         loginDialog.setContentView(R.layout.login_dialog);
         loginDialog.setTitle("Login");
-            //inizializzo componenti del dialog
+        //inizializzo componenti del dialog
         Button btnCancel = (Button) loginDialog.findViewById(R.id.btnLoginCancel);
         Button btnLogin = (Button) loginDialog.findViewById(R.id.btnLoginEnter);
         final EditText txtUser = (EditText) loginDialog.findViewById(R.id.txtLoginUsername);
@@ -93,7 +93,7 @@ public class Home extends AppCompatActivity
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    //richiama il metodo dello user per gestire i dati inerenti il login
+                //richiama il metodo dello user per gestire i dati inerenti il login
                 UserHandler.login(txtUser.getText().toString());
                 setOptionMenu();
 
@@ -109,19 +109,19 @@ public class Home extends AppCompatActivity
             }
         });
 
-            //rende visibile il dialog
+        //rende visibile il dialog
         loginDialog.show();
 
     }
 
 
     private void logout() {
-            //richiama il metodo dello user per gestire i dati inerenti il logout
+        //richiama il metodo dello user per gestire i dati inerenti il logout
         UserHandler.logout();
         setOptionMenu();
     }
 
-        //richiamato quando effettuo login e logout, imposta le voci del menu
+    //richiamato quando effettuo login e logout, imposta le voci del menu
     private void setOptionMenu() {
         TextView tv = (TextView)findViewById(R.id.text_logName);
 

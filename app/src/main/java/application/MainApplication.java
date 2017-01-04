@@ -1,6 +1,10 @@
 package application;
 
+import android.content.Context;
+
 import java.util.ArrayList;
+
+import application.database.UserAdapter;
 import application.maps.Node;
 import application.maps.Floor;
 import application.user.UserHandler;
@@ -13,13 +17,14 @@ public class MainApplication {
 
     /**
      * array dinamico che contiene tutti i piani di una mappa scaricata
-    */
+     */
     // TODO: 06/12/2016  in teoria io potrei switchare tra più mappe es. medicinia o ingengeria ...
-            // devo prevedere come gestire le diverse mappe scaricate, tenendone in memoria solo una???
-            // lasciando le altre sul db??
+    // devo prevedere come gestire le diverse mappe scaricate, tenendone in memoria solo una???
+    // lasciando le altre sul db??
 
 
     private ArrayList<Floor> edi;
+    private static UserAdapter db;
 
     /**
      * Method used t
@@ -29,8 +34,20 @@ public class MainApplication {
 
     }
 
-    public static void start() {
+    public static UserAdapter getDB () {
+        return db;
+    }
+
+        //lo richiamo quando devo impostare il writabledb
+    public static void setDb(UserAdapter a) {
+        db = a;
+    }
+
+    public static void start(Context context) {
         UserHandler.init();
+        //crea il db, ma ancora non è ne leggibile ne scrivibile
+        db = new UserAdapter(context);
+
     }
 
     public void loadMap(String tipe){
@@ -41,3 +58,4 @@ public class MainApplication {
 
     }
 }
+

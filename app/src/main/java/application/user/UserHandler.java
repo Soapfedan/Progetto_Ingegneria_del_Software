@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 import java.net.NetworkInterface;
 import java.util.*;
+
+import application.MainApplication;
+
 /**
  * Created by Federico-PC on 05/12/2016.
  */
@@ -23,20 +26,27 @@ public class UserHandler {
     public static String getMail() {
         return email;
     }
-    
+
     public static boolean checkUser(String e){
-        
+
         //// TODO: 02/01/2017  devo controllare se esiste email
         return false;
     }
 
     public static void logup(HashMap<String,String> info){
-        // TODO: 05/12/2016  procedura di iscrizione
+        //aggiunto il metodo open, in modo che venga creato il collegamento
+        //e lavori su un db writable
+        MainApplication.getDB().open().createUser(info.get("email"),info.get("pass"),info.get("name"),
+                info.get("surname"),info.get("birth_date"),info.get("birth_city"),
+                info.get("province"),info.get("state"),info.get("phone"),
+                info.get("sex"), info.get("personal_number"));
+        //finito ad usare il db, viene chiuso
+        MainApplication.getDB().close();
     }
 
     public static void logout() {
         email = null;
-            //rende nulli anche altri elementi
+        //rende nulli anche altri elementi
     }
 
     public static boolean isLogged() {

@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import application.MainApplication;
 import application.user.UserHandler;
 
 /**
@@ -44,7 +45,7 @@ public class InformationsHandler extends AppCompatActivity {
 
         loadResources();
         loadEvents();
-
+        MainApplication.setDb(MainApplication.getDB().open());
 
     }
 
@@ -133,21 +134,21 @@ public class InformationsHandler extends AppCompatActivity {
         final int worthColor = Color.WHITE;
 
         infoTxt.get("email").setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View v, boolean hasFocus) {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
 
-                    if( infoTxt.get("email").getText().toString().isEmpty()){
-                        infoTxt.get("email").setBackgroundColor(errorColor);
-                        emptyValue[0] = true;
+                if( infoTxt.get("email").getText().toString().isEmpty()){
+                    infoTxt.get("email").setBackgroundColor(errorColor);
+                    emptyValue[0] = true;
 
-                    }
-                    else{
-                        infoTxt.get("email").setBackgroundColor(worthColor);
-                        emptyValue[0] = false;
-
-                    }
                 }
-            });
+                else{
+                    infoTxt.get("email").setBackgroundColor(worthColor);
+                    emptyValue[0] = false;
+
+                }
+            }
+        });
 
         infoTxt.get("pass1").setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -352,9 +353,9 @@ public class InformationsHandler extends AppCompatActivity {
             alert.show();
         }
 
-        //controllo password
+        //controllo password (devono essere diverse le stringhe)
 
-        if(infoTxt.get("pass1").getText().toString().equals(infoTxt.get("pass2").getText().toString())){
+        if(!infoTxt.get("pass1").getText().toString().equals(infoTxt.get("pass2").getText().toString())){
             alert.setMessage(pass_msg);
             alert.show();
         }
@@ -373,7 +374,10 @@ public class InformationsHandler extends AppCompatActivity {
             info.put("personal_number",infoTxt.get("personal_number").getText().toString());
             info.put("sex",sex_spinner.getSelectedItem().toString());
 
+            //alert.setMessage("provo il logup");
+            //alert.show();
             UserHandler.logup(info);
+
         }else{
             alert.setMessage(email_msg);
             alert.show();

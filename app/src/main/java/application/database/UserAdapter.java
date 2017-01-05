@@ -104,7 +104,7 @@ public class UserAdapter {
         Cursor mCursor = database.query(true, DATABASE_TABLE, new String[] {
                         KEY_EMAIL, KEY_NAME, KEY_SURNAME },
                 KEY_EMAIL + "='"+ mail + "'", null, null, null, null, null);
-        //System.out.println("mail: " + mail + " presente " + mCursor.getCount());
+        System.out.println("mail: " + mail + " presente " + mCursor.getCount());
         return mCursor.getCount();
     }
 

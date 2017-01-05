@@ -28,9 +28,10 @@ public class UserHandler {
     }
 
     public static boolean checkUser(String e){
-
-        //// TODO: 02/01/2017  devo controllare se esiste email
-        return false;
+        boolean b;
+        if (MainApplication.getDB().checkNewUser(e)==0) b = false;
+        else b = true;
+        return b;
     }
 
     public static void logup(HashMap<String,String> info){

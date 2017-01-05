@@ -282,7 +282,7 @@ public class InformationsHandler extends AppCompatActivity {
                 }
                 else{
                     infoTxt.get("phone").setBackgroundColor(worthColor);
-                    emptyValue[9] = true;
+                    emptyValue[9] = false;
                 }
             }
         });
@@ -344,6 +344,7 @@ public class InformationsHandler extends AppCompatActivity {
         //check if some value is empty
         for(int i=0;i<11;i++){
             if(emptyValue[i]==true){
+                System.out.println("i: " + i);
                 error = true;
             }
         }
@@ -374,8 +375,8 @@ public class InformationsHandler extends AppCompatActivity {
             info.put("personal_number",infoTxt.get("personal_number").getText().toString());
             info.put("sex",sex_spinner.getSelectedItem().toString());
 
-            //alert.setMessage("provo il logup");
-            //alert.show();
+            alert.setMessage("provo il logup");
+            alert.show();
             UserHandler.logup(info);
 
         }else{

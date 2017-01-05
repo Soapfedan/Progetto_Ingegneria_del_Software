@@ -114,7 +114,7 @@ public class UserAdapter {
         Cursor cursor = database.query(true, DATABASE_TABLE, new String[] {
                         KEY_EMAIL, KEY_PASSWORD, KEY_NAME, KEY_SURNAME, KEY_BIRTH_DATE, KEY_BIRTH_CITY, KEY_PROVINCE, KEY_STATE, KEY_TELEPHONE,
                         KEY_SEX,KEY_PERSONAL_NUMBER},
-                KEY_EMAIL + "="+ mail, null, null, null, null, null);
+                KEY_EMAIL + "='"+ mail + "'", null, null, null, null, null);
         UserProfile profile = null;
         if (cursor.moveToFirst()) {
 

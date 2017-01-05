@@ -1,5 +1,7 @@
 package application.user;
 
+import android.app.AlertDialog;
+
 import java.util.ArrayList;
 
 import java.net.NetworkInterface;
@@ -56,13 +58,38 @@ public class UserHandler {
         return b;
     }
 
-    public static void login(String name){
-        //  TODO: va effettuato qua il controllo sui dati dell'utente??
-        email = name;
+    public static boolean login(String name, String pass){
+        boolean b = false;
+            //assegnato valore solo se si trova utente con quel nome, altrimenti null
+        UserProfile u= MainApplication.getDB().open().getUserProfile(name);
+        if (u==null) {
+            b = false;
+        }
+        else {
+                //si confronta la password dell'utente con quell salvata nello userprofile
+            if (u.getPassword().equals(pass)) {
+                email=name;
+                nome = u.nome;
+                cognome = u.cognome;
+
+                b = true;
+            }
+            else b = false;
+        }
+        return b;
     }
+
 
     public void searchRoom(){
         // TODO: 05/12/2016  procedura di ricerca delle aule offline
+    }
+
+    public static String getNome() {
+        return nome;
+    }
+
+    public static String getCognome() {
+        return cognome;
     }
 
     public static String obtainMacAddr() {

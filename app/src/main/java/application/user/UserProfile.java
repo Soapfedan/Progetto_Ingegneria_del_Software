@@ -33,4 +33,8 @@ public class UserProfile {
         this.sesso = sesso;
         this.cod_fis = cod_fis;
     }
+
+    public String getPassword() {
+        return password;
+    }
 }

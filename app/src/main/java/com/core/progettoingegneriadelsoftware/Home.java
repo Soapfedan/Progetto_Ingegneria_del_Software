@@ -1,5 +1,7 @@
 package com.core.progettoingegneriadelsoftware;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -27,6 +29,8 @@ public class Home extends AppCompatActivity
 
     //menu laterale
     private NavigationView navigationView;
+        //serve per eventuali errori durante il login
+    private AlertDialog alert;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +48,16 @@ public class Home extends AppCompatActivity
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("")
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        //do nothings
+                    }
+                });
+        alert = builder.create();
 
         //vengono effettuate alcune configurazioni a livello di utente e si software
         MainApplication.start(this);
@@ -89,17 +103,24 @@ public class Home extends AppCompatActivity
         Button btnLogin = (Button) loginDialog.findViewById(R.id.btnLoginEnter);
         final EditText txtUser = (EditText) loginDialog.findViewById(R.id.txtLoginUsername);
         final EditText txtPass = (EditText) loginDialog.findViewById(R.id.txtLoginPassword);
-
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //richiama il metodo dello user per gestire i dati inerenti il login
-                UserHandler.login(txtUser.getText().toString());
-                setOptionMenu();
+                    //in base alla riuscita del login si cambiano i menu oppure si mostra alert
+                boolean b = UserHandler.login(txtUser.getText().toString(),txtPass.getText().toString());
+                if (b) {
+                    setOptionMenu();
 
-                Toast.makeText(getApplicationContext(),
-                        "benvenuto " + txtUser.getText().toString(),Toast.LENGTH_SHORT).show();
-                loginDialog.dismiss();
+                    Toast.makeText(getApplicationContext(),
+                            "benvenuto " + txtUser.getText().toString(),Toast.LENGTH_SHORT).show();
+                    loginDialog.dismiss();
+                }
+                else {
+                    alert.setMessage("login e/o password scorretti");
+                    alert.show();
+                }
+
             }
         });
         btnCancel.setOnClickListener(new View.OnClickListener() {
@@ -128,7 +149,7 @@ public class Home extends AppCompatActivity
         if(UserHandler.isLogged()) {
             navigationView.getMenu().findItem(R.id.nav1).setTitle("Modifica Profilo");
             navigationView.getMenu().findItem(R.id.nav2).setTitle("Logout");
-            tv.setText(UserHandler.getMail());
+            tv.setText(UserHandler.getNome() + " " + UserHandler.getCognome());
         }
         else {
             navigationView.getMenu().findItem(R.id.nav1).setTitle("Login");

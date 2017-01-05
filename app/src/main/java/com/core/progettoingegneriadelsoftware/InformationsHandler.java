@@ -349,7 +349,7 @@ public class InformationsHandler extends AppCompatActivity {
         }
 
         if(error==true){
-            alert.setMessage(email_msg);
+            alert.setMessage(null_msg);
             alert.show();
         }
 

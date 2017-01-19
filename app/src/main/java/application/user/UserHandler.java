@@ -18,6 +18,7 @@ public class UserHandler {
     private static String email;
     private static String nome;
     private static String cognome;
+    private static UserProfile profile;
     //private ArrayList<Beacon> beacons;
 
 
@@ -47,10 +48,27 @@ public class UserHandler {
         MainApplication.getDB().close();
     }
 
+    public static void editProfile(HashMap<String,String> info){
+        //aggiunto il metodo open, in modo che venga creato il collegamento
+        //e lavori su un db writable
+        MainApplication.getDB().open().updateProfile(info.get("email"),info.get("pass"),info.get("name"),
+                info.get("surname"),info.get("birth_date"),info.get("birth_city"),
+                info.get("province"),info.get("state"),info.get("phone"),
+                info.get("sex"), info.get("personal_number"));
+        //finito ad usare il db, viene chiuso
+        MainApplication.getDB().close();
+    }
+
     public static void logout() {
         email = null;
         //rende nulli anche altri elementi
     }
+
+    public static UserProfile getInformation(String email){
+        return MainApplication.getDB().open().getUserProfile(email);
+    }
+
+
 
     public static boolean isLogged() {
         boolean b = false;

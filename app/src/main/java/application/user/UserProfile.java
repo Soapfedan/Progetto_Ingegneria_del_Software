@@ -37,4 +37,44 @@ public class UserProfile {
     public String getPassword() {
         return password;
     }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getCognome() {
+        return cognome;
+    }
+
+    public String getData_nascita() {
+        return data_nascita;
+    }
+
+    public String getLuogo_nascita() {
+        return luogo_nascita;
+    }
+
+    public String getProvincia() {
+        return provincia;
+    }
+
+    public String getStato() {
+        return stato;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public String getSesso() {
+        return sesso;
+    }
+
+    public String getCod_fis() {
+        return cod_fis;
+    }
 }

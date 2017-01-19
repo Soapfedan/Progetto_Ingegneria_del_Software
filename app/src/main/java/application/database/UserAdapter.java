@@ -85,17 +85,17 @@ public class UserAdapter {
     }
 
     //update an user
-    public boolean updateContact(String email,String password, String name, String surname, String birth_date,
+    public boolean updateProfile(String email,String password, String name, String surname, String birth_date,
                                  String birth_city, String province, String state, String telephone, String sex,
                                  String personal_number ) {
         ContentValues updateValues = createContentValues(email, password, name, surname, birth_date, birth_city,
                 province, state, telephone, sex, personal_number);
-        return database.update(DATABASE_TABLE, updateValues, KEY_EMAIL + "=" + email, null) > 0;
+        return database.update(DATABASE_TABLE, updateValues, KEY_EMAIL + "='"+ email + "'", null) > 0;
     }
 
     //delete an user
-    public boolean deleteContact(String email) {
-        return database.delete(DATABASE_TABLE, KEY_EMAIL + "=" + email, null) > 0;
+    public boolean deleteProfile(String email) {
+        return database.delete(DATABASE_TABLE, KEY_EMAIL + "='"+ email + "'", null) > 0;
     }
 
 

@@ -170,7 +170,10 @@ public class Home extends AppCompatActivity
                         ActivityMaps.class);
                 startActivity(intent);
             } else if (id == R.id.nav1) {
-
+                //modifica il profilo
+                Intent intent = new Intent (getApplicationContext(),
+                        InformationsHandler.class);
+                startActivity(intent);
             } else if (id == R.id.nav2) {
                 logout();
             }
@@ -181,7 +184,7 @@ public class Home extends AppCompatActivity
                 Intent intent = new Intent (getApplicationContext(),
                         ActivityMaps.class);
                 startActivity(intent);
-                //modifica il profilo
+
             } else if (id == R.id.nav1) {
                 login();
             } else if (id == R.id.nav2) {

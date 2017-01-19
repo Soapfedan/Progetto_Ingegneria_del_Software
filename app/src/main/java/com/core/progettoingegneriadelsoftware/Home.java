@@ -3,6 +3,8 @@ package com.core.progettoingegneriadelsoftware;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -31,6 +33,7 @@ public class Home extends AppCompatActivity
     private NavigationView navigationView;
         //serve per eventuali errori durante il login
     private AlertDialog alert;
+    private SharedPreferences prefer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +63,18 @@ public class Home extends AppCompatActivity
         alert = builder.create();
 
         //vengono effettuate alcune configurazioni a livello di utente e si software
+
+        prefer = getApplicationContext().getSharedPreferences("SessionPref", 0); // 0 - for private mode
+        Editor edi = prefer.edit();
+
+        UserHandler.setPref(prefer);
+        if(!(prefer.getString("email",null) == null)) {
+            if (!prefer.getString("email", null).isEmpty()) {
+                UserHandler.setInfo(prefer.getString("email", null), prefer.getString("nome", null), prefer.getString("cognome", null));
+
+            }
+        }
+
         MainApplication.start(this);
     }
 
@@ -149,7 +164,7 @@ public class Home extends AppCompatActivity
         if(UserHandler.isLogged()) {
             navigationView.getMenu().findItem(R.id.nav1).setTitle("Modifica Profilo");
             navigationView.getMenu().findItem(R.id.nav2).setTitle("Logout");
-            tv.setText(UserHandler.getNome() + " " + UserHandler.getCognome());
+            //tv.setText(prefer.getString("nome",null) + " " + prefer.getString("cognome",null));
         }
         else {
             navigationView.getMenu().findItem(R.id.nav1).setTitle("Login");

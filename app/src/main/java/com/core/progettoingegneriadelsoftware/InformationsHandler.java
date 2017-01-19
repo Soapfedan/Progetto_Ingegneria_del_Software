@@ -2,6 +2,7 @@ package com.core.progettoingegneriadelsoftware;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +19,7 @@ import java.util.Map;
 
 import application.MainApplication;
 import application.user.UserHandler;
+import application.user.UserProfile;
 
 /**
  * Created by Federico-PC on 28/12/2016.
@@ -30,6 +32,7 @@ public class InformationsHandler extends AppCompatActivity {
     private Button send_b;
     private Spinner sex_spinner;
     private boolean[] emptyValue;
+    private UserProfile profile;
 
     public static final String null_msg = "Hai inserito un campo vuoto!";
     public static final String error_msg = "Hai inserito un campo errato!";
@@ -46,6 +49,10 @@ public class InformationsHandler extends AppCompatActivity {
         loadResources();
         loadEvents();
         MainApplication.setDb(MainApplication.getDB().open());
+        if(UserHandler.isLogged()){
+            profile = UserHandler.getInformation(UserHandler.getMail());
+            populate();
+        }
 
     }
 
@@ -282,7 +289,7 @@ public class InformationsHandler extends AppCompatActivity {
                 }
                 else{
                     infoTxt.get("phone").setBackgroundColor(worthColor);
-                    emptyValue[9] = false;
+                    emptyValue[9] = true;
                 }
             }
         });
@@ -307,8 +314,13 @@ public class InformationsHandler extends AppCompatActivity {
             public void onClick(View v) {
                 //devo aggiungere che prende i dati
                 //11 text 1 spinner e un'immagine
+                if(UserHandler.isLogged()){
+                    editProfile();
+                }else{
+                    gatheringInformation();
+                }
 
-                gatheringInformation();
+
 
                 /*
                 Intent intent = new Intent (getApplicationContext(),
@@ -344,7 +356,6 @@ public class InformationsHandler extends AppCompatActivity {
         //check if some value is empty
         for(int i=0;i<11;i++){
             if(emptyValue[i]==true){
-                System.out.println("i: " + i);
                 error = true;
             }
         }
@@ -352,6 +363,10 @@ public class InformationsHandler extends AppCompatActivity {
         if(error==true){
             alert.setMessage(null_msg);
             alert.show();
+            for(int i=0;i<11;i++){
+                System.out.println(i+" "+emptyValue[i]);
+
+            }
         }
 
         //controllo password (devono essere diverse le stringhe)
@@ -375,15 +390,61 @@ public class InformationsHandler extends AppCompatActivity {
             info.put("personal_number",infoTxt.get("personal_number").getText().toString());
             info.put("sex",sex_spinner.getSelectedItem().toString());
 
-            alert.setMessage("provo il logup");
-            alert.show();
-            UserHandler.logup(info);
+            //alert.setMessage("provo il logup");
+            //alert.show();
 
+            UserHandler.logup(info);
+            Intent intent = new Intent (getApplicationContext(),
+                    Home.class);
+            startActivity(intent);
         }else{
             alert.setMessage(email_msg);
             alert.show();
         }
 
+
+    }
+
+    private void editProfile(){
+
+        HashMap<String,String> info = new HashMap<>();
+
+        info.put("email",infoTxt.get("email").getText().toString());
+        info.put("pass",infoTxt.get("pass1").getText().toString());
+        info.put("name",infoTxt.get("name").getText().toString());
+        info.put("surname",infoTxt.get("surname").getText().toString());
+        info.put("birth_date",infoTxt.get("birth_date").getText().toString());
+        info.put("birth_city",infoTxt.get("birth_city").getText().toString());
+        info.put("province",infoTxt.get("province").getText().toString());
+        info.put("state",infoTxt.get("state").getText().toString());
+        info.put("phone",infoTxt.get("phone").getText().toString());
+        info.put("personal_number",infoTxt.get("personal_number").getText().toString());
+        info.put("sex",sex_spinner.getSelectedItem().toString());
+
+        UserHandler.editProfile(info);
+        Intent intent = new Intent (getApplicationContext(),
+                Home.class);
+        startActivity(intent);
+
+    }
+
+    private void populate(){
+
+        infoTxt.get("email").setText(profile.getEmail());
+        infoTxt.get("pass1").setText(profile.getPassword());
+        infoTxt.get("name").setText(profile.getNome());
+        infoTxt.get("surname").setText(profile.getCognome());
+        infoTxt.get("birth_date").setText(profile.getData_nascita());
+        infoTxt.get("birth_city").setText(profile.getLuogo_nascita());
+        infoTxt.get("province").setText(profile.getProvincia());
+        infoTxt.get("state").setText(profile.getStato());
+        infoTxt.get("phone").setText(profile.getTelefono());
+        infoTxt.get("personal_number").setText(profile.getCod_fis());
+        if(profile.getSesso().equals("Uomo")){
+            sex_spinner.setSelection(0);
+        }else{
+            sex_spinner.setSelection(1);
+        }
 
     }
 }

@@ -1,6 +1,8 @@
 package application.user;
 
 import android.app.AlertDialog;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 
 import java.util.ArrayList;
 
@@ -19,11 +21,15 @@ public class UserHandler {
     private static String nome;
     private static String cognome;
     private static UserProfile profile;
+    private static SharedPreferences pref;
+    private static Editor editor;
     //private ArrayList<Beacon> beacons;
 
 
     public static void init(){
         macAddress = obtainMacAddr();
+        editor = pref.edit();
+
     }
 
     public static String getMail() {
@@ -61,6 +67,8 @@ public class UserHandler {
 
     public static void logout() {
         email = null;
+        editor.clear();
+        editor.commit();
         //rende nulli anche altri elementi
     }
 
@@ -72,7 +80,9 @@ public class UserHandler {
 
     public static boolean isLogged() {
         boolean b = false;
-        if (email!=null) b=true;
+        if (pref.getString("email",null)!=null){
+            b=true;
+        }
         return b;
     }
 
@@ -89,7 +99,10 @@ public class UserHandler {
                 email=name;
                 nome = u.nome;
                 cognome = u.cognome;
-
+                editor.putString("email",email);
+                editor.putString("nome",nome);
+                editor.putString("cognome",cognome);
+                editor.commit();
                 b = true;
             }
             else b = false;
@@ -135,5 +148,15 @@ public class UserHandler {
             //handle exception
         }
         return "";
+    }
+
+    public static void setPref(SharedPreferences p) {
+        pref = p;
+    }
+
+    public static void setInfo(String e,String n,String c){
+        email = e;
+        nome = n;
+
     }
 }

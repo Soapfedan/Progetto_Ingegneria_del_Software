@@ -1,6 +1,7 @@
 package application;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import java.util.ArrayList;
 
@@ -25,6 +26,8 @@ public class MainApplication {
 
     private ArrayList<Floor> edi;
     private static UserAdapter db;
+
+
 
     /**
      * Method used t
@@ -57,5 +60,7 @@ public class MainApplication {
     public void activateBluetooth(){
 
     }
+
+
 }
 

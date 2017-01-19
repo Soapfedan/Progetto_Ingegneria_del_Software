@@ -189,7 +189,7 @@
                 android:id="@+id/province_txt" />
 
             <TextView
-                android:text="Stato"
+                android:text="Stato di nascita"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/textView15" />

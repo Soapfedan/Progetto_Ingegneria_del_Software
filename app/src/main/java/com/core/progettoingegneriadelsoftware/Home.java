@@ -1,6 +1,7 @@
 package com.core.progettoingegneriadelsoftware;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,6 +9,7 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.AttributeSet;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -74,7 +76,7 @@ public class Home extends AppCompatActivity
 
             }
         }
-
+        setOptionMenu();
         MainApplication.start(this);
     }
 
@@ -164,7 +166,8 @@ public class Home extends AppCompatActivity
         if(UserHandler.isLogged()) {
             navigationView.getMenu().findItem(R.id.nav1).setTitle("Modifica Profilo");
             navigationView.getMenu().findItem(R.id.nav2).setTitle("Logout");
-            //tv.setText(prefer.getString("nome",null) + " " + prefer.getString("cognome",null));
+            if(tv!= null)
+                tv.setText(prefer.getString("nome",null) + " " + prefer.getString("cognome",null));
         }
         else {
             navigationView.getMenu().findItem(R.id.nav1).setTitle("Login");

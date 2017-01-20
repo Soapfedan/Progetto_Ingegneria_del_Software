@@ -172,7 +172,7 @@ public class Home extends AppCompatActivity
         else {
             navigationView.getMenu().findItem(R.id.nav1).setTitle("Login");
             navigationView.getMenu().findItem(R.id.nav2).setTitle("Iscriviti");
-            tv.setText("utente non registrato");
+            //tv.setText("utente non registrato");
         }
     }
 

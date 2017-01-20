@@ -80,7 +80,7 @@ public class Home extends AppCompatActivity
         setOptionMenu();
         View headerView = navigationView.inflateHeaderView(R.layout.nav_header_home);
         TextView textV = (TextView)headerView.findViewById(R.id.text_logName);
-        textV.setText(prefer.getString("nome","utente") + " " + prefer.getString("cognome","non registrato"));
+        textV.setText(prefer.getString("nome","Utente") + " " + prefer.getString("cognome","non registrato"));
         MainApplication.start(this);
     }
 

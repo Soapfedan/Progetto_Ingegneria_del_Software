@@ -11,6 +11,8 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.Settings;
 
+import java.util.ArrayList;
+
 import application.user.UserProfile;
 
 public class UserAdapter {
@@ -90,7 +92,8 @@ public class UserAdapter {
                                  String personal_number ) {
         ContentValues updateValues = createContentValues(email, password, name, surname, birth_date, birth_city,
                 province, state, telephone, sex, personal_number);
-        return database.update(DATABASE_TABLE, updateValues, KEY_EMAIL + "='"+ email + "'", null) > 0;
+        return database.update(DATABASE_TABLE, updateValues, KEY_EMAIL + "='"+ email
+                + "'", null) > 0;
     }
 
     //delete an user
@@ -143,6 +146,22 @@ public class UserAdapter {
         return mCursor;
     }
 
+    //get all users
+    public ArrayList<UserProfile> getAllUsers(){
+        Cursor cursor = database.query(true, DATABASE_TABLE, new String[] {
+                        KEY_EMAIL, KEY_NAME, KEY_SURNAME,},
+               null, null, null, null, null, null);
+        ArrayList<UserProfile> users = new ArrayList<>();
+        UserProfile profile = null;
+        while (cursor.moveToNext()) {
 
+            profile = new UserProfile(cursor.getString(0),    //email
+                    cursor.getString(1),    //nome
+                    cursor.getString(2)    //cognome
+            );
+            users.add(profile);
+        }
+        return users;
+    }
 
 }

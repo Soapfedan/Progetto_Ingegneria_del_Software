@@ -34,6 +34,13 @@ public class UserProfile {
         this.cod_fis = cod_fis;
     }
 
+    public UserProfile(String email, String nome, String cognome){
+
+        this.email = email;
+        this.nome = nome;
+        this.cognome = cognome;
+    }
+
     public String getPassword() {
         return password;
     }

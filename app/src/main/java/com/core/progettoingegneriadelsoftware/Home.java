@@ -37,6 +37,7 @@ public class Home extends AppCompatActivity
         //serve per eventuali errori durante il login
     private AlertDialog alert;
     private SharedPreferences prefer;
+    private TextView tv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,8 +80,8 @@ public class Home extends AppCompatActivity
         }
         setOptionMenu();
         View headerView = navigationView.inflateHeaderView(R.layout.nav_header_home);
-        TextView textV = (TextView)headerView.findViewById(R.id.text_logName);
-        textV.setText(prefer.getString("nome","Utente") + " " + prefer.getString("cognome","non registrato"));
+        tv = (TextView)headerView.findViewById(R.id.text_logName);
+        tv.setText(prefer.getString("nome","Utente") + " " + prefer.getString("cognome","non registrato"));
         MainApplication.start(this);
     }
 
@@ -165,7 +166,7 @@ public class Home extends AppCompatActivity
 
     //richiamato quando effettuo login e logout, imposta le voci del menu
     private void setOptionMenu() {
-        TextView tv = (TextView)findViewById(R.id.text_logName);
+        tv = (TextView)findViewById(R.id.text_logName);
 
         if(UserHandler.isLogged()) {
             navigationView.getMenu().findItem(R.id.nav1).setTitle("Modifica Profilo");
@@ -176,7 +177,7 @@ public class Home extends AppCompatActivity
         else {
             navigationView.getMenu().findItem(R.id.nav1).setTitle("Login");
             navigationView.getMenu().findItem(R.id.nav2).setTitle("Iscriviti");
-            //tv.setText("utente non registrato");
+            if(tv!= null) tv.setText("utente non registrato");
         }
     }
 

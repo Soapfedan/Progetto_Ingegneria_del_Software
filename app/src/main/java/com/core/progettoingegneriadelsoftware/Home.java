@@ -78,6 +78,9 @@ public class Home extends AppCompatActivity
             }
         }
         setOptionMenu();
+        View headerView = navigationView.inflateHeaderView(R.layout.nav_header_home);
+        TextView textV = (TextView)headerView.findViewById(R.id.text_logName);
+        textV.setText(prefer.getString("nome",null) + " " + prefer.getString("cognome",null));
         MainApplication.start(this);
     }
 

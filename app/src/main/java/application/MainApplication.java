@@ -41,11 +41,6 @@ public class MainApplication {
         return db;
     }
 
-        //lo richiamo quando devo impostare il writabledb
-    public static void setDb(UserAdapter a) {
-        db = a;
-    }
-
     public static void start(Context context) {
         UserHandler.init();
         //crea il db, ma ancora non è ne leggibile ne scrivibile

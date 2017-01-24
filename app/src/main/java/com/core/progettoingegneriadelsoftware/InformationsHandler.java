@@ -20,6 +20,7 @@ import java.util.Map;
 import application.MainApplication;
 import application.user.UserHandler;
 import application.user.UserProfile;
+import application.validation.FormControl;
 
 /**
  * Created by Federico-PC on 28/12/2016.
@@ -48,7 +49,7 @@ public class InformationsHandler extends AppCompatActivity {
 
         loadResources();
         loadEvents();
-        MainApplication.setDb(MainApplication.getDB().open());
+        MainApplication.getDB().open();
         if(UserHandler.isLogged()){
             profile = UserHandler.getInformation(UserHandler.getMail());
             populate();
@@ -72,6 +73,7 @@ public class InformationsHandler extends AppCompatActivity {
 
     protected void onStop() {
         super.onStop();
+        MainApplication.getDB().close();
     }
 
 
@@ -144,6 +146,11 @@ public class InformationsHandler extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
 
+                if (!FormControl.mailControl(infoTxt.get("email").getText().toString()) && !hasFocus) {
+                    alert.setMessage("l'email deve contenere solo lettere, @ e punti");
+                    alert.show();
+                }
+
                 if( infoTxt.get("email").getText().toString().isEmpty()){
                     infoTxt.get("email").setBackgroundColor(errorColor);
                     emptyValue[0] = true;
@@ -161,6 +168,11 @@ public class InformationsHandler extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
 
+                if (!FormControl.passwordControl(infoTxt.get("pass1").getText().toString()) && !hasFocus) {
+                    alert.setMessage("la password deve contenere almeno 8 caratteri");
+                    alert.show();
+                }
+
                 if( infoTxt.get("pass1").getText().toString().isEmpty()){
                     infoTxt.get("pass1").setBackgroundColor(errorColor);
                     emptyValue[1] = true;
@@ -176,8 +188,13 @@ public class InformationsHandler extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
 
-                if( infoTxt.get("pass1").getText().toString().isEmpty()){
-                    infoTxt.get("pass1").setBackgroundColor(errorColor);
+                if (!FormControl.passwordControl(infoTxt.get("pass2").getText().toString()) && !hasFocus) {
+                    alert.setMessage("la password deve contenere almeno 8 caratteri");
+                    alert.show();
+                }
+
+                if( infoTxt.get("pass2").getText().toString().isEmpty()){
+                    infoTxt.get("pass2").setBackgroundColor(errorColor);
                     emptyValue[2] = true;
                 }
                 else{
@@ -190,6 +207,11 @@ public class InformationsHandler extends AppCompatActivity {
         infoTxt.get("name").setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
+                    //controlla che sia composto solo da lettere e spazi
+                if (!FormControl.letterControl(infoTxt.get("name").getText().toString()) && !hasFocus) {
+                    alert.setMessage("il nome deve contenere solo lettere");
+                    alert.show();
+                }
 
                 if( infoTxt.get("name").getText().toString().isEmpty()){
                     infoTxt.get("name").setBackgroundColor(errorColor);
@@ -205,6 +227,11 @@ public class InformationsHandler extends AppCompatActivity {
         infoTxt.get("surname").setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
+                    //controlla che sia composto solo da lettere e spazi
+                if (!FormControl.letterControl(infoTxt.get("surname").getText().toString()) && !hasFocus) {
+                    alert.setMessage("il cognome deve contenere solo lettere");
+                    alert.show();
+                }
 
                 if( infoTxt.get("surname").getText().toString().isEmpty()){
                     infoTxt.get("surname").setBackgroundColor(errorColor);
@@ -214,6 +241,7 @@ public class InformationsHandler extends AppCompatActivity {
                     infoTxt.get("surname").setBackgroundColor(worthColor);
                     emptyValue[4] = false;
                 }
+
             }
         });
 
@@ -237,6 +265,12 @@ public class InformationsHandler extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
 
+                    //controlla che sia composto solo da lettere e spazi
+                if (!FormControl.letterControl(infoTxt.get("birth_city").getText().toString()) && !hasFocus) {
+                    alert.setMessage("la città deve contenere solo lettere");
+                    alert.show();
+                }
+
                 if( infoTxt.get("birth_city").getText().toString().isEmpty()){
                     infoTxt.get("birth_city").setBackgroundColor(errorColor);
                     emptyValue[6] = true;
@@ -251,6 +285,15 @@ public class InformationsHandler extends AppCompatActivity {
         infoTxt.get("province").setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
+                    //controlla che sia composto solo da lettere e spazi
+                if (!FormControl.letterControl(infoTxt.get("name").getText().toString()) && !hasFocus) {
+                    alert.setMessage("la provincia deve contenere solo lettere");
+                    alert.show();
+                }
+                if (!FormControl.provenceControl(infoTxt.get("name").getText().toString()) && !hasFocus) {
+                    alert.setMessage("la provincia deve essere composta da due lettere");
+                    alert.show();
+                }
 
                 if( infoTxt.get("province").getText().toString().isEmpty()){
                     infoTxt.get("province").setBackgroundColor(errorColor);
@@ -267,6 +310,11 @@ public class InformationsHandler extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
 
+                if (!FormControl.letterControl(infoTxt.get("state").getText().toString()) && !hasFocus) {
+                    alert.setMessage("lo stato deve contenere solo lettere");
+                    alert.show();
+                }
+
                 if( infoTxt.get("state").getText().toString().isEmpty()){
                     infoTxt.get("state").setBackgroundColor(errorColor);
                     emptyValue[8] = true;
@@ -282,7 +330,18 @@ public class InformationsHandler extends AppCompatActivity {
         infoTxt.get("phone").setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
+                //controllo se abbastanza lungo, solo quando esco dal text (!hasFocus serve per quello)
+                if (!FormControl.phoneControl(infoTxt.get("phone").getText().toString()) && !hasFocus) {
+                    alert.setMessage("numero troppo corto");
+                    alert.show();
+                }
+                    //controlla che ci siano solo numeri
+                if (!FormControl.numberControl(infoTxt.get("phone").getText().toString()) && !hasFocus) {
+                    alert.setMessage("vanno inseriti solo numeri");
+                    alert.show();
+                }
 
+                //controllo se vuoto campo
                 if( infoTxt.get("phone").getText().toString().isEmpty()){
                     infoTxt.get("phone").setBackgroundColor(errorColor);
                     emptyValue[9] = true;
@@ -291,6 +350,8 @@ public class InformationsHandler extends AppCompatActivity {
                     infoTxt.get("phone").setBackgroundColor(worthColor);
                     emptyValue[9] = true;
                 }
+
+
             }
         });
 

@@ -24,7 +24,7 @@ public abstract class FormControl {
     //controlla che ci siano solamente lettere, @ e punto
     public static boolean mailControl(String s) {
         boolean b;
-        String pattern= "^[a-zA-Z@.]*$";
+        String pattern= "^[a-zA-Z@._-]*$";
         if(s.matches(pattern)) b = true;
         else b = false;
         return b;

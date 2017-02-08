@@ -67,8 +67,7 @@ public class UserHandler {
 
     public static void logout() {
         email = null;
-        editor.clear();
-        editor.commit();
+        cleanEditor();
         //rende nulli anche altri elementi
     }
 
@@ -76,17 +75,29 @@ public class UserHandler {
         return MainApplication.getDB().open().getUserProfile(email);
     }
 
+    private static void updateEditor() {
+        editor.putString("email",email);
+        editor.putString("nome",nome);
+        editor.putString("cognome",cognome);
+        editor.commit();
+    }
 
-
+    private static void cleanEditor() {
+        editor.clear();
+        editor.commit();
+    }
+        //controlla che utente sia loggato o che ci siano dati nella sharedpreferencies
     public static boolean isLogged() {
         boolean b = false;
-        if (pref.getString("email",null)!=null){
-            b=true;
+        if(email!=null) b = true;
+        else if (pref.getString("email",null)!=null) {
+            setInfo(pref.getString("email",null),pref.getString("nome",null),pref.getString("cognome",null));
+            b = true;
         }
         return b;
     }
 
-    public static boolean login(String name, String pass){
+    public static boolean login(String name, String pass, boolean chk){
         boolean b = false;
             //assegnato valore solo se si trova utente con quel nome, altrimenti null
         UserProfile u= MainApplication.getDB().open().getUserProfile(name);
@@ -99,10 +110,8 @@ public class UserHandler {
                 email=name;
                 nome = u.nome;
                 cognome = u.cognome;
-                editor.putString("email",email);
-                editor.putString("nome",nome);
-                editor.putString("cognome",cognome);
-                editor.commit();
+                if(chk)updateEditor();
+                else cleanEditor();
                 b = true;
             }
             else b = false;
@@ -157,6 +166,6 @@ public class UserHandler {
     public static void setInfo(String e,String n,String c){
         email = e;
         nome = n;
-
+        cognome = c;
     }
 }

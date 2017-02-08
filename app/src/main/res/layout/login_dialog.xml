@@ -11,6 +11,14 @@
     <EditText android:layout_height="wrap_content"
         android:inputType="textPassword" android:id="@+id/txtLoginPassword"
         android:layout_width="match_parent"></EditText>
+
+    <CheckBox
+        android:text="Ricordami"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/checkLog"
+        android:checked="true" />
+
     <LinearLayout android:layout_width="match_parent"
         android:layout_height="wrap_content" android:id="@+id/linearLayout1">
         <Button android:layout_width="wrap_content"

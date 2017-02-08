@@ -20,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -72,21 +73,26 @@ public class Home extends AppCompatActivity
         Editor edi = prefer.edit();
 
         UserHandler.setPref(prefer);
-        if(!(prefer.getString("email",null) == null)) {
-            if (!prefer.getString("email", null).isEmpty()) {
-                UserHandler.setInfo(prefer.getString("email", null), prefer.getString("nome", null), prefer.getString("cognome", null));
 
-            }
-        }
-        setOptionMenu();
         View headerView = navigationView.inflateHeaderView(R.layout.nav_header_home);
         tv = (TextView)headerView.findViewById(R.id.text_logName);
-        tv.setText(prefer.getString("nome","Utente") + " " + prefer.getString("cognome","non registrato"));
+
+            //prima controlla se è già loggato o se ci sono sharedpreferencies
+        if(UserHandler.isLogged()) {
+            tv.setText(UserHandler.getNome() + " " + UserHandler.getCognome());
+        }
+        else {
+            tv.setText("Utente non registrato");
+        }
+
+        setOptionMenu();
+
         MainApplication.start(this);
     }
 
     protected void onStart() {
         super.onStart();
+
     }
 
     protected void onResume() {
@@ -125,12 +131,13 @@ public class Home extends AppCompatActivity
         Button btnLogin = (Button) loginDialog.findViewById(R.id.btnLoginEnter);
         final EditText txtUser = (EditText) loginDialog.findViewById(R.id.txtLoginUsername);
         final EditText txtPass = (EditText) loginDialog.findViewById(R.id.txtLoginPassword);
+        final CheckBox chkLog = (CheckBox) loginDialog.findViewById(R.id.checkLog);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //richiama il metodo dello user per gestire i dati inerenti il login
                     //in base alla riuscita del login si cambiano i menu oppure si mostra alert
-                boolean b = UserHandler.login(txtUser.getText().toString(),txtPass.getText().toString());
+                boolean b = UserHandler.login(txtUser.getText().toString(),txtPass.getText().toString(),chkLog.isChecked());
                 if (b) {
                     setOptionMenu();
 
@@ -171,8 +178,10 @@ public class Home extends AppCompatActivity
         if(UserHandler.isLogged()) {
             navigationView.getMenu().findItem(R.id.nav1).setTitle("Modifica Profilo");
             navigationView.getMenu().findItem(R.id.nav2).setTitle("Logout");
-            if(tv!= null)
-                tv.setText(prefer.getString("nome",null) + " " + prefer.getString("cognome",null));
+            if(tv!= null) {
+                if (UserHandler.getMail()==null) tv.setText(prefer.getString("nome",null) + " " + prefer.getString("cognome",null));
+                else tv.setText(UserHandler.getNome() + " " + UserHandler.getCognome());
+            }
         }
         else {
             navigationView.getMenu().findItem(R.id.nav1).setTitle("Login");

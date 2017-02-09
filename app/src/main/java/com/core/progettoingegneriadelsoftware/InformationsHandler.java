@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
-
+import java.util.Calendar;
 import org.w3c.dom.Text;
 
 import java.util.HashMap;
@@ -21,7 +21,9 @@ import application.MainApplication;
 import application.user.UserHandler;
 import application.user.UserProfile;
 import application.validation.FormControl;
-
+import android.app.DatePickerDialog;
+import android.widget.DatePicker;
+import android.app.DatePickerDialog.OnDateSetListener;
 /**
  * Created by Federico-PC on 28/12/2016.
  */
@@ -136,6 +138,14 @@ public class InformationsHandler extends AppCompatActivity {
 
 
     }
+        //aggiorna il textView di date_birth
+    private void updateDisplay(int mMonth, int mDay, int mYear) {
+        infoTxt.get("birth_date").setText(
+                new StringBuilder()
+                        .append(mMonth + 1).append("-")
+                        .append(mDay).append("-")
+                        .append(mYear).append(" "));
+    }
 
     private void loadEvents(){
 
@@ -249,6 +259,35 @@ public class InformationsHandler extends AppCompatActivity {
         infoTxt.get("birth_date").setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
+
+                    //quando prende il focus invece della tastiera viene fuori il datepicker
+                if(hasFocus) {
+                    Calendar mcurrentDate=Calendar.getInstance();
+                int mYear=mcurrentDate.get(Calendar.YEAR);
+                int mMonth=mcurrentDate.get(Calendar.MONTH);
+                int mDay=mcurrentDate.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog mDatePicker=new DatePickerDialog(InformationsHandler.this, new OnDateSetListener() {
+                    public void onDateSet(DatePicker datepicker, int selectedyear, int selectedmonth, int selectedday) {
+                        int year = selectedyear;
+                        int month = selectedmonth;
+                        int day = selectedday;
+                        updateDisplay(month,day,year);
+                    }
+                },mYear, mMonth, mDay);
+                mDatePicker.setTitle("Select date");
+                    //quando clicco cancel nel dialog non deve rimanere la tastiera
+                mDatePicker.setButton(DialogInterface.BUTTON_NEGATIVE, "cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == DialogInterface.BUTTON_NEGATIVE) {
+                            //TODO deve far scomparire la tastiera se clicco cancel nel dialog
+                            infoTxt.get("birth_date").clearFocus();
+                        }
+                    }
+                });
+                mDatePicker.show();
+                updateDisplay(mMonth,mDay,mYear);
+                }
 
                 if( infoTxt.get("birth_date").getText().toString().isEmpty()){
                     infoTxt.get("birth_date").setBackgroundColor(errorColor);

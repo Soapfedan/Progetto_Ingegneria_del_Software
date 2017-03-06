@@ -259,6 +259,7 @@ public class Home extends AppCompatActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
-        return true;
+            //evita che rimanga selezionato l'item del menu
+        return false;
     }
 }

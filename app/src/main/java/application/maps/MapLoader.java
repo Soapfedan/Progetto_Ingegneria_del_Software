@@ -1,50 +1,40 @@
 package application.maps;
 
-import android.content.Context;
-import android.content.res.AssetManager;
-
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import au.com.bytecode.opencsv.CSVReader;
+public class MapLoader{
+    InputStream inputStream;
 
-/**
- * Created by Federico-PC on 05/03/2017.
- */
+    public MapLoader(InputStream inputStream){
+        this.inputStream = inputStream;
+    }
 
-public class MapLoader {
-
-    private final String CSV_PATH = "Data/data.csv";
-    private String line = "";
-    private String cvsSplitBy = ";";
-
-
-    public boolean load(Context context){
-
-
-        List<String[]> questionList = new ArrayList<String[]>();
-        AssetManager assetManager = context.getAssets();
-
+    public List read(){
+        List resultList = new ArrayList();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         try {
-            InputStream csvStream = assetManager.open(CSV_PATH);
-            InputStreamReader csvStreamReader = new InputStreamReader(csvStream);
-            CSVReader csvReader = new CSVReader(csvStreamReader);
-            String[] line;
-
-            // throw away the header
-            csvReader.readNext();
-
-            while ((line = csvReader.readNext()) != null) {
-                questionList.add(line);
+            String csvLine;
+            while ((csvLine = reader.readLine()) != null) {
+                String[] row = csvLine.split(",");
+                resultList.add(row);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-        return false;
+        catch (IOException ex) {
+            throw new RuntimeException("Error in reading CSV file: "+ex);
+        }
+        finally {
+            try {
+                inputStream.close();
+            }
+            catch (IOException e) {
+                throw new RuntimeException("Error while closing input stream: "+e);
+            }
+        }
+        return resultList;
     }
 }

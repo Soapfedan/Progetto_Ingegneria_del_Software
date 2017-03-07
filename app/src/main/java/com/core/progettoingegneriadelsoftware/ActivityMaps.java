@@ -11,6 +11,8 @@ import android.widget.ListView;
 import android.widget.ArrayAdapter;
 import android.content.Intent;
 import android.view.View;
+
+import java.io.InputStream;
 import java.util.*;
 import application.maps.*;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -45,6 +47,11 @@ public class ActivityMaps extends AppCompatActivity {
         createMaps(b);
         createIcon(b);
 
+        InputStream inputStream = getResources().openRawResource(R.raw.beaconlist);
+        MapLoader csvFile = new MapLoader(inputStream);
+        List scoreList = csvFile.read();
+
+
     }
 
     protected void onStart() {
@@ -68,6 +75,8 @@ public class ActivityMaps extends AppCompatActivity {
         b.add(f_160);
         b.add(f_155);
         b.add(f_150);
+
+
     }
 
     private void createIcon(final ArrayList<Floor> b) {

@@ -20,8 +20,9 @@ public class MapLoader{
         try {
             String csvLine;
             while ((csvLine = reader.readLine()) != null) {
-                String[] row = csvLine.split(",");
+                String[] row = csvLine.split(";");
                 resultList.add(row);
+                System.out.println(row);
             }
         }
         catch (IOException ex) {

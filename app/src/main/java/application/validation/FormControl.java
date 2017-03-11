@@ -30,6 +30,15 @@ public abstract class FormControl {
         return b;
     }
 
+    //control fiscal code
+    public static boolean PersonalNumberControl(String s) {
+        boolean b;
+        String pattern= "^[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]$";
+        if(s.matches(pattern)) b = true;
+            else b = false;
+        return b;
+    }
+
     //controlla che ci siano solamente numeri
     public static boolean numberControl(String s) {
         boolean b;

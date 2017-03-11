@@ -15,7 +15,10 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
 
         <LinearLayout
@@ -37,16 +40,17 @@
                 android:layout_weight="0.06" />
 
             <TextView
-                android:text="Email"
-                android:layout_width="42dp"
+                android:id="@+id/Email"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/profile_image"
                 android:layout_marginLeft="0dp"
                 android:layout_marginStart="0dp"
-                android:id="@+id/Email"
                 android:layout_marginTop="41dp"
-                android:layout_below="@+id/profile_image"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+                android:layout_weight="0.02"
+                android:text="Email" />
 
             <EditText
                 android:layout_width="match_parent"
@@ -56,25 +60,27 @@
                 android:id="@+id/email_txt" />
 
             <TextView
-                android:text="Password"
+                android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/email_txt"
                 android:layout_alignLeft="@+id/pass_txt1"
                 android:layout_alignStart="@+id/pass_txt1"
-                android:layout_marginTop="10dp"
-                android:id="@+id/textView2" />
+                android:layout_below="@+id/email_txt"
+                android:layout_marginLeft="0dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="41dp"
+                android:text="Password" />
 
             <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:ems="10"
-            android:id="@+id/pass_txt1"
-            android:layout_marginTop="34dp"
-            android:layout_below="@+id/email_txt"
-            android:layout_alignLeft="@+id/pass_txt2"
-            android:layout_alignStart="@+id/pass_txt2" />
+                android:id="@+id/pass_txt1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/pass_txt2"
+                android:layout_alignStart="@+id/pass_txt2"
+                android:layout_below="@+id/email_txt"
+                android:layout_marginTop="34dp"
+                android:ems="10"
+                android:inputType="textPassword" />
 
             <TextView
             android:text="Ripeti Password"
@@ -86,15 +92,15 @@
             android:id="@+id/textView3" />
 
             <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:ems="10"
-            android:layout_marginTop="29dp"
-            android:id="@+id/pass_txt2"
-            android:layout_below="@+id/pass_txt1"
-            android:layout_alignLeft="@+id/email_txt"
-            android:layout_alignStart="@+id/email_txt" />
+                android:id="@+id/pass_txt2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/email_txt"
+                android:layout_alignStart="@+id/email_txt"
+                android:layout_below="@+id/pass_txt1"
+                android:layout_marginTop="29dp"
+                android:ems="10"
+                android:inputType="textPassword" />
 
             <TextView
             android:text="Nome"
@@ -108,15 +114,15 @@
             android:layout_alignStart="@+id/pass_txt2" />
 
             <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName"
-                android:ems="10"
-                android:layout_marginTop="17dp"
                 android:id="@+id/name_txt"
-                android:layout_below="@+id/textView4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_alignLeft="@+id/textView4"
-                android:layout_alignStart="@+id/textView4" />
+                android:layout_alignStart="@+id/textView4"
+                android:layout_below="@+id/textView4"
+                android:layout_marginTop="17dp"
+                android:ems="10"
+                android:inputType="textPersonName" />
 
             <TextView
             android:text="Cognome"
@@ -129,15 +135,15 @@
             android:id="@+id/textView5" />
 
             <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:ems="10"
-            android:layout_below="@+id/name_txt"
-            android:layout_alignRight="@+id/name_txt"
-            android:layout_alignEnd="@+id/name_txt"
-            android:layout_marginTop="38dp"
-            android:id="@+id/surname_txt" />
+                android:id="@+id/surname_txt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/name_txt"
+                android:layout_alignRight="@+id/name_txt"
+                android:layout_below="@+id/name_txt"
+                android:layout_marginTop="38dp"
+                android:ems="10"
+                android:inputType="textPersonName" />
 
             <TextView
             android:text="Data di nascita"
@@ -150,17 +156,17 @@
             android:id="@+id/textView8" />
 
             <EditText
-                android:layout_width="wrap_content"
+                android:id="@+id/birth_date_txt"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="date"
-                android:ems="10"
-                android:layout_below="@+id/textView8"
-                android:layout_alignRight="@+id/surname_txt"
                 android:layout_alignEnd="@+id/surname_txt"
-                android:layout_marginRight="11dp"
+                android:layout_alignRight="@+id/surname_txt"
+                android:layout_below="@+id/textView8"
                 android:layout_marginEnd="11dp"
+                android:layout_marginRight="11dp"
                 android:layout_marginTop="21dp"
-                android:id="@+id/birth_date_txt" />
+                android:ems="10"
+                android:inputType="date" />
 
             <TextView
                 android:layout_width="match_parent"

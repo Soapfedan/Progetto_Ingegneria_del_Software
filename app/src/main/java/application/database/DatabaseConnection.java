@@ -15,7 +15,8 @@ public class DatabaseConnection extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 4;
 
     // Lo statement SQL di creazione del database
-    private static final String DATABASE_CREATE = "create table User (email text primary key, password text not null, nome text not null, cognome text not null, data_nascita text, " +
+    private static final String DATABASE_CREATE = "create table User (email text primary key, password text not null," +
+            " nome text not null, cognome text not null, data_nascita text, " +
             "luogo_nascita text , provincia text , stato text ," +
             " telefono text , sesso text , cod_fis text);";
 

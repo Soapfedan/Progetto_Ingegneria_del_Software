@@ -4,6 +4,7 @@ package com.core.progettoingegneriadelsoftware;
  * Created by Niccolò on 28/12/2016.
  */
 import android.os.Bundle;
+import android.support.annotation.IntegerRes;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -14,6 +15,8 @@ import android.view.View;
 
 import java.io.InputStream;
 import java.util.*;
+
+import application.MainApplication;
 import application.maps.*;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.AdapterView;
@@ -33,24 +36,27 @@ public class ActivityMaps extends AppCompatActivity {
     private Spinner spinner_floor;
     private Spinner spinner_room;
     private ImageView image;
+    private ArrayList<String> floorsname;
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        ArrayList b = new ArrayList<Floor>();
+        floorsname = new ArrayList<>();
+        ArrayList<String[]> beaconList;
+        ArrayList<String[]> roomsList;
+        //selectedFloor = new Floor();
+        selectedRoom = new Room(null);
 
-        selectedFloor = new Floor();
-        selectedRoom = new Room();
-
-        createMaps(b);
-        createIcon(b);
-
-        InputStream inputStream = getResources().openRawResource(R.raw.beaconlist);
-        MapLoader csvFile = new MapLoader(inputStream);
-        List scoreList = csvFile.read();
-
+        InputStream inputStreamBeacon = getResources().openRawResource(R.raw.beaconlist);
+        beaconList = MapLoader.read(inputStreamBeacon);
+        loadBeacons(beaconList);
+        InputStream inputStreamRooms = getResources().openRawResource(R.raw.rooms);
+        roomsList = MapLoader.read(inputStreamRooms);
+        loadRooms(roomsList);
+        floorsname = createNamesArray();
+        createIcon();
 
     }
 
@@ -59,34 +65,57 @@ public class ActivityMaps extends AppCompatActivity {
 
     }
         //aggiungo manualmente elementi alle barre, dopo andrà fatto diversamente
-    private void createMaps(ArrayList b) {
-        Floor f_160 = new Floor("160");
-        Floor f_155 = new Floor("155");
-        Floor f_150 = new Floor("150");
-        f_160.addRoom("160/1");
-        f_160.addRoom("160/2");
-        f_160.addRoom("160/3");
-        f_155.addRoom("155/1");
-        f_155.addRoom("155/2");
-        f_155.addRoom("155/3");
-        f_150.addRoom("150/1");
-        f_150.addRoom("150/2");
-        f_150.addRoom("150/3");
-        b.add(f_160);
-        b.add(f_155);
-        b.add(f_150);
+    private void loadBeacons(ArrayList<String[]> b) {
+
+        int[] coords = new int[2];
+        double width;
+        String cod;
+        HashMap<String,Floor> f = new HashMap<>();
+        MainApplication.setFloors(f);
+        for (String[] beaconlist : b) {
+            if(MainApplication.getFloors().containsKey(beaconlist[2])) {    //il piano esiste
+                coords[0] = Integer.parseInt(beaconlist[0]); //x
+                coords[1] = Integer.parseInt(beaconlist[1]); //y
+                width = Double.parseDouble(beaconlist[3].replace(",","."));
+                cod = beaconlist[4];
+                MainApplication.getFloors().get(beaconlist[2]).addNode(cod,new Node(coords,beaconlist[2],width));
+            }else{
+                MainApplication.getFloors().put(beaconlist[2],new Floor(beaconlist[2]));//aggiungo il nuovo piano
+                //aggiunto il nodo
+                coords[0] = Integer.parseInt(beaconlist[0]); //x
+                coords[1] = Integer.parseInt(beaconlist[1]); //y
+                width = Double.parseDouble(beaconlist[3].replace(",","."));     //larghezza
+                cod = beaconlist[4];                         //codice
+                MainApplication.getFloors().get(beaconlist[2]).addNode(cod,new Node(coords,beaconlist[2],width));
+            }
+
+
+
+        }
 
 
     }
 
-    private void createIcon(final ArrayList<Floor> b) {
-        selectedFloor = b.get(0);
-        selectedRoom = b.get(0).getRooms().get(0);
+    //aggiungo manualmente elementi alle barre, dopo andrà fatto diversamente
+    private void loadRooms(ArrayList<String[]> b) {
+
+
+        for (String[] roomList : b) {
+                MainApplication.getFloors().get(roomList[0]).addRoom(roomList[1],new Room(roomList[1]));
+        }
+
+
+    }
+
+    private void createIcon() {
+        selectedFloor = MainApplication.getFloors().get(floorsname.get(0));
+        selectedRoom = MainApplication.getFloors().get(floorsname.get(0)).getRooms().get(
+                MainApplication.getFloors().get(floorsname.get(0)).nameStringRoom().get(0));
         spinner_floor = (Spinner) findViewById(R.id.spin_floor);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 this,
                 android.R.layout.simple_spinner_item,
-                createArray(b)
+                createNamesArray()
         );
         spinner_floor.setAdapter(adapter);
             //controlla che cosa è stato selezionato sullo spinner del piano
@@ -96,12 +125,10 @@ public class ActivityMaps extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> arg0, View arg1,
                                        int arg2, long arg3) {
 
-                if (arg2 == 0) {
-                    selectedFloor = b.get(0);
-                } else if (arg2 == 1) {
-                    selectedFloor = b.get(1);
-                } else {
-                    selectedFloor = b.get(2);
+                for(int i=0;i<floorsname.size();i++) {
+                    if (arg2 == i) {
+                        selectedFloor = MainApplication.getFloors().get(floorsname.get(i));
+                    }
                 }
 
                 spinner_room = (Spinner) findViewById(R.id.spin_room);
@@ -117,14 +144,12 @@ public class ActivityMaps extends AppCompatActivity {
                     public void onItemSelected(AdapterView<?> arg0, View arg1,
                                                int arg2, long arg3) {
 
-                        if (arg2 == 0) {
-                            selectedRoom = selectedFloor.getRooms().get(0);
-                        } else if (arg2 == 1) {
-                            selectedRoom = selectedFloor.getRooms().get(1);
-                        } else {
-                            selectedRoom = selectedFloor.getRooms().get(2);
+                        for(int j=0;j<selectedFloor.nameStringRoom().size();j++) {
+                            if (arg2 == j) {
+                                selectedRoom = MainApplication.getFloors().get(selectedFloor.getFloorName()).getRooms().get(
+                                        MainApplication.getFloors().get(selectedFloor.getFloorName()).nameStringRoom().get(j));
+                            }
                         }
-
                     }
 
                     @Override
@@ -142,32 +167,41 @@ public class ActivityMaps extends AppCompatActivity {
         b_search = (Button) findViewById(R.id.but_map_search);
         b_search.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(),
-                        "cercata stanza " + selectedRoom.getName() + " nel piano " + selectedFloor.getName() ,Toast.LENGTH_SHORT).show();
+               // Toast.makeText(getApplicationContext(),
+                        //"cercata stanza " + selectedRoom.getName() + " nel piano " + selectedFloor.getName() ,Toast.LENGTH_SHORT).show();
                 b_search.setVisibility(View.INVISIBLE);
                 spinner_floor.setVisibility(View.INVISIBLE);
                 spinner_room.setVisibility(View.INVISIBLE);
                 setContentView(R.layout.activity_maps_scrool);
-                //selectImage(selectedFloor,selectedRoom);
-                //image.setVisibility(View.VISIBLE);
+                selectImage();
+                image.setVisibility(View.VISIBLE);
             }
         });
     }
 
-    private void selectImage(Floor f, Room r) {
-        image = (ImageView) findViewById(R.id.map_image);
-        if (selectedFloor.getName().equals("160") && selectedRoom.getName().equals("160/1"))
-            image.setImageResource(R.drawable.gargantua1);
+    private void selectImage() {
+        image = (ImageView) findViewById(R.id.imageHelp);
+        String floor = selectedFloor.getFloorName();
+        String room = selectedRoom.getCod();
+        String map = "m".concat(floor).concat("_color");
+        int resID = getResources().getIdentifier(map , "drawable", getPackageName());
+            image.setImageResource(resID);
+
     }
 
     //a partire da arrayList di stanze ne crea uno parallelo con i nomi delle stanze
-    private ArrayList<String> createArray(ArrayList<Floor> floors) {
+    private ArrayList<String> createNamesArray(){
         ArrayList<String> s = new ArrayList();
-        for (Floor f : floors) {
-            s.add(f.getName());
-        }
-        return s;
+            Iterator it = MainApplication.getFloors().entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry) it.next();
+                s.add(pair.getKey().toString());
+                //it.remove(); // avoids a ConcurrentModificationException
+            }
+            return s;
+
     }
+
 
     protected void onResume() {
         super.onResume();

@@ -8,21 +8,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MapLoader{
-    InputStream inputStream;
 
-    public MapLoader(InputStream inputStream){
+    /*public MapLoader(InputStream inputStream){
         this.inputStream = inputStream;
-    }
+    }*/
 
-    public List read(){
-        List resultList = new ArrayList();
+    public static ArrayList<String[]> read(InputStream inputStream){
+        ArrayList<String[]> resultList = new ArrayList<>();
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         try {
             String csvLine;
             while ((csvLine = reader.readLine()) != null) {
                 String[] row = csvLine.split(";");
                 resultList.add(row);
-                System.out.println(row);
+
             }
         }
         catch (IOException ex) {

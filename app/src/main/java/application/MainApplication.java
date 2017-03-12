@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import application.database.UserAdapter;
 import application.maps.Node;
@@ -24,7 +25,7 @@ public class MainApplication {
     // lasciando le altre sul db??
 
 
-    private ArrayList<Floor> edi;
+    private static HashMap<String,Floor> floors;
     private static UserAdapter db;
 
 
@@ -56,6 +57,13 @@ public class MainApplication {
 
     }
 
+    public static void setFloors(HashMap<String,Floor> f){
+        floors = f;
+    }
+
+    public static HashMap<String,Floor> getFloors(){
+        return floors;
+    }
 
 }
 

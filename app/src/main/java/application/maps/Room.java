@@ -5,20 +5,18 @@ package application.maps;
  */
 
 public class Room {
-    private String roomName;
 
-    public Room() {}
+    String cod;
+    int[] coords = new int[2];
 
-    public Room(String name) {
-        roomName = name;
+    public Room(String c) {
+        this.cod = c;
     }
 
-    public void setName(String name) {
-        roomName = name;
+    public String getCod(){
+        return cod;
     }
 
-    public String getName() {
-        return roomName;
-    }
+
 
 }

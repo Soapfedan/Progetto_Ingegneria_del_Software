@@ -11,17 +11,21 @@ import java.util.HashMap;
 public class Node {
 
     private int[] coords;
-    private int id;
+    private String floor;
+    private double width;
     private ImageView position;
     private HashMap<String,Emergency> emergencies;
     private boolean presence;
 
+    public Node(){
 
+    }
 
-    public Node(int i,int[] crds){
+    public Node(int[] crds,String floor,double width){
 
-        this.id = i;
-        this.coords = crds;
+             this.coords = crds;
+        this.floor = floor;
+        this.width = width;
     }
 
     public boolean isPresence(){
@@ -36,4 +40,15 @@ public class Node {
         //// TODO: 06/12/2016  setto tutte le emergenze
     }
 
+    public int[] getCoords() {
+        return coords;
+    }
+
+    public String getFloor() {
+        return floor;
+    }
+
+    public double getWidth() {
+        return width;
+    }
 }

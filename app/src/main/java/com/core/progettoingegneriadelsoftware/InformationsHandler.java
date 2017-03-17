@@ -30,7 +30,7 @@ import android.app.DatePickerDialog.OnDateSetListener;
 
 public class InformationsHandler extends AppCompatActivity {
 
-    private HashMap<String,TextView> infoTxt;
+    private HashMap<String,TextView[]> infoTxt;
     private AlertDialog alert;
     private Button send_b;
     private Spinner sex_spinner;
@@ -38,7 +38,7 @@ public class InformationsHandler extends AppCompatActivity {
     private boolean[] errorValue;
     private UserProfile profile;
 
-    public static final String null_msg = "Hai inserito un campo vuoto!";
+    public static final String null_msg = "Hai inserito un campo obbligatorio vuoto!";
     public static final String error_msg = "Hai inserito un campo errato!";
     public static final String pass_msg = "Hai sbagliato a reinserire la password";
     public static final String email_msg = "Esiste gia' un utente con questa mail";
@@ -47,7 +47,7 @@ public class InformationsHandler extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_informations);
 
-        infoTxt = new HashMap<String,TextView>();
+        infoTxt = new HashMap<String,TextView[]>();
         emptyValue = new boolean[11];
         errorValue = new boolean[11];
 
@@ -93,41 +93,52 @@ public class InformationsHandler extends AppCompatActivity {
 
     private void loadResources(){
 
-        TextView tv;
+        TextView[] tv = new TextView[2];
         // creo una hashmap con tutti gli elementi di una form
-        tv = (TextView)findViewById(R.id.email_txt);
-        infoTxt.put("email",tv);
+        tv[0] = (TextView)findViewById(R.id.email_txt);
+        tv[1] = (TextView)findViewById(R.id.errorEmail);
+        infoTxt.put("email",tv.clone());
 
-        tv = (TextView)findViewById(R.id.pass_txt1);
-        infoTxt.put("pass1",tv);
+        tv[0] = (TextView)findViewById(R.id.pass_txt1);
+        tv[1] = (TextView)findViewById(R.id.errorPass1);
+        infoTxt.put("pass1",tv.clone());
 
-        tv = (TextView)findViewById(R.id.pass_txt2);
-        infoTxt.put("pass2",tv);
+        tv[0] = (TextView)findViewById(R.id.pass_txt2);
+        tv[1] = (TextView)findViewById(R.id.errorPass2);
+        infoTxt.put("pass2",tv.clone());
 
-        tv = (TextView)findViewById(R.id.name_txt);
-        infoTxt.put("name", tv);
+        tv[0] = (TextView)findViewById(R.id.name_txt);
+        tv[1] = (TextView)findViewById(R.id.errorName);
+        infoTxt.put("name", tv.clone());
 
-        tv = (TextView)findViewById(R.id.surname_txt);
-        infoTxt.put("surname",tv);
+        tv[0] = (TextView)findViewById(R.id.surname_txt);
+        tv[1] = (TextView)findViewById(R.id.errorSurname);
+        infoTxt.put("surname",tv.clone());
 
-        tv = (TextView)findViewById(R.id.birth_date_txt);
-        infoTxt.put("birth_date",tv);
-        infoTxt.get("birth_date").setFocusable(false);
+        tv[0] = (TextView)findViewById(R.id.birth_date_txt);
+        tv[1] = (TextView)findViewById(R.id.errorBirthDate);
+        infoTxt.put("birth_date",tv.clone());
+        infoTxt.get("birth_date")[0].setFocusable(false);
 
-        tv = (TextView)findViewById(R.id.birth_city_txt);
-        infoTxt.put("birth_city",tv);
+        tv[0] = (TextView)findViewById(R.id.birth_city_txt);
+        tv[1] = (TextView)findViewById(R.id.errorBirthCity);
+        infoTxt.put("birth_city",tv.clone());
 
-        tv = (TextView)findViewById(R.id.province_txt);
-        infoTxt.put("province",tv);
+        tv[0] = (TextView)findViewById(R.id.province_txt);
+        tv[1] = (TextView)findViewById(R.id.errorProvince);
+        infoTxt.put("province",tv.clone());
 
-        tv = (TextView)findViewById(R.id.state_txt);
-        infoTxt.put("state",tv);
+        tv[0] = (TextView)findViewById(R.id.state_txt);
+        tv[1] = (TextView)findViewById(R.id.errorState);
+        infoTxt.put("state",tv.clone());
 
-        tv = (TextView)findViewById(R.id.phone_txt);
-        infoTxt.put("phone",tv);
+        tv[0] = (TextView)findViewById(R.id.phone_txt);
+        tv[1] = (TextView)findViewById(R.id.errorPhone);
+        infoTxt.put("phone",tv.clone());
 
-        tv = (TextView)findViewById(R.id.personal_number_txt);
-        infoTxt.put("personal_number",tv);
+        tv[0] = (TextView)findViewById(R.id.personal_number_txt);
+        tv[1] = (TextView)findViewById(R.id.errorPersonalNumber);
+        infoTxt.put("personal_number",tv.clone());
 
 
         send_b = (Button) findViewById(R.id.profile_button);
@@ -148,7 +159,7 @@ public class InformationsHandler extends AppCompatActivity {
     }
         //aggiorna il textView di date_birth
     private void updateDisplay(int mMonth, int mDay, int mYear) {
-        infoTxt.get("birth_date").setText(
+        infoTxt.get("birth_date")[0].setText(
                 new StringBuilder()
                         .append(mMonth + 1).append("-")
                         .append(mDay).append("-")
@@ -161,102 +172,112 @@ public class InformationsHandler extends AppCompatActivity {
         final int errorColor = Color.RED;
         final int worthColor = Color.GREEN;
 
-        infoTxt.get("email").setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        infoTxt.get("email")[0].setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if( infoTxt.get("email").getText().toString().isEmpty()) {
-                    infoTxt.get("email").setBackgroundColor(emptyColor);
+                if( infoTxt.get("email")[0].getText().toString().isEmpty()) {
+                    infoTxt.get("email")[0].setBackgroundColor(emptyColor);
                     emptyValue[0] = true;
-                }else if (!FormControl.mailControl(infoTxt.get("email").getText().toString())) {
+                }else if (!FormControl.mailControl(infoTxt.get("email")[0].getText().toString())) {
                     //alert.setMessage("l'email deve contenere solo lettere, @ e punti");
                     //
-                    infoTxt.get("email").setBackgroundColor(errorColor);
+                    infoTxt.get("email")[0].setBackgroundColor(errorColor);
+                    infoTxt.get("email")[1].setVisibility(View.VISIBLE);
                     errorValue[0] = true;
 
                 }else{
-                    infoTxt.get("email").setBackgroundColor(worthColor);
+                    infoTxt.get("email")[0].setBackgroundColor(worthColor);
+                    infoTxt.get("email")[1].setVisibility(View.INVISIBLE);
                     emptyValue[0] = false;
 
                 }
             }
         });
 
-        infoTxt.get("pass1").setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        infoTxt.get("pass1")[0].setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if( infoTxt.get("pass1").getText().toString().isEmpty()){
-                    infoTxt.get("pass1").setBackgroundColor(emptyColor);
+                if( infoTxt.get("pass1")[0].getText().toString().isEmpty()){
+                    infoTxt.get("pass1")[0].setBackgroundColor(emptyColor);
                     emptyValue[1] = true;
-                }else if (!FormControl.passwordControl(infoTxt.get("pass1").getText().toString())){
+                }else if (!FormControl.passwordControl(infoTxt.get("pass1")[0].getText().toString())){
                     //alert.setMessage("la password deve contenere almeno 8 caratteri");
                     //alert.show();
-                    infoTxt.get("pass1").setBackgroundColor(errorColor);
+                    infoTxt.get("pass1")[0].setBackgroundColor(errorColor);
+                    infoTxt.get("pass1")[1].setVisibility(View.VISIBLE);
                     errorValue[1] = true;
                 }else{
-                    infoTxt.get("pass1").setBackgroundColor(worthColor);
+                    infoTxt.get("pass1")[0].setBackgroundColor(worthColor);
+                    infoTxt.get("pass1")[1].setVisibility(View.INVISIBLE);
                     emptyValue[1] = false;
                 }
             }
         });
 
-        infoTxt.get("pass2").setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        infoTxt.get("pass2")[0].setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if( infoTxt.get("pass2").getText().toString().isEmpty()){
-                    infoTxt.get("pass2").setBackgroundColor(emptyColor);
+                if( infoTxt.get("pass2")[0].getText().toString().isEmpty()){
+                    infoTxt.get("pass2")[0].setBackgroundColor(emptyColor);
                     emptyValue[2] = true;
-                }else if (infoTxt.get("pass2").getText().toString().compareTo(infoTxt.get("pass1").getText().toString())!=0) {
+                }else if (infoTxt.get("pass2")[0].getText().toString().compareTo(infoTxt.get("pass1")[0].getText().toString())!=0) {
                     //alert.setMessage("la password deve contenere almeno 8 caratteri");
                     //alert.show();
-                    infoTxt.get("pass2").setBackgroundColor(errorColor);
+                    infoTxt.get("pass2")[0].setBackgroundColor(errorColor);
+                    infoTxt.get("pass2")[1].setVisibility(View.VISIBLE);
                     errorValue[2] = true;
                 }else{
-                    infoTxt.get("pass2").setBackgroundColor(worthColor);
+                    infoTxt.get("pass2")[0].setBackgroundColor(worthColor);
+                    infoTxt.get("pass2")[1].setVisibility(View.INVISIBLE);
                     emptyValue[2] = false;
                 }
             }
         });
 
-        infoTxt.get("name").setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        infoTxt.get("name")[0].setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                     //controlla che sia composto solo da lettere e spazi
-                if( infoTxt.get("name").getText().toString().isEmpty()){
-                    infoTxt.get("name").setBackgroundColor(emptyColor);
+                if( infoTxt.get("name")[0].getText().toString().isEmpty()){
+                    infoTxt.get("name")[0].setBackgroundColor(emptyColor);
                     emptyValue[3] = true;
-                }else if (!FormControl.letterControl(infoTxt.get("name").getText().toString())) {
+                }else if (!FormControl.letterControl(infoTxt.get("name")[0].getText().toString())) {
                     //alert.setMessage("il nome deve contenere solo lettere");
                     //alert.show();
-                    infoTxt.get("name").setBackgroundColor(errorColor);
+                    infoTxt.get("name")[0].setBackgroundColor(errorColor);
+                    infoTxt.get("name")[1].setVisibility(View.VISIBLE);
                     errorValue[3] = true;
                 }else{
-                    infoTxt.get("name").setBackgroundColor(worthColor);
+                    infoTxt.get("name")[0].setBackgroundColor(worthColor);
+                    infoTxt.get("name")[1].setVisibility(View.INVISIBLE);
                     emptyValue[3] = false;
                 }
             }
         });
 
-        infoTxt.get("surname").setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        infoTxt.get("surname")[0].setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                     //controlla che sia composto solo da lettere e spazi
-                if( infoTxt.get("surname").getText().toString().isEmpty()){
-                    infoTxt.get("surname").setBackgroundColor(emptyColor);
+                if( infoTxt.get("surname")[0].getText().toString().isEmpty()){
+                    infoTxt.get("surname")[0].setBackgroundColor(emptyColor);
                     emptyValue[4] = true;
-                }else if (!FormControl.letterControl(infoTxt.get("surname").getText().toString())) {
+                }else if (!FormControl.letterControl(infoTxt.get("surname")[0].getText().toString())) {
                     //alert.setMessage("il cognome deve contenere solo lettere");
                     //alert.show();
-                    infoTxt.get("surname").setBackgroundColor(errorColor);
+                    infoTxt.get("surname")[0].setBackgroundColor(errorColor);
+                    infoTxt.get("surname")[1].setVisibility(View.VISIBLE);
                     errorValue[4] = true;
                 }else{
-                    infoTxt.get("surname").setBackgroundColor(worthColor);
+                    infoTxt.get("surname")[0].setBackgroundColor(worthColor);
+                    infoTxt.get("surname")[1].setVisibility(View.INVISIBLE);
                     emptyValue[4] = false;
                 }
 
             }
         });
 
-        infoTxt.get("birth_date").setOnClickListener(new View.OnClickListener() {
+        infoTxt.get("birth_date")[0].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                     Calendar mcurrentDate=Calendar.getInstance();
@@ -278,117 +299,127 @@ public class InformationsHandler extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             if (which == DialogInterface.BUTTON_NEGATIVE) {
                                 //TODO deve far scomparire la tastiera se clicco cancel nel dialog
-                                infoTxt.get("birth_date").clearFocus();
+                                infoTxt.get("birth_date")[0].clearFocus();
                             }
                         }
                     });
                     mDatePicker.show();
                     updateDisplay(mMonth,mDay,mYear);
 
-                if( infoTxt.get("birth_date").getText().toString().isEmpty()){
-                    infoTxt.get("birth_date").setBackgroundColor(emptyColor);
+                if( infoTxt.get("birth_date")[0].getText().toString().isEmpty()){
+                    infoTxt.get("birth_date")[0].setBackgroundColor(emptyColor);
                     emptyValue[5] = true;
                 }else{
-                    infoTxt.get("birth_date").setBackgroundColor(worthColor);
+                    infoTxt.get("birth_date")[0].setBackgroundColor(worthColor);
                     emptyValue[5] = false;
                 }
             }
 
         });
 
-        infoTxt.get("birth_city").setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        infoTxt.get("birth_city")[0].setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
 
                     //controlla che sia composto solo da lettere e spazi
-                if( infoTxt.get("birth_city").getText().toString().isEmpty()){
-                    infoTxt.get("birth_city").setBackgroundColor(emptyColor);
+                if( infoTxt.get("birth_city")[0].getText().toString().isEmpty()){
+                    infoTxt.get("birth_city")[0].setBackgroundColor(emptyColor);
                     emptyValue[6] = true;
-                }else if (!FormControl.letterControl(infoTxt.get("birth_city").getText().toString())) {
+                }else if (!FormControl.letterControl(infoTxt.get("birth_city")[0].getText().toString())) {
                     //alert.setMessage("la città deve contenere solo lettere");
                     //alert.show();
-                    infoTxt.get("birth_city").setBackgroundColor(errorColor);
+                    infoTxt.get("birth_city")[0].setBackgroundColor(errorColor);
+                    infoTxt.get("birth_city")[1].setVisibility(View.VISIBLE);
                     errorValue[6] = true;
                 }else{
-                    infoTxt.get("birth_city").setBackgroundColor(worthColor);
+                    infoTxt.get("birth_city")[0].setBackgroundColor(worthColor);
+                    infoTxt.get("birth_city")[1].setVisibility(View.INVISIBLE);
                     emptyValue[6] = false;
                 }
             }
         });
 
-        infoTxt.get("province").setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        infoTxt.get("province")[0].setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                     //controlla che sia composto solo da lettere e spazi
-                if( infoTxt.get("province").getText().toString().isEmpty()){
-                    infoTxt.get("province").setBackgroundColor(emptyColor);
+                if( infoTxt.get("province")[0].getText().toString().isEmpty()){
+                    infoTxt.get("province")[0].setBackgroundColor(emptyColor);
                     emptyValue[7] = true;
-                }else if (!FormControl.letterControl(infoTxt.get("province").getText().toString()) ||
-                          !FormControl.provenceControl(infoTxt.get("province").getText().toString())) {
+                }else if (!FormControl.letterControl(infoTxt.get("province")[0].getText().toString()) ||
+                          !FormControl.provenceControl(infoTxt.get("province")[0].getText().toString())) {
                         //alert.setMessage("la provincia deve contenere solo lettere");
                         //alert.show();
-                    infoTxt.get("province").setBackgroundColor(errorColor);
+                    infoTxt.get("province")[0].setBackgroundColor(errorColor);
+                    infoTxt.get("province")[1].setVisibility(View.VISIBLE);
                     errorValue[7] = true;
                 }else{
-                    infoTxt.get("province").setBackgroundColor(worthColor);
+                    infoTxt.get("province")[0].setBackgroundColor(worthColor);
+                    infoTxt.get("province")[1].setVisibility(View.INVISIBLE);
                     emptyValue[7] = false;
                 }
             }
         });
 
-        infoTxt.get("state").setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        infoTxt.get("state")[0].setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if( infoTxt.get("state").getText().toString().isEmpty()){
-                    infoTxt.get("state").setBackgroundColor(emptyColor);
+                if( infoTxt.get("state")[0].getText().toString().isEmpty()){
+                    infoTxt.get("state")[0].setBackgroundColor(emptyColor);
                     emptyValue[8] = true;
-                }else if (!FormControl.letterControl(infoTxt.get("state").getText().toString())) {
+                }else if (!FormControl.letterControl(infoTxt.get("state")[0].getText().toString())) {
                     //alert.setMessage("lo stato deve contenere solo lettere");
                     //alert.show();
-                    infoTxt.get("state").setBackgroundColor(errorColor);
+                    infoTxt.get("state")[0].setBackgroundColor(errorColor);
+                    infoTxt.get("state")[1].setVisibility(View.VISIBLE);
                     errorValue[8] = true;
                 }else{
-                    infoTxt.get("state").setBackgroundColor(worthColor);
+                    infoTxt.get("state")[0].setBackgroundColor(worthColor);
+                    infoTxt.get("state")[1].setVisibility(View.INVISIBLE);
                     emptyValue[8] = false;
                 }
             }
         });
 
 
-        infoTxt.get("phone").setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        infoTxt.get("phone")[0].setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 //controllo se abbastanza lungo, solo quando esco dal text (!hasFocus serve per quello)
-                if( infoTxt.get("phone").getText().toString().isEmpty()){
-                    infoTxt.get("phone").setBackgroundColor(emptyColor);
+                if( infoTxt.get("phone")[0].getText().toString().isEmpty()){
+                    infoTxt.get("phone")[0].setBackgroundColor(emptyColor);
                     emptyValue[9] = true;
-                }else if (!FormControl.phoneControl(infoTxt.get("phone").getText().toString()) ||
-                        !FormControl.numberControl(infoTxt.get("phone").getText().toString())) {
+                }else if (!FormControl.phoneControl(infoTxt.get("phone")[0].getText().toString()) ||
+                        !FormControl.numberControl(infoTxt.get("phone")[0].getText().toString())) {
                     //alert.setMessage("numero troppo corto");
                     //alert.show();
-                    infoTxt.get("phone").setBackgroundColor(errorColor);
+                    infoTxt.get("phone")[0].setBackgroundColor(errorColor);
+                    infoTxt.get("phone")[1].setVisibility(View.VISIBLE);
                     errorValue[9] = true;
                 }else{
-                    infoTxt.get("phone").setBackgroundColor(worthColor);
+                    infoTxt.get("phone")[0].setBackgroundColor(worthColor);
+                    infoTxt.get("phone")[1].setVisibility(View.INVISIBLE);
                     emptyValue[9] = true;
                 }
             }
         });
 
-        infoTxt.get("personal_number").setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        infoTxt.get("personal_number")[0].setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
 
-                if( infoTxt.get("personal_number").getText().toString().isEmpty()){
-                    infoTxt.get("personal_number").setBackgroundColor(emptyColor);
+                if( infoTxt.get("personal_number")[0].getText().toString().isEmpty()){
+                    infoTxt.get("personal_number")[0].setBackgroundColor(emptyColor);
                     emptyValue[10] = true;
-                }if (!FormControl.PersonalNumberControl(infoTxt.get("personal_number").getText().toString())){
+                }else if (!FormControl.PersonalNumberControl(infoTxt.get("personal_number")[0].getText().toString())){
                     //alert.setMessage("numero troppo corto");
                     //alert.show();
-                    infoTxt.get("personal_number").setBackgroundColor(errorColor);
+                    infoTxt.get("personal_number")[0].setBackgroundColor(errorColor);
+                    infoTxt.get("personal_number")[1].setVisibility(View.VISIBLE);
                     errorValue[10] = true;
                 }else{
-                    infoTxt.get("personal_number").setBackgroundColor(worthColor);
+                    infoTxt.get("personal_number")[0].setBackgroundColor(worthColor);
+                    infoTxt.get("personal_number")[1].setVisibility(View.INVISIBLE);
                     emptyValue[10] = false;
                 }
             }
@@ -442,32 +473,34 @@ public class InformationsHandler extends AppCompatActivity {
         for(int i=0;i<11;i++){
             if(errorValue[i]==true){
                 error = true;
+                alert.setMessage(error_msg);
             }
         }
         for(int i=0;i<5;i++) {
-            if(emptyValue[i]==true)
-                error=true;
+            if(emptyValue[i]==true && error==false) {
+                error = true;
+                alert.setMessage(null_msg);
+            }
         }
 
-        if(!infoTxt.get("pass1").getText().toString().equals(infoTxt.get("pass2").getText().toString())){
+        if(!infoTxt.get("pass1")[0].getText().toString().equals(infoTxt.get("pass2")[0].getText().toString())){
             error=true;
         }
 
         if(error==true){
-            alert.setMessage(null_msg);
             alert.show();
-        }else if(!UserHandler.checkUser(infoTxt.get("email").getText().toString())) {
+        }else if(!UserHandler.checkUser(infoTxt.get("email")[0].getText().toString())) {
                 HashMap<String, String> info = new HashMap<>();
-                info.put("email", infoTxt.get("email").getText().toString());
-                info.put("pass", infoTxt.get("pass1").getText().toString());
-                info.put("name", infoTxt.get("name").getText().toString());
-                info.put("surname", infoTxt.get("surname").getText().toString());
-                info.put("birth_date", infoTxt.get("birth_date").getText().toString());
-                info.put("birth_city", infoTxt.get("birth_city").getText().toString());
-                info.put("province", infoTxt.get("province").getText().toString());
-                info.put("state", infoTxt.get("state").getText().toString());
-                info.put("phone", infoTxt.get("phone").getText().toString());
-                info.put("personal_number", infoTxt.get("personal_number").getText().toString());
+                info.put("email", infoTxt.get("email")[0].getText().toString());
+                info.put("pass", infoTxt.get("pass1")[0].getText().toString());
+                info.put("name", infoTxt.get("name")[0].getText().toString());
+                info.put("surname", infoTxt.get("surname")[0].getText().toString());
+                info.put("birth_date", infoTxt.get("birth_date")[0].getText().toString());
+                info.put("birth_city", infoTxt.get("birth_city")[0].getText().toString());
+                info.put("province", infoTxt.get("province")[0].getText().toString());
+                info.put("state", infoTxt.get("state")[0].getText().toString());
+                info.put("phone", infoTxt.get("phone")[0].getText().toString());
+                info.put("personal_number", infoTxt.get("personal_number")[0].getText().toString());
                 info.put("sex", sex_spinner.getSelectedItem().toString());
                 UserHandler.logup(info);
                 Intent intent = new Intent(getApplicationContext(), Home.class);
@@ -483,16 +516,16 @@ public class InformationsHandler extends AppCompatActivity {
 
         HashMap<String,String> info = new HashMap<>();
 
-        info.put("email",infoTxt.get("email").getText().toString());
-        info.put("pass",infoTxt.get("pass1").getText().toString());
-        info.put("name",infoTxt.get("name").getText().toString());
-        info.put("surname",infoTxt.get("surname").getText().toString());
-        info.put("birth_date",infoTxt.get("birth_date").getText().toString());
-        info.put("birth_city",infoTxt.get("birth_city").getText().toString());
-        info.put("province",infoTxt.get("province").getText().toString());
-        info.put("state",infoTxt.get("state").getText().toString());
-        info.put("phone",infoTxt.get("phone").getText().toString());
-        info.put("personal_number",infoTxt.get("personal_number").getText().toString());
+        info.put("email",infoTxt.get("email")[0].getText().toString());
+        info.put("pass",infoTxt.get("pass1")[0].getText().toString());
+        info.put("name",infoTxt.get("name")[0].getText().toString());
+        info.put("surname",infoTxt.get("surname")[0].getText().toString());
+        info.put("birth_date",infoTxt.get("birth_date")[0].getText().toString());
+        info.put("birth_city",infoTxt.get("birth_city")[0].getText().toString());
+        info.put("province",infoTxt.get("province")[0].getText().toString());
+        info.put("state",infoTxt.get("state")[0].getText().toString());
+        info.put("phone",infoTxt.get("phone")[0].getText().toString());
+        info.put("personal_number",infoTxt.get("personal_number")[0].getText().toString());
         info.put("sex",sex_spinner.getSelectedItem().toString());
 
         UserHandler.editProfile(info);
@@ -504,16 +537,16 @@ public class InformationsHandler extends AppCompatActivity {
 
     private void populate(){
 
-        infoTxt.get("email").setText(profile.getEmail());
-        infoTxt.get("pass1").setText(profile.getPassword());
-        infoTxt.get("name").setText(profile.getNome());
-        infoTxt.get("surname").setText(profile.getCognome());
-        infoTxt.get("birth_date").setText(profile.getData_nascita());
-        infoTxt.get("birth_city").setText(profile.getLuogo_nascita());
-        infoTxt.get("province").setText(profile.getProvincia());
-        infoTxt.get("state").setText(profile.getStato());
-        infoTxt.get("phone").setText(profile.getTelefono());
-        infoTxt.get("personal_number").setText(profile.getCod_fis());
+        infoTxt.get("email")[0].setText(profile.getEmail());
+        infoTxt.get("pass1")[0].setText(profile.getPassword());
+        infoTxt.get("name")[0].setText(profile.getNome());
+        infoTxt.get("surname")[0].setText(profile.getCognome());
+        infoTxt.get("birth_date")[0].setText(profile.getData_nascita());
+        infoTxt.get("birth_city")[0].setText(profile.getLuogo_nascita());
+        infoTxt.get("province")[0].setText(profile.getProvincia());
+        infoTxt.get("state")[0].setText(profile.getStato());
+        infoTxt.get("phone")[0].setText(profile.getTelefono());
+        infoTxt.get("personal_number")[0].setText(profile.getCod_fis());
         if(profile.getSesso().equals("Uomo")){
             sex_spinner.setSelection(0);
         }else{

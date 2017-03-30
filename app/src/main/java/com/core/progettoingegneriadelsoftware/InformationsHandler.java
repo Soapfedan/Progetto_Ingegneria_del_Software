@@ -54,14 +54,20 @@ public class InformationsHandler extends AppCompatActivity {
         for(int i = 0; i<11 ;i++)
         {
             errorValue[i]=false;
+            emptyValue[i]=false;
         }
 
         loadResources();
         loadEvents();
         MainApplication.getDB().open();
+        int editable = getIntent().getIntExtra("editable",-1);
         if(UserHandler.isLogged()){
             profile = UserHandler.getInformation(UserHandler.getMail());
             populate();
+            if(editable == 0){
+                toggleEdit(false);
+            }
+
         }
 
     }
@@ -210,6 +216,7 @@ public class InformationsHandler extends AppCompatActivity {
                     infoTxt.get("pass1")[0].setBackgroundColor(worthColor);
                     infoTxt.get("pass1")[1].setVisibility(View.INVISIBLE);
                     emptyValue[1] = false;
+                    errorValue[1] = false;
                 }
             }
         });
@@ -230,6 +237,7 @@ public class InformationsHandler extends AppCompatActivity {
                     infoTxt.get("pass2")[0].setBackgroundColor(worthColor);
                     infoTxt.get("pass2")[1].setVisibility(View.INVISIBLE);
                     emptyValue[2] = false;
+                    errorValue[2] = false;
                 }
             }
         });
@@ -251,6 +259,7 @@ public class InformationsHandler extends AppCompatActivity {
                     infoTxt.get("name")[0].setBackgroundColor(worthColor);
                     infoTxt.get("name")[1].setVisibility(View.INVISIBLE);
                     emptyValue[3] = false;
+                    errorValue[3] = false;
                 }
             }
         });
@@ -272,6 +281,7 @@ public class InformationsHandler extends AppCompatActivity {
                     infoTxt.get("surname")[0].setBackgroundColor(worthColor);
                     infoTxt.get("surname")[1].setVisibility(View.INVISIBLE);
                     emptyValue[4] = false;
+                    errorValue[4] = false;
                 }
 
             }
@@ -312,6 +322,7 @@ public class InformationsHandler extends AppCompatActivity {
                 }else{
                     infoTxt.get("birth_date")[0].setBackgroundColor(worthColor);
                     emptyValue[5] = false;
+                    errorValue[5] = false;
                 }
             }
 
@@ -335,6 +346,7 @@ public class InformationsHandler extends AppCompatActivity {
                     infoTxt.get("birth_city")[0].setBackgroundColor(worthColor);
                     infoTxt.get("birth_city")[1].setVisibility(View.INVISIBLE);
                     emptyValue[6] = false;
+                    errorValue[6] = false;
                 }
             }
         });
@@ -357,6 +369,7 @@ public class InformationsHandler extends AppCompatActivity {
                     infoTxt.get("province")[0].setBackgroundColor(worthColor);
                     infoTxt.get("province")[1].setVisibility(View.INVISIBLE);
                     emptyValue[7] = false;
+                    errorValue[7] = false;
                 }
             }
         });
@@ -377,6 +390,7 @@ public class InformationsHandler extends AppCompatActivity {
                     infoTxt.get("state")[0].setBackgroundColor(worthColor);
                     infoTxt.get("state")[1].setVisibility(View.INVISIBLE);
                     emptyValue[8] = false;
+                    errorValue[8] = false;
                 }
             }
         });
@@ -399,7 +413,8 @@ public class InformationsHandler extends AppCompatActivity {
                 }else{
                     infoTxt.get("phone")[0].setBackgroundColor(worthColor);
                     infoTxt.get("phone")[1].setVisibility(View.INVISIBLE);
-                    emptyValue[9] = true;
+                    emptyValue[9] = false;
+                    errorValue[9] = false;
                 }
             }
         });
@@ -420,7 +435,8 @@ public class InformationsHandler extends AppCompatActivity {
                 }else{
                     infoTxt.get("personal_number")[0].setBackgroundColor(worthColor);
                     infoTxt.get("personal_number")[1].setVisibility(View.INVISIBLE);
-                    emptyValue[10] = false;
+                    errorValue[10] = false;
+                    errorValue[10] = false;
                 }
             }
         });
@@ -553,6 +569,27 @@ public class InformationsHandler extends AppCompatActivity {
             sex_spinner.setSelection(1);
         }
 
+    }
+    private void toggleEdit(boolean edit){
+        int editInt;
+        if(edit)
+            editInt=View.VISIBLE;
+        else
+            editInt=View.INVISIBLE;
+        infoTxt.get("email")[0].setEnabled(edit);
+        infoTxt.get("pass1")[0].setVisibility(editInt);
+        infoTxt.get("pass2")[0].setVisibility(editInt);
+        findViewById(R.id.textView2).setVisibility(editInt);
+        findViewById(R.id.textView3).setVisibility(editInt);
+        infoTxt.get("name")[0].setEnabled(edit);
+        infoTxt.get("surname")[0].setEnabled(edit);
+        infoTxt.get("birth_date")[0].setEnabled(edit);
+        infoTxt.get("birth_city")[0].setEnabled(edit);
+        infoTxt.get("province")[0].setEnabled(edit);
+        infoTxt.get("state")[0].setEnabled(edit);
+        infoTxt.get("phone")[0].setEnabled(edit);
+        infoTxt.get("personal_number")[0].setEnabled(edit);
+        sex_spinner.setEnabled(edit);
     }
 }
 

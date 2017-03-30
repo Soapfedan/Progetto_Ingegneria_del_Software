@@ -174,18 +174,21 @@ public class Home extends AppCompatActivity
     //richiamato quando effettuo login e logout, imposta le voci del menu
     private void setOptionMenu() {
         tv = (TextView)findViewById(R.id.text_logName);
-
         if(UserHandler.isLogged()) {
             navigationView.getMenu().findItem(R.id.nav1).setTitle("Modifica Profilo");
             navigationView.getMenu().findItem(R.id.nav2).setTitle("Logout");
+            navigationView.getMenu().findItem(R.id.view_information).setVisible(true);
             if(tv!= null) {
                 if (UserHandler.getMail()==null) tv.setText(prefer.getString("nome",null) + " " + prefer.getString("cognome",null));
-                else tv.setText(UserHandler.getNome() + " " + UserHandler.getCognome());
+                else {
+                    tv.setText(UserHandler.getNome() + " " + UserHandler.getCognome());
+                }
             }
         }
         else {
             navigationView.getMenu().findItem(R.id.nav1).setTitle("Login");
             navigationView.getMenu().findItem(R.id.nav2).setTitle("Iscriviti");
+            navigationView.getMenu().findItem(R.id.view_information).setVisible(false);
             if(tv!= null) tv.setText("utente non registrato");
         }
     }
@@ -196,18 +199,29 @@ public class Home extends AppCompatActivity
 
         int id = item.getItemId();
         if (UserHandler.isLogged()) {
-            if (id == R.id.nav_maps) {
+            switch(id){
+                case R.id.nav_maps:
                 //passa ad activity maps (per ora vuota)
-                Intent intent = new Intent (getApplicationContext(),
+                Intent intentMap = new Intent (getApplicationContext(),
                         ActivityMaps.class);
-                startActivity(intent);
-            } else if (id == R.id.nav1) {
+                startActivity(intentMap);
+                    break;
+                case R.id.nav1 :
                 //modifica il profilo
-                Intent intent = new Intent (getApplicationContext(),
+                Intent intentModify = new Intent (getApplicationContext(),
                         InformationsHandler.class);
-                startActivity(intent);
-            } else if (id == R.id.nav2) {
+                    intentModify.putExtra("editable", 1);
+                startActivity(intentModify);
+                    break;
+                case R.id.view_information:
+                    Intent intentView = new Intent (getApplicationContext(),
+                            InformationsHandler.class);
+                    intentView.putExtra("editable", 0);
+                    startActivity(intentView);
+                    break;
+                case R.id.nav2:
                 logout();
+                    break;
             }
         }
         else {

@@ -1,14 +1,12 @@
 package application;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import application.database.UserAdapter;
-import application.maps.Node;
-import application.maps.Floor;
+import application.maps.components.Node;
+import application.maps.components.Floor;
 import application.user.UserHandler;
 
 /**

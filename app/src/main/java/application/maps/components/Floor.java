@@ -1,4 +1,4 @@
-package application.maps;
+package application.maps.components;
 
 import android.widget.ImageView;
 

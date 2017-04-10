@@ -16,6 +16,7 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 import application.MainApplication;
+import application.beacon.BeaconScanner;
 import application.comunication.ServerComunication;
 import application.maps.*;
 import application.maps.components.Floor;
@@ -79,6 +80,8 @@ public class ActivityMaps extends AppCompatActivity {
 
     protected void onStart() {
         super.onStart();
+        BeaconScanner.stop();
+        BeaconScanner.start(this,"SEARCHING");
 
     }
         //aggiungo manualmente elementi alle barre, dopo andrà fatto diversamente
@@ -217,11 +220,15 @@ public class ActivityMaps extends AppCompatActivity {
 
     protected void onPause() {
         super.onPause();
+        BeaconScanner.stop();
+        BeaconScanner.start(this);
     }
 
 
     protected void onStop() {
         super.onStop();
+        BeaconScanner.stop();
+        BeaconScanner.start(this);
     }
 
 

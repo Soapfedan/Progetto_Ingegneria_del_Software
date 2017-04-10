@@ -21,6 +21,7 @@ import android.util.TypedValue;
 import android.view.Display;
 
 import application.MainApplication;
+import application.beacon.BeaconScanner;
 import application.maps.grid.TouchImageView;
 import application.sharedstorage.DataContainer;
 import application.sharedstorage.DataListener;
@@ -81,7 +82,8 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
 
     protected void onStart() {
         super.onStart();
-
+        BeaconScanner.stop();
+        BeaconScanner.start(this,"SEARCHING");
     }
 
     protected void onResume() {
@@ -90,10 +92,14 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
 
     protected void onPause() {
         super.onPause();
+        BeaconScanner.stop();
+        BeaconScanner.start(this);
     }
 
     protected void onStop() {
         super.onStop();
+        BeaconScanner.stop();
+        BeaconScanner.start(this);
     }
 
     public void onDestroy() {

@@ -87,12 +87,12 @@ public class Home extends AppCompatActivity
 
         setOptionMenu();
 
-        MainApplication.start(this);
+
     }
 
     protected void onStart() {
         super.onStart();
-
+        MainApplication.start(this);
     }
 
     protected void onResume() {

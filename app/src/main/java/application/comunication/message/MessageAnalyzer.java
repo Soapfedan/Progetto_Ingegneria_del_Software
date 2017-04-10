@@ -1,18 +1,10 @@
 package application.comunication.message;
 
-import android.util.JsonReader;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.HashMap;
-
-import application.comunication.ServerComunication;
 
 /**
  * Created by Federico-PC on 23/03/2017.

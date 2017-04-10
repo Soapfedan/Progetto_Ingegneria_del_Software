@@ -11,14 +11,12 @@ import android.widget.Spinner;
 import android.widget.ArrayAdapter;
 import android.view.View;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 import application.MainApplication;
 import application.comunication.ServerComunication;
-import application.comunication.Todo;
 import application.maps.*;
 import application.maps.components.Floor;
 import application.maps.components.Room;
@@ -26,7 +24,6 @@ import application.maps.components.Room;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -58,7 +55,7 @@ public class ActivityMaps extends AppCompatActivity {
 
 
         try {
-            s = new ServerComunication().execute().get();
+            s = ServerComunication.getRequest();
             System.out.println("Risultato "+s.getString("description")+" "+s.getString("summary"));
         } catch (InterruptedException e) {
             e.printStackTrace();

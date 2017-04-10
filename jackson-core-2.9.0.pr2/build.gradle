@@ -1,2 +1,0 @@
-configurations.maybeCreate("default")
-artifacts.add("default", file('jackson-core-2.9.0.pr2.jar'))

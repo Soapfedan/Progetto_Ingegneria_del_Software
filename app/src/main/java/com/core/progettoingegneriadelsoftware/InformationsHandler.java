@@ -31,6 +31,7 @@ import android.app.DatePickerDialog.OnDateSetListener;
 public class InformationsHandler extends AppCompatActivity {
 
     private HashMap<String,TextView[]> infoTxt;
+    private HashMap<String,TextView> infoTxtView;
     private AlertDialog alert;
     private Button send_b;
     private Spinner sex_spinner;
@@ -45,36 +46,37 @@ public class InformationsHandler extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_informations);
-
-        infoTxt = new HashMap<String,TextView[]>();
-        emptyValue = new boolean[11];
-        errorValue = new boolean[11];
-
-        for(int i = 0; i<11 ;i++)
+        int editable = getIntent().getIntExtra("editable",-1);
+        if(editable == 0)
         {
-            errorValue[i]=false;
-            emptyValue[i]=false;
+            setContentView(R.layout.content_view_information);
+            infoTxtView = new HashMap<String, TextView>();
+            loadResources(editable);
+        }else if(editable == 1){
+            setContentView(R.layout.activity_informations);
+            infoTxt = new HashMap<String, TextView[]>();
+            loadResources(editable);
+            loadEvents();
         }
 
-        loadResources();
-        loadEvents();
-        MainApplication.getDB().open();
-        int editable = getIntent().getIntExtra("editable",-1);
-        if(UserHandler.isLogged()){
-            profile = UserHandler.getInformation(UserHandler.getMail());
-            populate();
-            if(editable == 0){
-                toggleEdit(false);
+            emptyValue = new boolean[11];
+            errorValue = new boolean[11];
+
+            for (int i = 0; i < 11; i++) {
+                errorValue[i] = false;
+                emptyValue[i] = false;
             }
 
-        }
+            MainApplication.getDB().open();
+            if (UserHandler.isLogged()) {
+                profile = UserHandler.getInformation(UserHandler.getMail());
+                populate(editable);
+            }
 
     }
 
     protected void onStart() {
         super.onStart();
-
     }
 
     protected void onResume() {
@@ -97,72 +99,105 @@ public class InformationsHandler extends AppCompatActivity {
     }
 
 
-    private void loadResources(){
+    private void loadResources(int edit) {
+        if (edit == 1) {
+            TextView[] tv = new TextView[2];
+            // creo una hashmap con tutti gli elementi di una form
+            tv[0] = (TextView) findViewById(R.id.email_txt);
+            tv[1] = (TextView) findViewById(R.id.errorEmail);
+            infoTxt.put("email", tv.clone());
 
-        TextView[] tv = new TextView[2];
-        // creo una hashmap con tutti gli elementi di una form
-        tv[0] = (TextView)findViewById(R.id.email_txt);
-        tv[1] = (TextView)findViewById(R.id.errorEmail);
-        infoTxt.put("email",tv.clone());
+            tv[0] = (TextView) findViewById(R.id.pass_txt1);
+            tv[1] = (TextView) findViewById(R.id.errorPass1);
+            infoTxt.put("pass1", tv.clone());
 
-        tv[0] = (TextView)findViewById(R.id.pass_txt1);
-        tv[1] = (TextView)findViewById(R.id.errorPass1);
-        infoTxt.put("pass1",tv.clone());
+            tv[0] = (TextView) findViewById(R.id.pass_txt2);
+            tv[1] = (TextView) findViewById(R.id.errorPass2);
+            infoTxt.put("pass2", tv.clone());
 
-        tv[0] = (TextView)findViewById(R.id.pass_txt2);
-        tv[1] = (TextView)findViewById(R.id.errorPass2);
-        infoTxt.put("pass2",tv.clone());
+            tv[0] = (TextView) findViewById(R.id.name_txt);
+            tv[1] = (TextView) findViewById(R.id.errorName);
+            infoTxt.put("name", tv.clone());
 
-        tv[0] = (TextView)findViewById(R.id.name_txt);
-        tv[1] = (TextView)findViewById(R.id.errorName);
-        infoTxt.put("name", tv.clone());
+            tv[0] = (TextView) findViewById(R.id.surname_txt);
+            tv[1] = (TextView) findViewById(R.id.errorSurname);
+            infoTxt.put("surname", tv.clone());
 
-        tv[0] = (TextView)findViewById(R.id.surname_txt);
-        tv[1] = (TextView)findViewById(R.id.errorSurname);
-        infoTxt.put("surname",tv.clone());
+            tv[0] = (TextView) findViewById(R.id.birth_date_txt);
+            tv[1] = (TextView) findViewById(R.id.errorBirthDate);
+            infoTxt.put("birth_date", tv.clone());
+            infoTxt.get("birth_date")[0].setFocusable(false);
 
-        tv[0] = (TextView)findViewById(R.id.birth_date_txt);
-        tv[1] = (TextView)findViewById(R.id.errorBirthDate);
-        infoTxt.put("birth_date",tv.clone());
-        infoTxt.get("birth_date")[0].setFocusable(false);
+            tv[0] = (TextView) findViewById(R.id.birth_city_txt);
+            tv[1] = (TextView) findViewById(R.id.errorBirthCity);
+            infoTxt.put("birth_city", tv.clone());
 
-        tv[0] = (TextView)findViewById(R.id.birth_city_txt);
-        tv[1] = (TextView)findViewById(R.id.errorBirthCity);
-        infoTxt.put("birth_city",tv.clone());
+            tv[0] = (TextView) findViewById(R.id.province_txt);
+            tv[1] = (TextView) findViewById(R.id.errorProvince);
+            infoTxt.put("province", tv.clone());
 
-        tv[0] = (TextView)findViewById(R.id.province_txt);
-        tv[1] = (TextView)findViewById(R.id.errorProvince);
-        infoTxt.put("province",tv.clone());
+            tv[0] = (TextView) findViewById(R.id.state_txt);
+            tv[1] = (TextView) findViewById(R.id.errorState);
+            infoTxt.put("state", tv.clone());
 
-        tv[0] = (TextView)findViewById(R.id.state_txt);
-        tv[1] = (TextView)findViewById(R.id.errorState);
-        infoTxt.put("state",tv.clone());
+            tv[0] = (TextView) findViewById(R.id.phone_txt);
+            tv[1] = (TextView) findViewById(R.id.errorPhone);
+            infoTxt.put("phone", tv.clone());
 
-        tv[0] = (TextView)findViewById(R.id.phone_txt);
-        tv[1] = (TextView)findViewById(R.id.errorPhone);
-        infoTxt.put("phone",tv.clone());
-
-        tv[0] = (TextView)findViewById(R.id.personal_number_txt);
-        tv[1] = (TextView)findViewById(R.id.errorPersonalNumber);
-        infoTxt.put("personal_number",tv.clone());
-
-
-        send_b = (Button) findViewById(R.id.profile_button);
-        sex_spinner = (Spinner) findViewById(R.id.sex_spinner);
+            tv[0] = (TextView) findViewById(R.id.personal_number_txt);
+            tv[1] = (TextView) findViewById(R.id.errorPersonalNumber);
+            infoTxt.put("personal_number", tv.clone());
 
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("")
-                .setCancelable(false)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        //do nothings
-                    }
-                });
-        alert = builder.create();
+            send_b = (Button) findViewById(R.id.profile_button);
+            sex_spinner = (Spinner) findViewById(R.id.sex_spinner);
 
 
+            /* AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("")
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            //do nothings
+                        }
+                    });
+            alert = builder.create(); */
+
+        } else {
+            TextView tv;
+            // creo una hashmap con tutti gli elementi di una form
+            tv = (TextView) findViewById(R.id.email_txt);
+            infoTxtView.put("email", tv);
+
+            tv = (TextView) findViewById(R.id.name);
+            infoTxtView.put("name", tv);
+
+            tv = (TextView) findViewById(R.id.surname);
+            infoTxtView.put("surname", tv);
+
+            tv = (TextView) findViewById(R.id.birth_city);
+            infoTxtView.put("birth_city", tv);
+
+            tv = (TextView) findViewById(R.id.province);
+            infoTxtView.put("province", tv);
+
+            tv = (TextView) findViewById(R.id.state);
+            infoTxtView.put("state", tv);
+
+            tv = (TextView) findViewById(R.id.phone);
+            infoTxtView.put("phone", tv);
+
+            tv = (TextView) findViewById(R.id.personal_number);
+            infoTxtView.put("personal_number", tv);
+
+            tv = (TextView) findViewById(R.id.birth_date);
+            infoTxtView.put("birth_date", tv);
+
+            tv = (TextView) findViewById(R.id.sex);
+            infoTxtView.put("sex", tv);
+        }
     }
+
         //aggiorna il textView di date_birth
     private void updateDisplay(int mMonth, int mDay, int mYear) {
         infoTxt.get("birth_date")[0].setText(
@@ -531,7 +566,6 @@ public class InformationsHandler extends AppCompatActivity {
     private void editProfile(){
 
         HashMap<String,String> info = new HashMap<>();
-
         info.put("email",infoTxt.get("email")[0].getText().toString());
         info.put("pass",infoTxt.get("pass1")[0].getText().toString());
         info.put("name",infoTxt.get("name")[0].getText().toString());
@@ -551,45 +585,37 @@ public class InformationsHandler extends AppCompatActivity {
 
     }
 
-    private void populate(){
-
-        infoTxt.get("email")[0].setText(profile.getEmail());
-        infoTxt.get("pass1")[0].setText(profile.getPassword());
-        infoTxt.get("name")[0].setText(profile.getNome());
-        infoTxt.get("surname")[0].setText(profile.getCognome());
-        infoTxt.get("birth_date")[0].setText(profile.getData_nascita());
-        infoTxt.get("birth_city")[0].setText(profile.getLuogo_nascita());
-        infoTxt.get("province")[0].setText(profile.getProvincia());
-        infoTxt.get("state")[0].setText(profile.getStato());
-        infoTxt.get("phone")[0].setText(profile.getTelefono());
-        infoTxt.get("personal_number")[0].setText(profile.getCod_fis());
-        if(profile.getSesso().equals("Uomo")){
-            sex_spinner.setSelection(0);
+    private void populate(int edit){
+        if (edit == 1)
+        {
+            infoTxt.get("email")[0].setText(profile.getEmail());
+            infoTxt.get("pass1")[0].setText(profile.getPassword());
+            infoTxt.get("name")[0].setText(profile.getNome());
+            infoTxt.get("surname")[0].setText(profile.getCognome());
+            infoTxt.get("birth_date")[0].setText(profile.getData_nascita());
+            infoTxt.get("birth_city")[0].setText(profile.getLuogo_nascita());
+            infoTxt.get("province")[0].setText(profile.getProvincia());
+            infoTxt.get("state")[0].setText(profile.getStato());
+            infoTxt.get("phone")[0].setText(profile.getTelefono());
+            infoTxt.get("personal_number")[0].setText(profile.getCod_fis());
+            if (profile.getSesso().equals("Uomo")) {
+                sex_spinner.setSelection(0);
+            } else {
+                sex_spinner.setSelection(1);
+            }
         }else{
-            sex_spinner.setSelection(1);
-        }
+            infoTxtView.get("email").setText(profile.getEmail());
+            infoTxtView.get("name").setText(profile.getNome());
+            infoTxtView.get("surname").setText(profile.getCognome());
+            infoTxtView.get("birth_date").setText(profile.getData_nascita());
+            infoTxtView.get("birth_city").setText(profile.getLuogo_nascita());
+            infoTxtView.get("province").setText(profile.getProvincia());
+            infoTxtView.get("state").setText(profile.getStato());
+            infoTxtView.get("phone").setText(profile.getTelefono());
+            infoTxtView.get("personal_number").setText(profile.getCod_fis());
+            infoTxtView.get("sex").setText(profile.getSesso());
 
-    }
-    private void toggleEdit(boolean edit){
-        int editInt;
-        if(edit)
-            editInt=View.VISIBLE;
-        else
-            editInt=View.INVISIBLE;
-        infoTxt.get("email")[0].setEnabled(edit);
-        infoTxt.get("pass1")[0].setVisibility(editInt);
-        infoTxt.get("pass2")[0].setVisibility(editInt);
-        findViewById(R.id.textView2).setVisibility(editInt);
-        findViewById(R.id.textView3).setVisibility(editInt);
-        infoTxt.get("name")[0].setEnabled(edit);
-        infoTxt.get("surname")[0].setEnabled(edit);
-        infoTxt.get("birth_date")[0].setEnabled(edit);
-        infoTxt.get("birth_city")[0].setEnabled(edit);
-        infoTxt.get("province")[0].setEnabled(edit);
-        infoTxt.get("state")[0].setEnabled(edit);
-        infoTxt.get("phone")[0].setEnabled(edit);
-        infoTxt.get("personal_number")[0].setEnabled(edit);
-        sex_spinner.setEnabled(edit);
+        }
     }
 }
 

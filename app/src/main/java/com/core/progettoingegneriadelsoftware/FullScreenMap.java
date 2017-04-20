@@ -19,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;
+import android.widget.Toast;
 
 import application.MainApplication;
 import application.beacon.BeaconScanner;
@@ -29,7 +30,8 @@ import application.sharedstorage.Positions;
 
 
 public class FullScreenMap extends AppCompatActivity implements DataListener{
-
+        //indica le volte che si clicca BackButton
+    private int backpress;
     //menu laterale
     private NavigationView navigationView;
         //serve per eventuali errori durante il login
@@ -77,13 +79,19 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
         image.setMaxZoom(4f);
         setImageGrid(s);
         setContentView(image);
+
+        if(MainApplication.getEmergency()) {
+            MainApplication.initializeScanner(this,"EMERGENCY");
+        }
+        else {
+            MainApplication.initializeScanner(this,"SEARCHING");
+        }
     }
 
 
     protected void onStart() {
         super.onStart();
-        BeaconScanner.stop();
-        BeaconScanner.start(this,"SEARCHING");
+
     }
 
     protected void onResume() {
@@ -92,14 +100,12 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
 
     protected void onPause() {
         super.onPause();
-        BeaconScanner.stop();
-        BeaconScanner.start(this);
+
     }
 
     protected void onStop() {
         super.onStop();
-        BeaconScanner.stop();
-        BeaconScanner.start(this);
+
     }
 
     public void onDestroy() {
@@ -173,4 +179,19 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
         position[0] = DataContainer.getUserPosition().getX();
         position[1] = DataContainer.getUserPosition().getY();
     }
+
+    @Override
+    public void onBackPressed() {
+        backpress = (backpress + 1);
+        Toast.makeText(getApplicationContext(), " Press Back again to Exit ", Toast.LENGTH_SHORT).show();
+
+        if (backpress>1) {
+            MainApplication.getScanner().suspendScan();
+            MainApplication.setEmergency(false);
+            this.finish();
+        }
+
+
+    }
+
 }

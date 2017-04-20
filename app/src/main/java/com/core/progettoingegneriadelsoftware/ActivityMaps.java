@@ -3,9 +3,13 @@ package com.core.progettoingegneriadelsoftware;
 /**
  * Created by Niccolò on 28/12/2016.
  */
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.ArrayAdapter;
@@ -44,7 +48,8 @@ public class ActivityMaps extends AppCompatActivity {
     private ImageView image;
     private ArrayList<String> floorsname;
     private JSONObject s;
-
+    private int resID;
+    private static String STARTMAPS = "STARTMAPS";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +57,8 @@ public class ActivityMaps extends AppCompatActivity {
         floorsname = new ArrayList<>();
         ArrayList<String[]> roomsList;
         //selectedFloor = new Floor();
+
+
         selectedRoom = new Room(null,null,null,0);
 /*
 
@@ -68,8 +75,6 @@ public class ActivityMaps extends AppCompatActivity {
 */
 
 
-
-
         InputStream inputStreamRooms = getResources().openRawResource(R.raw.roomlist);
         roomsList = MapLoader.read(inputStreamRooms);
         loadRooms(roomsList);
@@ -80,8 +85,16 @@ public class ActivityMaps extends AppCompatActivity {
 
     protected void onStart() {
         super.onStart();
-        BeaconScanner.stop();
-        BeaconScanner.start(this,"SEARCHING");
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(STARTMAPS);
+
+        getBaseContext().registerReceiver(broadcastReceiver,intentFilter);
+
+    }
+
+    protected void onPause() {
+        super.onPause();
+        if(broadcastReceiver!=null) getBaseContext().unregisterReceiver(broadcastReceiver);
 
     }
         //aggiungo manualmente elementi alle barre, dopo andrà fatto diversamente
@@ -108,7 +121,6 @@ public class ActivityMaps extends AppCompatActivity {
                 cod = roomslist[4];                         //codice
                 MainApplication.getFloors().get(roomslist[2]).addRoom(cod,new Room(cod,coords.clone(),roomslist[2],width));
             }
-
 
 
         }
@@ -183,6 +195,7 @@ public class ActivityMaps extends AppCompatActivity {
                 //spinner_room.setVisibility(View.INVISIBLE);
                 selectImage();
 
+
             }
         });
     }
@@ -192,12 +205,10 @@ public class ActivityMaps extends AppCompatActivity {
         String floor = selectedFloor.getFloorName();
         String room = selectedRoom.getCod();
         String map = "m".concat(floor).concat("_color");
-        int resID = getResources().getIdentifier(map , "drawable", getPackageName());
+        resID = getResources().getIdentifier(map , "drawable", getPackageName());
 
-        Intent intent = new Intent (getApplicationContext(),
-                FullScreenMap.class);
-        intent.putExtra("MAP_ID", resID);
-        startActivity(intent);
+
+        getApplicationContext().sendBroadcast(new Intent("SuspendScan"));
     }
 
     //a partire da arrayList di stanze ne crea uno parallelo con i nomi delle stanze
@@ -213,28 +224,20 @@ public class ActivityMaps extends AppCompatActivity {
 
     }
 
-
-    protected void onResume() {
-        super.onResume();
+    private void startFullMaps(){
+        Intent intentTWO = new Intent (this.getApplicationContext(),
+                FullScreenMap.class);
+        intentTWO.putExtra("MAP_ID",resID);
+        this.startActivity(intentTWO);
     }
 
-    protected void onPause() {
-        super.onPause();
-        BeaconScanner.stop();
-        BeaconScanner.start(this);
-    }
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("ACTIVTY MAPS","ricevuto broadcast: " + intent.getAction());
+            if(intent.getAction().equals(STARTMAPS)) startFullMaps();
+        }
+    };
 
-
-    protected void onStop() {
-        super.onStop();
-        BeaconScanner.stop();
-        BeaconScanner.start(this);
-    }
-
-
-    public void onDestroy() {
-        super.onDestroy();
-        //ServerComunication.disconnect();
-    }
 }
 

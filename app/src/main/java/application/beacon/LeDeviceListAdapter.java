@@ -1,25 +1,15 @@
 package application.beacon;
 
 /**
- * Created by Niccolo on 10/04/2017.
+ * Created by Niccolo on 30/03/2017.
  */
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
-import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
+import java.util.HashMap;
+import java.util.Map;
 import android.bluetooth.BluetoothDevice;
-import android.content.Context;
-import android.nfc.Tag;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.TextView;
+
 
 // Adapter per gestire i dispositivi identificati durante lo scanner.
 public class LeDeviceListAdapter {

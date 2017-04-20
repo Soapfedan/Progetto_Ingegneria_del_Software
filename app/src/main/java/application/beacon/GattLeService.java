@@ -1,9 +1,5 @@
 package application.beacon;
 
-/**
- * Created by Niccolo on 10/04/2017.
- */
-
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
@@ -22,6 +18,7 @@ import static java.lang.Math.pow;
 
 /**
  * Created by Niccolo on 29/03/2017.
+ * Questa classe contiene le procedure e le callback utilizzate per la connessione al dispositivo bluetooth
  */
 
 public class GattLeService {
@@ -29,45 +26,51 @@ public class GattLeService {
     public static final String TAG = "GattLeService";
 
     private static Context context;
+    //lista di servizi da analizzare
     private static ArrayList<BluetoothGattService> services;
 
+    //attributi necessari per la connessione con il dispositivo
     private static BluetoothDevice device;
     private static BluetoothGatt mBluetoothGatt;
     private static int mConnectionState;
 
+    //numero di campioni da estrarre per ogni sensore
     private static final int numSample = 5;
-
+    //servizio necessario per la modifica delle impostazioni dei sensori
     private static final String CLIENT_CHARACTERISTIC_CONFIG = "00002902-0000-1000-8000-00805f9b34fb";
 
     private static final int STATE_DISCONNECTED = 0;
     private static final int STATE_CONNECTING = 1;
     private static final int STATE_CONNECTED = 2;
 
+    //indica il nome del servizio attualmente analizzato
     private static String serviceAnalyzed;
-    private static BeaconService currentBeacon;
 
-    private static boolean terminated = false;
-    private static boolean sensorWorking = false;
-    private static int cont = 0;
+    private static BeaconService currentBeacon;
+    //contatore indicante il numero di campioni preso per un servizio
+    private static int cont;
 
     //flag utilizzato per scartare la prima misurazione del sensore
     private static boolean sampleFlag = false;
 
+    //lista di dati estratti dai sensori
     private static ArrayList<Double>[] data;
 
-//    private static double dataOneDim[];
-//    private static double dataThreeDim[][];
-
+    //inizializza la connessione
     public static void execute(BluetoothDevice d, Context c) {
         device = d;
         services = new ArrayList<>();
         mConnectionState = STATE_DISCONNECTED;
         context = c;
-
+        cont = 0;
         mBluetoothGatt = device.connectGatt(context,false,mGattCallback);
     }
 
-    public static ArrayList<BluetoothGattService> getServices() {
+    public static void setSampleFlag(boolean b) {
+        sampleFlag = b;
+    }
+
+    public static void printServices() {
         Log.e("onServicesDiscovered", "Services count: " + mBluetoothGatt.getServices().size());
         for (BluetoothGattService service: mBluetoothGatt.getServices()) {
             String serviceUUID = service.getUuid().toString();
@@ -75,9 +78,44 @@ public class GattLeService {
             for (BluetoothGattCharacteristic chaar : service.getCharacteristics()) {
                 Log.i(TAG,"char uuid " + chaar.getUuid());
             }
+        }
+    }
+
+    public static ArrayList<BluetoothGattService> getServices() {
+        for (BluetoothGattService service: mBluetoothGatt.getServices()) {
             services.add(service);
         }
         return services;
+    }
+
+    public static void initializeData() {
+        //contenitore dei dati
+        data = new ArrayList[numSample];
+
+        cont = 0;
+
+        //inizializzati elementi dell'array
+        for (int i=0; i<data.length;i++) {
+            data[i] = new ArrayList<>();
+        }
+    }
+
+    public static void analyzeData() {
+        Intent intent = new Intent(BeaconConnection.DATA_CHANGED);
+        ArrayList<Double> value = mediaValues(data);
+        if (value.size()==1) {
+            intent.putExtra("data",value.get(0));
+        }
+        else {
+            double[] d = new double[value.size()];
+            for (int i=0; i<value.size(); i++) {
+                d[i]=value.get(i);
+            }
+            intent.putExtra("data",d);
+        }
+        data = null;
+        cont = 0;
+        context.sendBroadcast(intent);
     }
 
     // Various callback methods defined by the BLE API.
@@ -89,10 +127,7 @@ public class GattLeService {
                     if (newState == BluetoothProfile.STATE_CONNECTED) {
                         mConnectionState = STATE_CONNECTED;
                         Log.i(TAG, "Connected to GATT server.");
-//                    Log.i(TAG, "Attempting to start service discovery:" + mBluetoothGatt.discoverServices());
-                        Log.i(TAG, "Attempting to start service discovery:" );
-
-                        context.sendBroadcast(new Intent("connectionChanged"));
+                        Log.i(TAG, "Attempting to start service discovery:" + mBluetoothGatt.discoverServices());
 
                     } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                         mConnectionState = STATE_DISCONNECTED;
@@ -105,7 +140,8 @@ public class GattLeService {
                 public void onServicesDiscovered(BluetoothGatt gatt, int status) {
                     if (status == BluetoothGatt.GATT_SUCCESS) {
                         Log.w(TAG,"GATT_SUCCESS");
-                        context.sendBroadcast(new Intent(BeaconConnection.SERVICE_DISCOVERED));
+                        printServices();
+                        context.sendBroadcast(new Intent(BeaconConnection.ACKNOWLEDGE));
                     } else {
                         Log.w(TAG, "onServicesDiscovered received: " + status);
                     }
@@ -124,48 +160,10 @@ public class GattLeService {
                 @Override
                 public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
                     if (status == BluetoothGatt.GATT_SUCCESS) {
+
                         //status 0 significa che è stato modificato con successo
+                        context.sendBroadcast(new Intent(BeaconConnection.ACKNOWLEDGE));
 
-
-                        if (!sensorWorking) {
-                            Log.i("WRITECHAR", "sensor activated");
-                            sensorWorking = true;
-
-                            //contenitore dei dati
-                            data = new ArrayList[numSample];
-
-                            //inizializzati elementi dell'array
-                            for (int i=0; i<data.length;i++) {
-                                data[i] = new ArrayList<>();
-                            }
-
-                            context.sendBroadcast(new Intent(BeaconConnection.CHAR_WRITTEN));
-                        }
-                        else {
-                            Log.i("WRITECHAR", "sensor disactivated");
-                            sensorWorking = false;
-                            terminated = false;
-                            sampleFlag = false;
-
-                            Intent intent = new Intent(BeaconConnection.DATA_CHANGED);
-
-                            ArrayList<Double> value = mediaValues(data);
-                            if (value.size()==1) {
-                                intent.putExtra("data",value.get(0));
-                            }
-                            else {
-                                double[] d = new double[value.size()];
-                                for (int i=0; i<value.size(); i++) {
-                                    d[i]=value.get(i);
-                                }
-                                intent.putExtra("data",d);
-                            }
-
-                            data = null;
-                            cont = 0;
-                            context.sendBroadcast(intent);
-
-                        }
                     }
 
                 }
@@ -178,9 +176,8 @@ public class GattLeService {
                 @Override
                 public void onDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
                     Log.i("DESCRIPTOR WRITE", "descriptor write");
-                    if(terminated) {
-                        turnOffSensor(gatt,currentBeacon);
-                    }
+
+                    context.sendBroadcast(new Intent(BeaconConnection.ACKNOWLEDGE));
                 }
 
 
@@ -210,8 +207,7 @@ public class GattLeService {
                             cont++;
                         }
                         else {
-                            terminated = true;
-                            disableNotifications(gatt,currentBeacon);
+                            context.sendBroadcast(new Intent(BeaconConnection.ACKNOWLEDGE));
                         }
                     }
                     sampleFlag = true;
@@ -330,7 +326,7 @@ public class GattLeService {
         BluetoothGattDescriptor config = dataCharacteristic.getDescriptor(clientCharacteristicConfigUUID);
         config.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
 
-        boolean b = gatt.writeDescriptor(config);
+        gatt.writeDescriptor(config);
     }
 
     private static double[] extractAccelerometerValue(BluetoothGattCharacteristic c) {
@@ -393,15 +389,6 @@ public class GattLeService {
 
         return output;
     }
-
-    /**
-     * Gyroscope, Magnetometer, Barometer, IR temperature
-     * all store 16 bit two's complement values in the awkward format
-     * LSB MSB, which cannot be directly parsed as getIntValue(FORMAT_SINT16, offset)
-     * because the bytes are stored in the "wrong" direction.
-     *
-     * This function extracts these 16 bit two's complement values.
-     * */
 
 
     private static Integer twentyFourBitUnsignedAtOffset(byte[] c, int offset) {

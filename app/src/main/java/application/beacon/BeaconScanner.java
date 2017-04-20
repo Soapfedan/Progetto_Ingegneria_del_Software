@@ -3,210 +3,334 @@ package application.beacon;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGatt;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Handler;
 import android.util.Log;
-
 import java.util.UUID;
 
-import static java.util.UUID.fromString;
+import application.MainApplication;
+import application.utility.StateMachine;
+
 
 /**
  * Created by Niccolo on 29/03/2017.
  */
 
-public class BeaconScanner {
+public class BeaconScanner extends StateMachine {
 
-    private static Setup setup;
+    //contiene le caratteristiche legate allo scan, in riferimento alla configurazione settata
+    private Setup setup;
 
-    private static int state;
+    //alcuni possibili messaggi che può ricevere lo scan (vengono utilizzati come parametri per l'intenFilter)
+    public static final String SCAN_PHASE_FINISHED = "ScanPhaseFinished";
+    public static final String SUSPEND_SCAN = "SuspendScan";
+    public static final String EMERGENCY = "EMERGENCY";
 
     private static final String TAG = "BeaconRESPONSE";
+
     //oggetto unico che rappresenta il bluetooth del dispositivo
-    private static BluetoothAdapter mBluetoothAdapter;
+    private BluetoothAdapter mBluetoothAdapter;
     //costante per attivare il bluetooth
     private static final int REQUEST_ENABLE_BT = 1;
 
-
     //adapter per ciò che viene trovato nello scan
-    private static LeDeviceListAdapter mLeDeviceListAdapter;
-
-    private static Activity a;
-
-    private static boolean running;
+    private LeDeviceListAdapter mLeDeviceListAdapter;
+    //activity in cui viene fatto partire lo scan (in modo da poterne ricavare il context)
+    private Activity activity;
 
     //rappresenta il beacon più vicino, con cui si deve effettuare il collegamento
-    private static BluetoothDevice currentBeacon;
-    //uuid dei beacon
+    private BluetoothDevice currentBeacon;
+    //uuid dei sensortag utilizati
     private static final String beaconUUID = "0000aa80-0000-1000-8000-00805f9b34fb";
 
-    private static UUID[] uuids;
+    //maschera di UUID, serve per filtrare i dispositivi bluetooth da analizzare
+    private UUID[] uuids;
+    //handler utilizzato per lanciare le varie Runnable (start,stop,wait)
+    private Handler scanHandler;
+    //filtro dei messaggi per il broadcast receiver
+    private IntentFilter intentFilter;
+    //connessione con un determinato sensortag, per leggere i dati dai sensori
+    private BeaconConnection connection;
 
-    private static Handler scanHandler;
+    public BeaconScanner(Activity a) {
+        super();
 
-    private static BeaconConnection connection;
-
-    public static void start(Activity activity) {
-        //inizializzati i componenti del bluetooth
-        a = activity;
+        activity = a;
         //inizializza il contenitore
         setup = new Setup();
-
+        //mette in funzione la state machine
         running = true;
-
-        mLeDeviceListAdapter = new LeDeviceListAdapter();
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if(!controlBluetooth()) activateBluetooth(a);
-
-        //insieme di UUID riconosciuti dallo scan
-        uuids = new UUID[1];
-        uuids[0] = fromString(beaconUUID);
-
-        scanHandler = new Handler();
-        //scan dei dispositivi LE
-        discoverBLEDevices();
-
-    }
-
-    public static void start(Activity activity, String status) {
         //inizializzati i componenti del bluetooth
-        a = activity;
-        //inizializza il contenitore
-        setup = new Setup();
-        setup.setCondition(status);
-
-        running = true;
-
         mLeDeviceListAdapter = new LeDeviceListAdapter();
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        //viene controllato che il bluetooth sia accesso, nel caso in cui ciò non sia vero
+        //viene mostrata l'opzione per attivarlo
         if(!controlBluetooth()) activateBluetooth(a);
 
-        //insieme di UUID riconosciuti dallo scan
+        //insieme di UUID riconosciuti dallo scan e relativa inizializzazione
         uuids = new UUID[1];
-        uuids[0] = fromString(beaconUUID);
+        uuids[0] = UUID.fromString(beaconUUID);
+        //inizializzazione del filtro per i messaggi e registrazione del broadcast receiver
+        initializeFilter();
+        //viene registrato il receiver, in modo che possa ricevere messaggi e possa leggere
+        //quelli la cui intestazione si trova nell'intentFilter
+        activity.getBaseContext().registerReceiver(broadcastReceiver,intentFilter);
+        //viene inizializzato l'handler
         scanHandler = new Handler();
-        //scan dei dispositivi LE
-        discoverBLEDevices();
-
+        //viene eseguito lo scan corrente
+        executeState();
     }
 
-    public static void changeRunning() {
-        running = !running;
+    public BeaconScanner(Activity a, String set) {
+        super();
+
+        activity = a;
+        //inizializza il contenitore
+        setup = new Setup(set);
+        //mette in funzione la state machine
+        running = true;
+        //inizializzati i componenti del bluetooth
+        mLeDeviceListAdapter = new LeDeviceListAdapter();
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        //viene controllato che il bluetooth sia accesso, nel caso in cui ciò non sia vero
+        //viene mostrata l'opzione per attivarlo
+        if(!controlBluetooth()) activateBluetooth(a);
+
+        //insieme di UUID riconosciuti dallo scan e relativa inizializzazione
+        uuids = new UUID[1];
+        uuids[0] = UUID.fromString(beaconUUID);
+        //inizializzazione del filtro per i messaggi e registrazione del broadcast receiver
+        initializeFilter();
+        //viene registrato il receiver, in modo che possa ricevere messaggi e possa leggere
+        //quelli la cui intestazione si trova nell'intentFilter
+        activity.getBaseContext().registerReceiver(broadcastReceiver,intentFilter);
+        //viene inizializzato l'handler
+        scanHandler = new Handler();
+        //viene eseguito lo scan corrente
+        executeState();
     }
 
-    public static Setup getSetup() {
+    //inseriti i filtri per i messaggi ricevuti
+    private void initializeFilter() {
+        intentFilter = new IntentFilter();
+        intentFilter.addAction(SCAN_PHASE_FINISHED);
+        intentFilter.addAction(SUSPEND_SCAN);
+        intentFilter.addAction(EMERGENCY);
+    }
+    //gestisce i messaggi ricevuti, in base all'intestazione
+    private void messageHandler(Intent intent) {
+        switch (intent.getAction()) {
+            //ricevuto quando è terminata la connessione al beacon
+            case (SCAN_PHASE_FINISHED):
+                connection = null;
+                //finita l'esecuzione dello stato richiama
+                int next = nextState();
+                changeState(next);
+                executeState();
+                break;
+            //ricevuto quando deve essere sospeso lo scan
+            case (SUSPEND_SCAN):
+
+                suspendScan();
+                break;
+            //ricevuto quando si presenta un'emergenza
+            case (EMERGENCY):
+
+                MainApplication.setEmergency(true);
+
+                suspendScan();
+                break;
+
+            default:
+                break;
+        }
+    }
+    //contiene le istruzioni relative alla sospesione dello scan, diverse in base allo stato in cui ci si trova
+    public void suspendScan() {
+        running = false;
+//        if (currentState==0) {
+//            int next = nextState();
+//            changeState(next);
+//            executeState();
+//        }
+        //nel caso in cui si stiano leggendo i dati dai sensori, viene interrotta la procedura
+        //fermando la macchina a stati che se ne occupa
+        if(currentState==1) {
+            activity.getBaseContext().sendBroadcast(new Intent(BeaconConnection.STOP_CONNECTION));
+        }
+        //se si sta aspettando per un nuovo scan, viene abortito il processo di attesa
+        //e si passa allo stato successivo (gestione della chiusura dello scan)
+        else if(currentState==2) {
+            scanHandler.removeCallbacks(wait);
+            int next = nextState();
+            changeState(next);
+            executeState();
+        }
+    }
+
+    //il broadcast receiver deputato alla ricezione dei messaggi
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i(TAG,"ricevuto broadcast: " + intent.getAction());
+            messageHandler(intent);
+        }
+    };
+
+
+    public Setup getSetup() {
         return setup;
     }
 
-    public static void stop() {
-        //fa in modo che non partano eventuali nuovi scan
-        running = false;
-        Log.i("STOP","STOP");
-        switch (state) {
-            //caso in cui stia effettuando lo scan
-            case(0):
-                Log.i("CASE","case " + state);
-                break;
-            //caso in cui stia estraendo dati
-            case(1):
-                Log.i("CASE","case " + state);
-                a.getBaseContext().sendBroadcast(new Intent("SUSPEND"));
-                break;
-            //caso in cui stia aspettando
-            case(2):
-                Log.i("CASE","case " + state);
-                scanHandler.removeCallbacksAndMessages(null);
 
-                break;
-        }
-//        scanHandler.removeCallbacks(startScan);
-//        scanHandler.removeCallbacks(stopScan);
-    }
-
-    private static void initializeUUIDArray() {
-        //TODO inserire qua dentro tutti gli UUID dei servizi che può servire leggere
-    }
     //contralla che il bluetooth sia acceso
-    private static boolean controlBluetooth() {
+    private boolean controlBluetooth() {
         boolean b = false;
         if (!mBluetoothAdapter.isEnabled() || mBluetoothAdapter==null) b = false;
         else b = true;
         return b;
     }
+
     //attiva il bluetooth
-    private static void activateBluetooth (Activity activity) {
+    private void activateBluetooth (Activity activity) {
         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
         activity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
     }
 
-    private static void discoverBLEDevices() {
+    //fa partire lo scan che ricerca i sensortag nel raggio d'azione dell'utente
+    private void discoverBLEDevices() {
         //scan dei bluetooth LE
         startScan.run();
-        Log.e("BLE_Scanner", "DiscoverBLE");
+
+        Log.e("BLE_Scanner", "DiscoverBLE, in " + setup.getState() + " condition");
     }
 
-
-    public static void closeConnection() {
-        BeaconConnection.close();
+    //in base allo stato attuale ed alle condizioni in cui si trova la macchina, viene valutato lo stato successivo
+    protected int nextState() {
+        int next;
+        switch(currentState) {
+            case(0):
+                if (!running) next = 3;
+                else if (running && mLeDeviceListAdapter.getCount()>0 && setup.mustAnalyze()) next = 1;
+                else next = 2;
+                break;
+            case(1):
+                if (!running) next = 3;
+                else next = 2;
+                break;
+            case(2):
+                if (!running) next = 3;
+                else next = 0;
+                break;
+            default:
+                next = 3;
+                break;
+        }
+        return next;
     }
 
-    //thread che si occupa di cercare i beacon
-    private static Runnable startScan = new Runnable() {
+    //attende il tempo necessario fra due scan consecutivi
+    private void waiting() {
+        Log.i("WAITING","waiting for " + setup.getPeriodBetweenScan()/1000 + " seconds for new Scan ");
+        scanHandler.postDelayed(wait,setup.getPeriodBetweenScan());
+    }
+
+    //vengono eseguite le istruzioni in base allo stato in cui ci si trova
+    protected void executeState() {
+        Log.i("State","execute scan state " + getState());
+        switch(currentState) {
+            case(0):
+                discoverBLEDevices();
+                break;
+            case(1):
+                connection = new BeaconConnection(activity, currentBeacon);
+                connection.start();
+                break;
+            case (2):
+                if (currentBeacon==null) closeConnection();
+                waiting();
+                break;
+            case (3):
+                activity.getBaseContext().sendBroadcast(new Intent("TerminatedScan"));
+                break;
+        }
+    }
+
+    //chiude la connessione, una volta terminata
+    public void closeConnection() {
+        connection = null;
+    }
+
+    //thread che si occupa di far partire lo scan in cerca dei beacon
+    private Runnable startScan = new Runnable() {
         @Override
         public void run() {
-            state = 0;
-            Log.i("State","state " + BeaconScanner.getState());
+            //cancella la lista di sensortag precedentemente trovati
             mLeDeviceListAdapter.clear();
-            if (!BeaconConnection.isNull()) closeConnection();
-            if (running) {
-                scanHandler.postDelayed(stopScan, setup.getScanPeriod());
-                mBluetoothAdapter.startLeScan(uuids, mLeScanCallback);
-            }
             Log.e(TAG, "Start Scan");
+            //parte effettivamente la ricerca dei sensortag
+            mBluetoothAdapter.startLeScan(uuids, mLeScanCallback);
+
+            //attende per la durata dello scan e poi lancia la runnable per stopparlo
+            scanHandler.postDelayed(stopScan, setup.getScanPeriod());
+
         }
     };
 
     //thread per mettere in pausa lo scan ed eventualmente elaborare i dati
-    private static Runnable stopScan = new Runnable() {
+    private Runnable stopScan = new Runnable() {
         @Override
         public void run() {
+
+            Log.e(TAG, "Stop Scan");
             mBluetoothAdapter.stopLeScan(mLeScanCallback);
             Log.i(TAG,"numero: " + mLeDeviceListAdapter.getCount());
             //trova il beacon più vicino
             currentBeacon = mLeDeviceListAdapter.getCurrentBeacon();
 
-            if(running) {
-                //se le trova, ci si collega per leggere i dati
-                if(currentBeacon!=null && setup.mustAnalyze()) {
-                    state = 1;
-                    Log.i("State","state " + BeaconScanner.getState());
-                    BeaconConnection.startConnection(a,currentBeacon);
-                }
+            //finita l'esecuzione dello stato richiama
+            int next = nextState();
+            changeState(next);
+            executeState();
 
-                scanHandler.postDelayed(startScan, setup.getPeriodBetweenScan());
-            }
 
-            Log.e(TAG, "Stop Scan");
+        }
+    };
+    //thread per gestire l'attesa fra due scan consecutivi
+    private Runnable wait = new Runnable() {
+        @Override
+        public void run() {
+            //finita l'attesa richiama i metodi per passare allo stato successivo
+            int next = nextState();
+            changeState(next);
+            executeState();
         }
     };
 
-    public static int getState() {
-        return state;
+    public BeaconConnection getConnection() {
+        return connection;
     }
 
-    public static void setState(int s) {
-        state = s;
+    public BluetoothAdapter getmBluetoothAdapter() {
+        return mBluetoothAdapter;
     }
 
-    //Device scan callback.
-    private static BluetoothAdapter.LeScanCallback mLeScanCallback =
+    //quando viene stoppato dall'esterno lo scan, come ultimo passaggio viene cancellata la registrazione
+    //del receiver
+    public void closeScan() {
+        if(broadcastReceiver!=null) activity.getBaseContext().unregisterReceiver(broadcastReceiver);
+    }
+
+    //callback utilizzata per trovare dispositivi nel raggio d'azione
+    private BluetoothAdapter.LeScanCallback mLeScanCallback =
             new BluetoothAdapter.LeScanCallback() {
                 @Override
                 public void onLeScan(final BluetoothDevice device, final int rssi,
                                      byte[] scanRecord) {
-                    a.runOnUiThread(new Runnable() {
+                    activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             mLeDeviceListAdapter.addDevice(device,rssi);

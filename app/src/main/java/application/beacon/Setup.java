@@ -1,9 +1,4 @@
 package application.beacon;
-
-/**
- * Created by Niccolo on 10/04/2017.
- */
-
 import android.util.Log;
 
 /**
@@ -19,7 +14,7 @@ public class Setup {
     private static final long scanPeriodSearching = 1500l;
     private static final long scanPeriodEmergency = 1000l;
 
-    private static final long periodBetweenScanNormal = 35000l;
+    private static final long periodBetweenScanNormal = 15000l;
     private static final long periodBetweenScanSearching = 5000l;
     private static final long periodBetweenScanEmergency = 3000l;
 

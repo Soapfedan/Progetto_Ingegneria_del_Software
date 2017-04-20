@@ -53,7 +53,7 @@ public class ActivityMaps extends AppCompatActivity {
         ArrayList<String[]> roomsList;
         //selectedFloor = new Floor();
         selectedRoom = new Room(null,null,null,0);
-
+/*
 
         try {
             s = ServerComunication.getRequest();
@@ -65,7 +65,7 @@ public class ActivityMaps extends AppCompatActivity {
         }  catch (JSONException e) {
         e.printStackTrace();
     }
-
+*/
 
 
 

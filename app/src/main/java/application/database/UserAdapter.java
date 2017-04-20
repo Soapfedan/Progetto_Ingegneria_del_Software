@@ -64,8 +64,8 @@ public class UserAdapter {
         values.put( KEY_BIRTH_DATE, birth_date );
         values.put( KEY_BIRTH_CITY, birth_city );
         values.put( KEY_PROVINCE, province );
-        values.put( KEY_BIRTH_DATE, state );
-        values.put( KEY_STATE, telephone );
+        values.put( KEY_STATE, state );
+        values.put( KEY_TELEPHONE, telephone );
         values.put( KEY_SEX, sex );
         values.put( KEY_PERSONAL_NUMBER, personal_number );
 

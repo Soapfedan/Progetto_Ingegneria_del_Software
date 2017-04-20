@@ -24,6 +24,8 @@ import application.validation.FormControl;
 import android.app.DatePickerDialog;
 import android.widget.DatePicker;
 import android.app.DatePickerDialog.OnDateSetListener;
+import android.widget.Toast;
+
 /**
  * Created by Federico-PC on 28/12/2016.
  */
@@ -46,13 +48,14 @@ public class InformationsHandler extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // editable = 1 for edit profile , editable = 0 for view information
         int editable = getIntent().getIntExtra("editable",-1);
         if(editable == 0)
         {
             setContentView(R.layout.content_view_information);
             infoTxtView = new HashMap<String, TextView>();
             loadResources(editable);
-        }else if(editable == 1){
+        }else{
             setContentView(R.layout.activity_informations);
             infoTxt = new HashMap<String, TextView[]>();
             loadResources(editable);
@@ -66,6 +69,16 @@ public class InformationsHandler extends AppCompatActivity {
                 errorValue[i] = false;
                 emptyValue[i] = false;
             }
+            
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("")
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        //do nothings
+                    }
+                });
+        alert = builder.create();
 
             MainApplication.getDB().open();
             if (UserHandler.isLogged()) {
@@ -100,12 +113,15 @@ public class InformationsHandler extends AppCompatActivity {
 
 
     private void loadResources(int edit) {
-        if (edit == 1) {
+        if (edit != 0) {
             TextView[] tv = new TextView[2];
             // creo una hashmap con tutti gli elementi di una form
             tv[0] = (TextView) findViewById(R.id.email_txt);
             tv[1] = (TextView) findViewById(R.id.errorEmail);
             infoTxt.put("email", tv.clone());
+            if(edit == 1)
+                tv[0].setFocusable(false);
+            else tv[0].setFocusable(true);
 
             tv[0] = (TextView) findViewById(R.id.pass_txt1);
             tv[1] = (TextView) findViewById(R.id.errorPass1);
@@ -556,6 +572,8 @@ public class InformationsHandler extends AppCompatActivity {
                 UserHandler.logup(info);
                 Intent intent = new Intent(getApplicationContext(), Home.class);
                 startActivity(intent);
+            Toast.makeText(getApplicationContext(),
+                    "Registrazione avvenuta con successo!",Toast.LENGTH_SHORT).show();
             } else {
                 alert.setMessage(email_msg);
                 alert.show();
@@ -564,24 +582,47 @@ public class InformationsHandler extends AppCompatActivity {
     }
 
     private void editProfile(){
+        //campo vuoto
+        boolean error = false;
+        //check if some value is empty
+        for(int i=0;i<11;i++){
+            if(errorValue[i]==true){
+                error = true;
+                alert.setMessage(error_msg);
+            }
+        }
+        for(int i=0;i<5;i++) {
+            if(emptyValue[i]==true && error==false) {
+                error = true;
+                alert.setMessage(null_msg);
+            }
+        }
 
-        HashMap<String,String> info = new HashMap<>();
-        info.put("email",infoTxt.get("email")[0].getText().toString());
-        info.put("pass",infoTxt.get("pass1")[0].getText().toString());
-        info.put("name",infoTxt.get("name")[0].getText().toString());
-        info.put("surname",infoTxt.get("surname")[0].getText().toString());
-        info.put("birth_date",infoTxt.get("birth_date")[0].getText().toString());
-        info.put("birth_city",infoTxt.get("birth_city")[0].getText().toString());
-        info.put("province",infoTxt.get("province")[0].getText().toString());
-        info.put("state",infoTxt.get("state")[0].getText().toString());
-        info.put("phone",infoTxt.get("phone")[0].getText().toString());
-        info.put("personal_number",infoTxt.get("personal_number")[0].getText().toString());
-        info.put("sex",sex_spinner.getSelectedItem().toString());
+        if(!infoTxt.get("pass1")[0].getText().toString().equals(infoTxt.get("pass2")[0].getText().toString())){
+            error=true;
+        }
 
-        UserHandler.editProfile(info);
-        Intent intent = new Intent (getApplicationContext(),
-                Home.class);
-        startActivity(intent);
+        if(error==true) {
+            alert.show();
+        }else {
+            HashMap<String, String> info = new HashMap<>();
+            info.put("email", infoTxt.get("email")[0].getText().toString());
+            info.put("pass", infoTxt.get("pass1")[0].getText().toString());
+            info.put("name", infoTxt.get("name")[0].getText().toString());
+            info.put("surname", infoTxt.get("surname")[0].getText().toString());
+            info.put("birth_date", infoTxt.get("birth_date")[0].getText().toString());
+            info.put("birth_city", infoTxt.get("birth_city")[0].getText().toString());
+            info.put("province", infoTxt.get("province")[0].getText().toString());
+            info.put("state", infoTxt.get("state")[0].getText().toString());
+            info.put("phone", infoTxt.get("phone")[0].getText().toString());
+            info.put("personal_number", infoTxt.get("personal_number")[0].getText().toString());
+            info.put("sex", sex_spinner.getSelectedItem().toString());
+
+            UserHandler.editProfile(info);
+            Intent intent = new Intent(getApplicationContext(),
+                    Home.class);
+            startActivity(intent);
+        }
 
     }
 

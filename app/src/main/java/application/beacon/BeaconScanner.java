@@ -32,9 +32,9 @@ public class BeaconScanner extends StateMachine {
     private static final String TAG = "BeaconRESPONSE";
 
     //oggetto unico che rappresenta il bluetooth del dispositivo
-    private BluetoothAdapter mBluetoothAdapter;
-    //costante per attivare il bluetooth
-    private static final int REQUEST_ENABLE_BT = 1;
+//    private BluetoothAdapter mBluetoothAdapter;
+//    //costante per attivare il bluetooth
+//    private static final int REQUEST_ENABLE_BT = 1;
 
     //adapter per ciò che viene trovato nello scan
     private LeDeviceListAdapter mLeDeviceListAdapter;
@@ -65,10 +65,10 @@ public class BeaconScanner extends StateMachine {
         running = true;
         //inizializzati i componenti del bluetooth
         mLeDeviceListAdapter = new LeDeviceListAdapter();
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+//        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         //viene controllato che il bluetooth sia accesso, nel caso in cui ciò non sia vero
         //viene mostrata l'opzione per attivarlo
-        if(!controlBluetooth()) activateBluetooth(a);
+//        if(!controlBluetooth()) activateBluetooth(a);
 
         //insieme di UUID riconosciuti dallo scan e relativa inizializzazione
         uuids = new UUID[1];
@@ -94,10 +94,10 @@ public class BeaconScanner extends StateMachine {
         running = true;
         //inizializzati i componenti del bluetooth
         mLeDeviceListAdapter = new LeDeviceListAdapter();
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+//        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         //viene controllato che il bluetooth sia accesso, nel caso in cui ciò non sia vero
         //viene mostrata l'opzione per attivarlo
-        if(!controlBluetooth()) activateBluetooth(a);
+//        if(!controlBluetooth()) activateBluetooth(a);
 
         //insieme di UUID riconosciuti dallo scan e relativa inizializzazione
         uuids = new UUID[1];
@@ -186,19 +186,19 @@ public class BeaconScanner extends StateMachine {
     }
 
 
-    //contralla che il bluetooth sia acceso
-    private boolean controlBluetooth() {
-        boolean b = false;
-        if (!mBluetoothAdapter.isEnabled() || mBluetoothAdapter==null) b = false;
-        else b = true;
-        return b;
-    }
-
-    //attiva il bluetooth
-    private void activateBluetooth (Activity activity) {
-        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        activity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-    }
+//    //contralla che il bluetooth sia acceso
+//    private boolean controlBluetooth() {
+//        boolean b = false;
+//        if (!MainApplication.getmBluetoothAdapter().isEnabled() || MainApplication.getmBluetoothAdapter()==null) b = false;
+//        else b = true;
+//        return b;
+//    }
+//
+//    //attiva il bluetooth
+//    private void activateBluetooth (Activity activity) {
+//        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+//        activity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+//    }
 
     //fa partire lo scan che ricerca i sensortag nel raggio d'azione dell'utente
     private void discoverBLEDevices() {
@@ -272,7 +272,7 @@ public class BeaconScanner extends StateMachine {
             mLeDeviceListAdapter.clear();
             Log.e(TAG, "Start Scan");
             //parte effettivamente la ricerca dei sensortag
-            mBluetoothAdapter.startLeScan(uuids, mLeScanCallback);
+            MainApplication.getmBluetoothAdapter().startLeScan(uuids, mLeScanCallback);
 
             //attende per la durata dello scan e poi lancia la runnable per stopparlo
             scanHandler.postDelayed(stopScan, setup.getScanPeriod());
@@ -286,7 +286,7 @@ public class BeaconScanner extends StateMachine {
         public void run() {
 
             Log.e(TAG, "Stop Scan");
-            mBluetoothAdapter.stopLeScan(mLeScanCallback);
+            MainApplication.getmBluetoothAdapter().stopLeScan(mLeScanCallback);
             Log.i(TAG,"numero: " + mLeDeviceListAdapter.getCount());
             //trova il beacon più vicino
             currentBeacon = mLeDeviceListAdapter.getCurrentBeacon();
@@ -312,10 +312,6 @@ public class BeaconScanner extends StateMachine {
 
     public BeaconConnection getConnection() {
         return connection;
-    }
-
-    public BluetoothAdapter getmBluetoothAdapter() {
-        return mBluetoothAdapter;
     }
 
     //quando viene stoppato dall'esterno lo scan, come ultimo passaggio viene cancellata la registrazione

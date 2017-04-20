@@ -1,6 +1,7 @@
 package application;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -35,10 +36,13 @@ public class MainApplication {
     private static UserAdapter db;
 
     private static boolean emergency;
-
+    private static BluetoothAdapter mBluetoothAdapter;
     private static BeaconScanner scanner;
 
     private static Activity activity;
+
+    //costante per attivare il bluetooth
+    private static final int REQUEST_ENABLE_BT = 1;
 
     private static IntentFilter intentFilter;
 
@@ -62,6 +66,8 @@ public class MainApplication {
         emergency = false;
         activity.getBaseContext().registerReceiver(broadcastReceiver,intentFilter);
 
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if(!controlBluetooth()) activateBluetooth(activity);
         initializeScanner(activity);
         UserHandler.init();
         //crea il db, ma ancora non è ne leggibile ne scrivibile
@@ -74,6 +80,10 @@ public class MainApplication {
 
     public void activateBluetooth(){
 
+    }
+
+    public static BluetoothAdapter getmBluetoothAdapter() {
+        return mBluetoothAdapter;
     }
 
     public static void setFloors(HashMap<String,Floor> f){
@@ -145,5 +155,18 @@ public class MainApplication {
         return activity;
     }
 
+    //contralla che il bluetooth sia acceso
+    public static boolean controlBluetooth() {
+        boolean b = false;
+        if (!MainApplication.getmBluetoothAdapter().isEnabled() || MainApplication.getmBluetoothAdapter()==null) b = false;
+        else b = true;
+        return b;
+    }
+
+    //attiva il bluetooth
+    public static void activateBluetooth (Activity activity) {
+        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        activity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+    }
 }
 

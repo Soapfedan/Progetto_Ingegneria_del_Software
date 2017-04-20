@@ -88,6 +88,8 @@ public class ActivityMaps extends AppCompatActivity {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(STARTMAPS);
 
+        if(!MainApplication.controlBluetooth()) MainApplication.activateBluetooth(this);
+
         getBaseContext().registerReceiver(broadcastReceiver,intentFilter);
 
     }

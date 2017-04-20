@@ -90,6 +90,7 @@ public class InformationsHandler extends AppCompatActivity {
 
     protected void onStart() {
         super.onStart();
+        if(!MainApplication.controlBluetooth()) MainApplication.activateBluetooth(this);
     }
 
     protected void onResume() {

@@ -91,7 +91,7 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
 
     protected void onStart() {
         super.onStart();
-
+        if(!MainApplication.controlBluetooth()) MainApplication.activateBluetooth(this);
     }
 
     protected void onResume() {

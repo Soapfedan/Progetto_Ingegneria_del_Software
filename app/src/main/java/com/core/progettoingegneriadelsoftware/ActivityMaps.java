@@ -29,6 +29,7 @@ import application.maps.components.Room;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -211,6 +212,9 @@ public class ActivityMaps extends AppCompatActivity {
 
 
         getApplicationContext().sendBroadcast(new Intent("SuspendScan"));
+
+        if(!MainApplication.controlBluetooth())
+            Toast.makeText(getApplicationContext(), "Si è verificato un problema, verificare che il Bluetooth sia attivo", Toast.LENGTH_SHORT).show();
     }
 
     //a partire da arrayList di stanze ne crea uno parallelo con i nomi delle stanze

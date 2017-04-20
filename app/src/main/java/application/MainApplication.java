@@ -68,7 +68,7 @@ public class MainApplication {
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if(!controlBluetooth()) activateBluetooth(activity);
-        initializeScanner(activity);
+        if(mBluetoothAdapter!=null) initializeScanner(activity);
         UserHandler.init();
         //crea il db, ma ancora non è ne leggibile ne scrivibile
         db = new UserAdapter(activity.getBaseContext());
@@ -157,8 +157,8 @@ public class MainApplication {
 
     //contralla che il bluetooth sia acceso
     public static boolean controlBluetooth() {
-        boolean b = false;
-        if (!MainApplication.getmBluetoothAdapter().isEnabled() || MainApplication.getmBluetoothAdapter()==null) b = false;
+        boolean b;
+        if (getmBluetoothAdapter()==null || !getmBluetoothAdapter().isEnabled()) b = false;
         else b = true;
         return b;
     }

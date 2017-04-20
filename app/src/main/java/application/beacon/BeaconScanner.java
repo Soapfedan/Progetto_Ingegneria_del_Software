@@ -291,6 +291,8 @@ public class BeaconScanner extends StateMachine {
             //trova il beacon più vicino
             currentBeacon = mLeDeviceListAdapter.getCurrentBeacon();
 
+            //TODO setto strttura dati
+
             //finita l'esecuzione dello stato richiama
             int next = nextState();
             changeState(next);

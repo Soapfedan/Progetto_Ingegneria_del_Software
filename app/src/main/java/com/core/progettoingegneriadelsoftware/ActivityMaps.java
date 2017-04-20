@@ -3,25 +3,31 @@ package com.core.progettoingegneriadelsoftware;
 /**
  * Created by Niccolò on 28/12/2016.
  */
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.IntegerRes;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.ListView;
 import android.widget.ArrayAdapter;
-import android.content.Intent;
 import android.view.View;
 
 import java.io.InputStream;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 import application.MainApplication;
+import application.beacon.BeaconScanner;
+import application.comunication.ServerComunication;
 import application.maps.*;
+import application.maps.components.Floor;
+import application.maps.components.Room;
+
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.AdapterView;
-import android.widget.Toast;
 import android.widget.ImageView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by Niccolò on 27/12/2016.
@@ -37,22 +43,34 @@ public class ActivityMaps extends AppCompatActivity {
     private Spinner spinner_room;
     private ImageView image;
     private ArrayList<String> floorsname;
+    private JSONObject s;
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-
         floorsname = new ArrayList<>();
-        ArrayList<String[]> beaconList;
         ArrayList<String[]> roomsList;
         //selectedFloor = new Floor();
-        selectedRoom = new Room(null);
+        selectedRoom = new Room(null,null,null,0);
+/*
 
-        InputStream inputStreamBeacon = getResources().openRawResource(R.raw.beaconlist);
-        beaconList = MapLoader.read(inputStreamBeacon);
-        loadBeacons(beaconList);
-        InputStream inputStreamRooms = getResources().openRawResource(R.raw.rooms);
+        try {
+            s = ServerComunication.getRequest();
+            System.out.println("Risultato "+s.getString("description")+" "+s.getString("summary"));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }  catch (JSONException e) {
+        e.printStackTrace();
+    }
+*/
+
+
+
+
+        InputStream inputStreamRooms = getResources().openRawResource(R.raw.roomlist);
         roomsList = MapLoader.read(inputStreamRooms);
         loadRooms(roomsList);
         floorsname = createNamesArray();
@@ -62,31 +80,33 @@ public class ActivityMaps extends AppCompatActivity {
 
     protected void onStart() {
         super.onStart();
+        BeaconScanner.stop();
+        BeaconScanner.start(this,"SEARCHING");
 
     }
         //aggiungo manualmente elementi alle barre, dopo andrà fatto diversamente
-    private void loadBeacons(ArrayList<String[]> b) {
+    private void loadRooms(ArrayList<String[]> b) {
 
         int[] coords = new int[2];
         double width;
         String cod;
         HashMap<String,Floor> f = new HashMap<>();
         MainApplication.setFloors(f);
-        for (String[] beaconlist : b) {
-            if(MainApplication.getFloors().containsKey(beaconlist[2])) {    //il piano esiste
-                coords[0] = Integer.parseInt(beaconlist[0]); //x
-                coords[1] = Integer.parseInt(beaconlist[1]); //y
-                width = Double.parseDouble(beaconlist[3].replace(",","."));
-                cod = beaconlist[4];
-                MainApplication.getFloors().get(beaconlist[2]).addNode(cod,new Node(coords,beaconlist[2],width));
+        for (String[] roomslist : b) {
+            if(MainApplication.getFloors().containsKey(roomslist[2])) {    //il piano esiste
+                coords[0] = Integer.parseInt(roomslist[0]); //x
+                coords[1] = Integer.parseInt(roomslist[1]); //y
+                width = Double.parseDouble(roomslist[3].replace(",","."));
+                cod = roomslist[4];
+                MainApplication.getFloors().get(roomslist[2]).addRoom(cod,new Room(cod,coords.clone(),roomslist[2],width));
             }else{
-                MainApplication.getFloors().put(beaconlist[2],new Floor(beaconlist[2]));//aggiungo il nuovo piano
+                MainApplication.getFloors().put(roomslist[2],new Floor(roomslist[2]));//aggiungo il nuovo piano
                 //aggiunto il nodo
-                coords[0] = Integer.parseInt(beaconlist[0]); //x
-                coords[1] = Integer.parseInt(beaconlist[1]); //y
-                width = Double.parseDouble(beaconlist[3].replace(",","."));     //larghezza
-                cod = beaconlist[4];                         //codice
-                MainApplication.getFloors().get(beaconlist[2]).addNode(cod,new Node(coords,beaconlist[2],width));
+                coords[0] = Integer.parseInt(roomslist[0]); //x
+                coords[1] = Integer.parseInt(roomslist[1]); //y
+                width = Double.parseDouble(roomslist[3].replace(",","."));     //larghezza
+                cod = roomslist[4];                         //codice
+                MainApplication.getFloors().get(roomslist[2]).addRoom(cod,new Room(cod,coords.clone(),roomslist[2],width));
             }
 
 
@@ -96,18 +116,7 @@ public class ActivityMaps extends AppCompatActivity {
 
     }
 
-    //aggiungo manualmente elementi alle barre, dopo andrà fatto diversamente
-    private void loadRooms(ArrayList<String[]> b) {
-
-
-        for (String[] roomList : b) {
-                MainApplication.getFloors().get(roomList[0]).addRoom(roomList[1],new Room(roomList[1]));
-        }
-
-
-    }
-
-    private void createIcon() {
+   private void createIcon() {
         selectedFloor = MainApplication.getFloors().get(floorsname.get(0));
         selectedRoom = MainApplication.getFloors().get(floorsname.get(0)).getRooms().get(
                 MainApplication.getFloors().get(floorsname.get(0)).nameStringRoom().get(0));
@@ -169,24 +178,26 @@ public class ActivityMaps extends AppCompatActivity {
             public void onClick(View v) {
                // Toast.makeText(getApplicationContext(),
                         //"cercata stanza " + selectedRoom.getName() + " nel piano " + selectedFloor.getName() ,Toast.LENGTH_SHORT).show();
-                b_search.setVisibility(View.INVISIBLE);
-                spinner_floor.setVisibility(View.INVISIBLE);
-                spinner_room.setVisibility(View.INVISIBLE);
-                setContentView(R.layout.activity_maps_scrool);
+               // b_search.setVisibility(View.INVISIBLE);
+                //spinner_floor.setVisibility(View.INVISIBLE);
+                //spinner_room.setVisibility(View.INVISIBLE);
                 selectImage();
-                image.setVisibility(View.VISIBLE);
+
             }
         });
     }
 
     private void selectImage() {
-        image = (ImageView) findViewById(R.id.imageHelp);
+
         String floor = selectedFloor.getFloorName();
         String room = selectedRoom.getCod();
         String map = "m".concat(floor).concat("_color");
         int resID = getResources().getIdentifier(map , "drawable", getPackageName());
-            image.setImageResource(resID);
 
+        Intent intent = new Intent (getApplicationContext(),
+                FullScreenMap.class);
+        intent.putExtra("MAP_ID", resID);
+        startActivity(intent);
     }
 
     //a partire da arrayList di stanze ne crea uno parallelo con i nomi delle stanze
@@ -209,16 +220,21 @@ public class ActivityMaps extends AppCompatActivity {
 
     protected void onPause() {
         super.onPause();
+        BeaconScanner.stop();
+        BeaconScanner.start(this);
     }
 
 
     protected void onStop() {
         super.onStop();
+        BeaconScanner.stop();
+        BeaconScanner.start(this);
     }
 
 
     public void onDestroy() {
         super.onDestroy();
+        //ServerComunication.disconnect();
     }
 }
 

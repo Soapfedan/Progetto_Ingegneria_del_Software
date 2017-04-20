@@ -1,4 +1,4 @@
-package application.maps;
+package application.maps.components;
 
 import android.widget.ImageView;
 
@@ -12,7 +12,6 @@ public class Node {
 
     private int[] coords;
     private String floor;
-    private double width;
     private ImageView position;
     private HashMap<String,Emergency> emergencies;
     private boolean presence;
@@ -21,11 +20,10 @@ public class Node {
 
     }
 
-    public Node(int[] crds,String floor,double width){
+    public Node(int[] crds,String floor){
 
-             this.coords = crds;
+        this.coords = crds;
         this.floor = floor;
-        this.width = width;
     }
 
     public boolean isPresence(){
@@ -48,7 +46,5 @@ public class Node {
         return floor;
     }
 
-    public double getWidth() {
-        return width;
-    }
+
 }

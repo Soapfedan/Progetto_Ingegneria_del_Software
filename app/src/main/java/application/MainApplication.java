@@ -1,14 +1,14 @@
 package application;
 
+import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
+import application.beacon.BeaconScanner;
 import application.database.UserAdapter;
-import application.maps.Node;
-import application.maps.Floor;
+import application.maps.components.Node;
+import application.maps.components.Floor;
 import application.user.UserHandler;
 
 /**
@@ -29,7 +29,6 @@ public class MainApplication {
     private static UserAdapter db;
 
 
-
     /**
      * Method used t
      * @param n
@@ -42,11 +41,11 @@ public class MainApplication {
         return db;
     }
 
-    public static void start(Context context) {
+    public static void start(Activity activity) {
         UserHandler.init();
         //crea il db, ma ancora non è ne leggibile ne scrivibile
-        db = new UserAdapter(context);
-
+        db = new UserAdapter(activity.getBaseContext());
+        BeaconScanner.start(activity);
     }
 
     public void loadMap(String tipe){

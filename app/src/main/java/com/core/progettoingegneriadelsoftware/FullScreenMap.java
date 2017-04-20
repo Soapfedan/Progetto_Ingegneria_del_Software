@@ -2,31 +2,23 @@ package com.core.progettoingegneriadelsoftware;
 
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.PointF;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.support.annotation.Dimension;
 import android.support.design.widget.NavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
-import android.view.Display;
 import android.widget.Toast;
 
 import application.MainApplication;
-import application.beacon.BeaconScanner;
 import application.maps.grid.TouchImageView;
-import application.sharedstorage.DataContainer;
+import application.sharedstorage.Data;
 import application.sharedstorage.DataListener;
-import application.sharedstorage.Positions;
+import application.sharedstorage.UserPositions;
 
 
 public class FullScreenMap extends AppCompatActivity implements DataListener{
@@ -43,29 +35,32 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
     final private int[] imageDim = {1600,1000};
 
     // These matrices will be used to move and zoom image
-    Matrix matrix = new Matrix();
-    Matrix savedMatrix = new Matrix();
+    private Matrix matrix = new Matrix();
+    private Matrix savedMatrix = new Matrix();
 
     // We can be in one of these 3 states
-    static final int NONE = 0;
-    static final int DRAG = 1;
-    static final int ZOOM = 2;
-    int mode = NONE;
+    private static final int NONE = 0;
+    private static final int DRAG = 1;
+    private static final int ZOOM = 2;
+    private int mode = NONE;
 
     // Remember some things for zooming
-    PointF start = new PointF();
-    PointF mid = new PointF();
-    float oldDist = 1f;
-    String savedItemClicked;
+    private PointF start = new PointF();
+    private PointF mid = new PointF();
+    private float oldDist = 1f;
+    private String savedItemClicked;
+
+    private int s;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.activity_maps_scrool);
-        int s = 0;
+        Data.getUserPosition().addDataListener(this);
+        s = 0;
         position = new int[2];
-        position = MainApplication.getFloors().get("145").getRooms().get("145DICEA").getCoords();
-        DataContainer.getUserPosition().addDataListener(this);
+        //position = MainApplication.getFloors().get("145").getRooms().get("145DICEA").getCoords();
+        Data.getUserPosition().addDataListener(this);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             s = extras.getInt("MAP_ID");
@@ -77,8 +72,7 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
         image.setScaleType(ImageView.ScaleType.FIT_XY);*/
         image = new TouchImageView(this);
         image.setMaxZoom(4f);
-        setImageGrid(s);
-        setContentView(image);
+
 
         if(MainApplication.getEmergency()) {
             MainApplication.initializeScanner(this,"EMERGENCY");
@@ -92,6 +86,8 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
     protected void onStart() {
         super.onStart();
         if(!MainApplication.controlBluetooth()) MainApplication.activateBluetooth(this);
+        setImageGrid(s);
+        setContentView(image);
     }
 
     protected void onResume() {
@@ -133,7 +129,7 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
 
             Canvas canvas = new Canvas(mutableBitmap);
             //int[] c = coordsMapping(position);
-            canvas.drawCircle(position[0], position[1], 5, paint); //x y radius paint
+            canvas.drawCircle(position[0], position[1], 50, paint); //x y radius paint
             image.setImageBitmap(mutableBitmap);
         }else {
             image.setImageResource(imageId);
@@ -176,8 +172,11 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
 
     @Override
     public void retrive() {
-        position[0] = DataContainer.getUserPosition().getX();
-        position[1] = DataContainer.getUserPosition().getY();
+        int[] pos = Data.getUserPosition().getPosition();
+        position[0] = pos[0];
+        position[1] = pos[1];
+        setImageGrid(s);
+        setContentView(image);
     }
 
     @Override

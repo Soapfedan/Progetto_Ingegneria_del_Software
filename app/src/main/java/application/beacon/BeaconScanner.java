@@ -12,6 +12,8 @@ import android.util.Log;
 import java.util.UUID;
 
 import application.MainApplication;
+import application.sharedstorage.Data;
+import application.sharedstorage.DataListener;
 import application.utility.StateMachine;
 
 
@@ -19,7 +21,7 @@ import application.utility.StateMachine;
  * Created by Niccolo on 29/03/2017.
  */
 
-public class BeaconScanner extends StateMachine {
+public class BeaconScanner extends StateMachine implements DataListener {
 
     //contiene le caratteristiche legate allo scan, in riferimento alla configurazione settata
     private Setup setup;
@@ -86,7 +88,7 @@ public class BeaconScanner extends StateMachine {
 
     public BeaconScanner(Activity a, String set) {
         super();
-
+        Data.getUserPosition().addDataListener(this);
         activity = a;
         //inizializza il contenitore
         setup = new Setup(set);
@@ -289,9 +291,11 @@ public class BeaconScanner extends StateMachine {
             MainApplication.getmBluetoothAdapter().stopLeScan(mLeScanCallback);
             Log.i(TAG,"numero: " + mLeDeviceListAdapter.getCount());
             //trova il beacon più vicino
+            //TODO DEVI CONTROLLARE SE IL BEACON E' UGUALE A QUELLO VECCHIO
             currentBeacon = mLeDeviceListAdapter.getCurrentBeacon();
-
-            //TODO setto strttura dati
+            //if(currentBeacon!=null){
+                update();
+            //}
 
             //finita l'esecuzione dello stato richiama
             int next = nextState();
@@ -339,4 +343,16 @@ public class BeaconScanner extends StateMachine {
             };
 
 
+    @Override
+    public void update() {
+        if(MainApplication.getFloors()!=null) {
+            int[] position = MainApplication.getFloors().get("145").getRooms().get("145RG2").getCoords();
+            Data.getUserPosition().setPosition(position);
+        }
+    }
+
+    @Override
+    public void retrive() {
+
+    }
 }

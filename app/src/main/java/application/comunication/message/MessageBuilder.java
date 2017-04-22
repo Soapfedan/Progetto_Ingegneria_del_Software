@@ -55,7 +55,7 @@ public class MessageBuilder {
                     for (int i = 0; i < elements; i++) {
 
                         try {
-                            jsonObject.put(keys.get(i+arrays*elements), values.get(i+arrays*elements));
+                            jsonObject.put(keys.get(i+k*elements), values.get(i+k*elements));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import application.utility.StateMachine;
@@ -196,6 +197,8 @@ public class BeaconConnection extends StateMachine {
                     double v = b.getDouble("data");
                     services.get(cont).setValue(v);
                 }
+                    //aggiorna il timestamp
+                services.get(cont).setLastSampleTime(new Timestamp(System.currentTimeMillis()));
 
                 services.get(cont).printValue();
                 cont++;

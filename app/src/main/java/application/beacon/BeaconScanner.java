@@ -290,12 +290,14 @@ public class BeaconScanner extends StateMachine implements DataListener {
             Log.e(TAG, "Stop Scan");
             MainApplication.getmBluetoothAdapter().stopLeScan(mLeScanCallback);
             Log.i(TAG,"numero: " + mLeDeviceListAdapter.getCount());
+
             //trova il beacon più vicino
             //TODO DEVI CONTROLLARE SE IL BEACON E' UGUALE A QUELLO VECCHIO
             currentBeacon = mLeDeviceListAdapter.getCurrentBeacon();
-            //if(currentBeacon!=null){
+
+            if(currentBeacon!=null){
                 update();
-            //}
+            }
 
             //finita l'esecuzione dello stato richiama
             int next = nextState();
@@ -345,6 +347,7 @@ public class BeaconScanner extends StateMachine implements DataListener {
 
     @Override
     public void update() {
+        Log.i("UPDATE","currentBeacon update");
         if(MainApplication.getFloors()!=null) {
             int[] position = MainApplication.getFloors().get("145").getRooms().get("145RG2").getCoords();
             Data.getUserPosition().setPosition(position);

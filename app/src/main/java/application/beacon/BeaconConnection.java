@@ -10,9 +10,12 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 
+import org.json.JSONObject;
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
+import application.comunication.message.MessageBuilder;
 import application.utility.StateMachine;
 
 /**
@@ -164,6 +167,7 @@ public class BeaconConnection extends StateMachine {
                 GattLeService.analyzeData();
                 break;
             case(8):
+                String mex = packingMessage();
                 close();
                 GattLeService.closeConnection();
                 activity.getBaseContext().sendBroadcast(new Intent("ScanPhaseFinished"));
@@ -209,6 +213,34 @@ public class BeaconConnection extends StateMachine {
 
                 break;
         }
+    }
+
+    private String packingMessage() {
+        String mex;
+        ArrayList<String> keys = new ArrayList<>();
+        ArrayList<String> values = new ArrayList<>();
+        for (int i=0; i<services.size(); i++) {
+            for (int j=0; j<services.get(i).getValue().size(); j++) {
+                if (services.get(i).getValue().size()==1) {
+                    keys.add(services.get(i).getName());
+                    if(i<cont) values.add(""+services.get(i).getValue());
+                    else values.add("null");
+                }
+                else {
+                    int letter = (int)'x' + j;
+                    char c = (char) letter;
+                    keys.add(services.get(i).getName()+c);
+                    if(i<cont) values.add(""+services.get(i).getValue().get(j));
+                    else values.add("null");
+                }
+
+
+            }
+        }
+
+        mex = MessageBuilder.builder(keys,values,keys.size(),0);
+        Log.i("mex",mex);
+        return mex;
     }
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {

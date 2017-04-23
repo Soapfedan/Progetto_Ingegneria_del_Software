@@ -347,10 +347,13 @@ public class BeaconScanner extends StateMachine implements DataListener {
 
     @Override
     public void update() {
-        Log.i("UPDATE","currentBeacon update");
         if(MainApplication.getFloors()!=null) {
-            int[] position = MainApplication.getFloors().get("145").getRooms().get("145RG2").getCoords();
-            Data.getUserPosition().setPosition(position);
+            String cod = currentBeacon.getAddress();
+//            MainApplication.getSensors().get(cod).getCoords();
+//            int[] position = MainApplication.getFloors().get("145").getRooms().get("145RG2").getCoords();
+            Data.getUserPosition().setPosition(MainApplication.getSensors().get(cod).getCoords());
+            Data.getUserPosition().setFloor(MainApplication.getSensors().get(cod).getFloor());
+            Data.getUserPosition().updateInformation();
         }
     }
 

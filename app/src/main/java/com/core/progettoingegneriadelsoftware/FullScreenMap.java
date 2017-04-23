@@ -173,9 +173,16 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
     @Override
     public void retrive() {
         int[] pos = Data.getUserPosition().getPosition();
+        String floor = Data.getUserPosition().getFloor();
+
         position[0] = pos[0];
         position[1] = pos[1];
-        setImageGrid(s);
+
+        String map = "m".concat(floor).concat("_color");
+
+        int resID = getResources().getIdentifier(map , "drawable", getPackageName());
+
+        setImageGrid(resID);
         setContentView(image);
     }
 

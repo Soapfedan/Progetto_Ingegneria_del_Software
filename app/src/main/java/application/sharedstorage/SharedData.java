@@ -14,7 +14,7 @@ public class SharedData {
         listeners.add(listener);
     }
 
-    protected void updateInformation() {
+    public void updateInformation() {
         for (DataListener dataListener : listeners) {
             dataListener.retrive();
         }

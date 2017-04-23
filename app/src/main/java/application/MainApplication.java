@@ -9,13 +9,18 @@ import android.content.IntentFilter;
 import android.util.Log;
 
 import com.core.progettoingegneriadelsoftware.FullScreenMap;
+import com.core.progettoingegneriadelsoftware.R;
 
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import application.beacon.BeaconScanner;
 import application.database.UserAdapter;
+import application.maps.MapLoader;
 import application.maps.components.Node;
 import application.maps.components.Floor;
+import application.maps.components.Room;
 import application.user.UserHandler;
 
 /**
@@ -34,6 +39,8 @@ public class MainApplication {
 
     private static HashMap<String,Floor> floors;
     private static UserAdapter db;
+
+    private static HashMap<String, Node> sensors;
 
     private static boolean emergency;
     private static BluetoothAdapter mBluetoothAdapter;
@@ -60,6 +67,10 @@ public class MainApplication {
         return db;
     }
 
+    public static HashMap<String,Node> getSensors() {
+        return sensors;
+    }
+
     public static void start(Activity a) {
         activity = a;
         initializeFilter();
@@ -72,6 +83,29 @@ public class MainApplication {
         UserHandler.init();
         //crea il db, ma ancora non è ne leggibile ne scrivibile
         db = new UserAdapter(activity.getBaseContext());
+
+        InputStream inputStream = activity.getResources().openRawResource(R.raw.beaconlist);
+        ArrayList<String[]> beaconList = new ArrayList<>();
+        beaconList = MapLoader.read(inputStream);
+        loadSensors(beaconList);
+
+    }
+
+    private static void loadSensors(ArrayList<String[]> b) {
+        int coords[] = new int[2];
+        String fl;
+        String cod;
+        HashMap<String,Node> s = new HashMap<>();
+        sensors = s;
+
+        for(String[] beacon : b) {
+            coords[0] = Integer.parseInt(beacon[2]);
+            coords[1] = Integer.parseInt(beacon[3]);
+            fl = beacon[1];
+            sensors.put(beacon[0],new Node(coords,fl));
+//            Log.i("csv","cod: " + beacon[0] + " floor " + fl + " coords " + coords[0] + "," + coords[1]);
+        }
+
     }
 
     public void loadMap(String tipe){
@@ -117,32 +151,32 @@ public class MainApplication {
     private static BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("MESSAGE ARRIVED","ricevuto broadcast: " + intent.getAction());
-            switch(intent.getAction()) {
-                case("TerminatedScan"):
-                    if(scanner.getSetup().getState().equals("NORMAL")) {
-                        scanner.closeScan();
-                        scanner = null;
+        Log.i("MESSAGE ARRIVED","ricevuto broadcast: " + intent.getAction());
+        switch(intent.getAction()) {
+            case("TerminatedScan"):
+                if(scanner.getSetup().getState().equals("NORMAL")) {
+                    scanner.closeScan();
+                    scanner = null;
 
-                        context.sendBroadcast(new Intent("STARTMAPS"));
+                    context.sendBroadcast(new Intent("STARTMAPS"));
 
 //                        Intent intentTWO = new Intent (activity.getApplicationContext(),
 //                                FullScreenMap.class);
 //                        activity.startActivity(intentTWO);
 
-                    }
-                    else {
-                        scanner.closeScan();
-                        scanner = null;
+                }
+                else {
+                    scanner.closeScan();
+                    scanner = null;
 
-                        initializeScanner(activity);
-                    }
-                    break;
+                    initializeScanner(activity);
+                }
+                break;
 
-                default:
+            default:
 
-                    break;
-            }
+                break;
+        }
         }
     };
 

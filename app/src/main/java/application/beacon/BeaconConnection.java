@@ -121,8 +121,9 @@ public class BeaconConnection extends StateMachine {
                 next = 6;
                 break;
             case(6):
-                if (!running) next = 8;
-                else next = 7;
+//                if (!running) next = 8;
+//                else next = 7;
+                next = 7;
                 break;
             case(7):
                 if (!running || cont>=services.size()) next = 8;
@@ -219,24 +220,45 @@ public class BeaconConnection extends StateMachine {
         String mex;
         ArrayList<String> keys = new ArrayList<>();
         ArrayList<String> values = new ArrayList<>();
-        for (int i=0; i<services.size(); i++) {
+
+        keys.add("temperature");
+        keys.add("luxometer");
+        keys.add("barometer");
+        keys.add("accx");
+        keys.add("accy");
+        keys.add("accz");
+
+        int c = 0;
+
+        for (int i=0;i<services.size(); i++) {
             for (int j=0; j<services.get(i).getValue().size(); j++) {
-                if (services.get(i).getValue().size()==1) {
-                    keys.add(services.get(i).getName());
-                    if(i<cont) values.add(""+services.get(i).getValue());
-                    else values.add("null");
-                }
-                else {
-                    int letter = (int)'x' + j;
-                    char c = (char) letter;
-                    keys.add(services.get(i).getName()+c);
-                    if(i<cont) values.add(""+services.get(i).getValue().get(j));
-                    else values.add("null");
-                }
-
-
+                values.add(""+services.get(i).getValue().get(j));
+                c++;
             }
         }
+            //qualora alcuni valori non siano stati letti, riempe value con "null"
+        while(c<6) {
+            values.add("null");
+            c++;
+        }
+
+//        for (int i=0; i<services.size(); i++) {
+//            for (int j=0; j<services.get(i).getValue().size(); j++) {
+//                if (services.get(i).getValue().size()==1) {
+//                    keys.add(services.get(i).getName());
+//                    if(i<cont) values.add(""+services.get(i).getValue().get(j));
+//                    else values.add("no value");
+//                }
+//                else {
+//                    int letter = (int)'x' + j;
+//                    char c = (char) letter;
+//                    keys.add(services.get(i).getName()+c);
+//                    if(i<cont) values.add(""+services.get(i).getValue().get(j));
+//                    else values.add("no value");
+//                }
+//                Log.i("num", "i " + i + " j " + j);
+//            }
+//        }
 
         mex = MessageBuilder.builder(keys,values,keys.size(),0);
         Log.i("mex",mex);

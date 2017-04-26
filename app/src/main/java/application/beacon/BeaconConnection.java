@@ -221,6 +221,7 @@ public class BeaconConnection extends StateMachine {
         ArrayList<String> keys = new ArrayList<>();
         ArrayList<String> values = new ArrayList<>();
 
+        keys.add("beacon_ID");
         keys.add("temperature");
         keys.add("luxometer");
         keys.add("barometer");
@@ -228,7 +229,10 @@ public class BeaconConnection extends StateMachine {
         keys.add("accy");
         keys.add("accz");
 
+        values.add(device.getAddress());
+
         int c = 0;
+
 
         for (int i=0;i<services.size(); i++) {
             for (int j=0; j<services.get(i).getValue().size(); j++) {

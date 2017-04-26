@@ -20,10 +20,10 @@ public class Node {
 
     }
 
-    public Node(int[] crds,String floor){
+    public Node(int[] crds,String fl){
 
-        this.coords = crds;
-        this.floor = floor;
+        coords = crds;
+        floor = fl;
     }
 
     public boolean isPresence(){

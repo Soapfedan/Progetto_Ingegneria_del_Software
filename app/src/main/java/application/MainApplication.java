@@ -95,14 +95,15 @@ public class MainApplication {
         int coords[] = new int[2];
         String fl;
         String cod;
-        HashMap<String,Node> s = new HashMap<>();
-        sensors = s;
+        sensors = new HashMap<>();
+
 
         for(String[] beacon : b) {
+            cod = beacon[0];
             coords[0] = Integer.parseInt(beacon[2]);
             coords[1] = Integer.parseInt(beacon[3]);
             fl = beacon[1];
-            sensors.put(beacon[0],new Node(coords,fl));
+            sensors.put(cod,new Node(coords.clone(),fl));
 //            Log.i("csv","cod: " + beacon[0] + " floor " + fl + " coords " + coords[0] + "," + coords[1]);
         }
 

@@ -348,7 +348,7 @@ public class GattLeService {
         double value;
         if (c.getValue().length > 4) {
             Integer val = twentyFourBitUnsignedAtOffset(c.getValue(), 2);
-            value = (double) val / 100.0;
+            value = (double) val / 10000.0;
         }
         else {
             int mantissa;
@@ -359,7 +359,7 @@ public class GattLeService {
             exponent = (sfloat >> 12) & 0xFF;
 
             double magnitude = pow(2.0f, exponent);
-            value = (mantissa * magnitude) / 100.0;
+            value = (mantissa * magnitude) / 10000.0;
 
         }
         return value;

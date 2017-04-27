@@ -52,6 +52,8 @@ public class ActivityMaps extends AppCompatActivity {
     private int resID;
     private static String STARTMAPS = "STARTMAPS";
 
+    private boolean buttonPressed;
+
     private String message;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +92,7 @@ public class ActivityMaps extends AppCompatActivity {
         super.onStart();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(STARTMAPS);
-
+        buttonPressed = false;
         if(!MainApplication.controlBluetooth()) MainApplication.activateBluetooth(this);
 
         getBaseContext().registerReceiver(broadcastReceiver,intentFilter);
@@ -198,8 +200,8 @@ public class ActivityMaps extends AppCompatActivity {
                // b_search.setVisibility(View.INVISIBLE);
                 //spinner_floor.setVisibility(View.INVISIBLE);
                 //spinner_room.setVisibility(View.INVISIBLE);
-                selectImage();
-
+                if (!buttonPressed) selectImage();
+                buttonPressed = true;
 
             }
         });

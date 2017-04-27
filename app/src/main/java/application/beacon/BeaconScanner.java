@@ -9,11 +9,15 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.util.Log;
+
+import java.util.ArrayList;
 import java.util.UUID;
 
 import application.MainApplication;
+import application.comunication.message.MessageBuilder;
 import application.sharedstorage.Data;
 import application.sharedstorage.DataListener;
+import application.user.UserHandler;
 import application.utility.StateMachine;
 
 
@@ -234,6 +238,22 @@ public class BeaconScanner extends StateMachine implements DataListener {
         return next;
     }
 
+    public String packingMessage() {
+        String mex;
+        ArrayList<String> keys = new ArrayList<>();
+        ArrayList<String> values = new ArrayList<>();
+        keys.add("beacon_ID");
+        keys.add("user_ID");
+
+        values.add(currentBeacon.getAddress());
+        values.add(UserHandler.getIpAddress());
+
+        mex = MessageBuilder.builder(keys,values,keys.size(),0);
+        Log.i("mex",mex);
+
+        return mex;
+    }
+
     //attende il tempo necessario fra due scan consecutivi
     private void waiting() {
         Log.i("WAITING","waiting for " + setup.getPeriodBetweenScan()/1000 + " seconds for new Scan ");
@@ -293,12 +313,10 @@ public class BeaconScanner extends StateMachine implements DataListener {
 
             //trova il beacon più vicino
             //TODO DEVI CONTROLLARE SE IL BEACON E' UGUALE A QUELLO VECCHIO
-            currentBeacon = mLeDeviceListAdapter.getCurrentBeacon();
+//            currentBeacon = mLeDeviceListAdapter.getCurrentBeacon();
 
             if(mLeDeviceListAdapter.getCurrentBeacon()!=null){
-                if (currentBeacon==null)
-                    currentBeacon = mLeDeviceListAdapter.getCurrentBeacon();
-                else if (currentBeacon.getAddress().equals(mLeDeviceListAdapter.getCurrentBeacon().getAddress())) {
+                if (currentBeacon==null || !currentBeacon.getAddress().equals(mLeDeviceListAdapter.getCurrentBeacon().getAddress())) {
                     currentBeacon = mLeDeviceListAdapter.getCurrentBeacon();
                     update();
                 }
@@ -354,14 +372,15 @@ public class BeaconScanner extends StateMachine implements DataListener {
 
     @Override
     public void update() {
-        if(MainApplication.getFloors()!=null) {
+        String mex = packingMessage();
+//        if(MainApplication.getFloors()!=null) {
             String cod = currentBeacon.getAddress();
 //            MainApplication.getSensors().get(cod).getCoords();
 //            int[] position = MainApplication.getFloors().get("145").getRooms().get("145RG2").getCoords();
             Data.getUserPosition().setPosition(MainApplication.getSensors().get(cod).getCoords());
             Data.getUserPosition().setFloor(MainApplication.getSensors().get(cod).getFloor());
             Data.getUserPosition().updateInformation();
-        }
+//        }
     }
 
     @Override

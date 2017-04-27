@@ -1,9 +1,15 @@
 package application.user;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
+import android.util.Log;
 
+import java.net.InetAddress;
+import java.net.SocketException;
 import java.util.ArrayList;
 
 import java.net.NetworkInterface;
@@ -24,12 +30,16 @@ public class UserHandler {
     private static SharedPreferences pref;
     private static Editor editor;
     //private ArrayList<Beacon> beacons;
-
+    private static String ipAddress;
 
     public static void init(){
         macAddress = obtainMacAddr();
         editor = pref.edit();
+        ipAddress = obtainLocalIpAddress();
+    }
 
+    public static String getIpAddress() {
+        return ipAddress;
     }
 
     public static String getMail() {
@@ -157,6 +167,16 @@ public class UserHandler {
             //handle exception
         }
         return "";
+    }
+
+        //calcola l'indirizzo ip dell'utente
+    public static String obtainLocalIpAddress(){
+        WifiManager wifiMan = (WifiManager) MainApplication.getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        WifiInfo wifiInf = wifiMan.getConnectionInfo();
+        int ipAddress = wifiInf.getIpAddress();
+        String ip = String.format("%d.%d.%d.%d", (ipAddress & 0xff),(ipAddress >> 8 & 0xff),(ipAddress >> 16 & 0xff),(ipAddress >> 24 & 0xff));
+//        Log.i("IP","IP " + ip);
+        return ip;
     }
 
     public static void setPref(SharedPreferences p) {

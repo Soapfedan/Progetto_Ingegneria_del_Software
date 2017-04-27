@@ -75,6 +75,7 @@ public class MainApplication {
         activity = a;
         initializeFilter();
         emergency = false;
+
         activity.getBaseContext().registerReceiver(broadcastReceiver,intentFilter);
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();

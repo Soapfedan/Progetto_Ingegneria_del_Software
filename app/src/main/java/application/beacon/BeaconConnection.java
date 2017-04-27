@@ -15,7 +15,9 @@ import org.json.JSONObject;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
+import application.MainApplication;
 import application.comunication.message.MessageBuilder;
+import application.user.UserHandler;
 import application.utility.StateMachine;
 
 /**
@@ -181,6 +183,10 @@ public class BeaconConnection extends StateMachine {
         switch (intent.getAction()) {
             //messaggio ricevuto in condizioni normali, quando uno stato termina le istruzioni da eseguire
             case(ACKNOWLEDGE):
+                Bundle bund = intent.getExtras();
+                if (bund!=null) {
+                    running = false;
+                }
                 int next = nextState();
                 changeState(next);
                 executeState();
@@ -222,6 +228,8 @@ public class BeaconConnection extends StateMachine {
         ArrayList<String> values = new ArrayList<>();
 
         keys.add("beacon_ID");
+        keys.add("user_ID");
+        keys.add("timestamp");
         keys.add("temperature");
         keys.add("luxometer");
         keys.add("barometer");
@@ -230,6 +238,8 @@ public class BeaconConnection extends StateMachine {
         keys.add("accz");
 
         values.add(device.getAddress());
+        values.add(UserHandler.getIpAddress());
+        values.add(new Timestamp(System.currentTimeMillis()).toString());
 
         int c = 0;
 

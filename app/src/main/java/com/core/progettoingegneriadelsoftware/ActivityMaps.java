@@ -52,6 +52,8 @@ public class ActivityMaps extends AppCompatActivity {
     private int resID;
     private static String STARTMAPS = "STARTMAPS";
 
+    private String message;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
@@ -207,8 +209,10 @@ public class ActivityMaps extends AppCompatActivity {
 
         String floor = selectedFloor.getFloorName();
         String room = selectedRoom.getCod();
-        String map = "m".concat(floor).concat("_color");
-        resID = getResources().getIdentifier(map , "drawable", getPackageName());
+        message = floor.concat(";").concat(room);
+
+//        String map = "m".concat(floor).concat("_color");
+//        resID = getResources().getIdentifier(map , "drawable", getPackageName());
 
 
         getApplicationContext().sendBroadcast(new Intent("SuspendScan"));
@@ -233,7 +237,7 @@ public class ActivityMaps extends AppCompatActivity {
     private void startFullMaps(){
         Intent intentTWO = new Intent (this.getApplicationContext(),
                 FullScreenMap.class);
-        intentTWO.putExtra("MAP_ID",resID);
+        intentTWO.putExtra("MAP_ID",message);
         this.startActivity(intentTWO);
     }
 

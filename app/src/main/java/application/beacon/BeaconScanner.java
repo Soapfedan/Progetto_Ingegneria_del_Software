@@ -295,8 +295,15 @@ public class BeaconScanner extends StateMachine implements DataListener {
             //TODO DEVI CONTROLLARE SE IL BEACON E' UGUALE A QUELLO VECCHIO
             currentBeacon = mLeDeviceListAdapter.getCurrentBeacon();
 
-            if(currentBeacon!=null){
-                update();
+            if(mLeDeviceListAdapter.getCurrentBeacon()!=null){
+                if (currentBeacon==null)
+                    currentBeacon = mLeDeviceListAdapter.getCurrentBeacon();
+                else if (currentBeacon.getAddress().equals(mLeDeviceListAdapter.getCurrentBeacon().getAddress())) {
+                    currentBeacon = mLeDeviceListAdapter.getCurrentBeacon();
+                    update();
+                }
+
+
             }
 
             //finita l'esecuzione dello stato richiama

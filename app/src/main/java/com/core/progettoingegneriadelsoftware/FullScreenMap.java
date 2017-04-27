@@ -52,6 +52,10 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
 
     private int s;
 
+    private String selectedFloor;
+    private String selectedRoom;
+    private String currentFloor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,10 +66,16 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
         //position = MainApplication.getFloors().get("145").getRooms().get("145DICEA").getCoords();
         Data.getUserPosition().addDataListener(this);
         Bundle extras = getIntent().getExtras();
+
         if (extras != null) {
-            s = extras.getInt("MAP_ID");
+            extractDatafromMessage(extras.getString("MAP_ID"));
+//            s = extras.getInt("MAP_ID");
+            String map = "m".concat(selectedFloor).concat("_color");
+            s = getResources().getIdentifier(map , "drawable", getPackageName());
             //The key argument here must match that used in the other activity
         }
+
+
 
        /* image = (ImageView) findViewById(R.id.imageHelp);
         image.setImageResource(s);
@@ -86,8 +96,8 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
     protected void onStart() {
         super.onStart();
         if(!MainApplication.controlBluetooth()) MainApplication.activateBluetooth(this);
-        setImageGrid(s);
-        setContentView(image);
+//        setImageGrid(s);
+//        setContentView(image);
     }
 
     protected void onResume() {
@@ -106,6 +116,14 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
 
     public void onDestroy() {
         super.onDestroy();
+    }
+
+    private void extractDatafromMessage(String mex) {
+        String[] m = new String[2];
+        m = mex.split(";");
+        selectedFloor = m[0];
+        selectedRoom = m[1];
+        currentFloor = selectedFloor;
     }
 
     private void setImageGrid(int imageId){
@@ -129,8 +147,15 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
 
             Canvas canvas = new Canvas(mutableBitmap);
             //int[] c = coordsMapping(position);
-            canvas.drawCircle(position[0], position[1], 50, paint); //x y radius paint
+            canvas.drawCircle(position[0], position[1], 30, paint); //x y radius paint
             image.setImageBitmap(mutableBitmap);
+
+                //disegno obiettivo
+            if(selectedFloor.equals(currentFloor)) {
+                int[] coords = new int[2];
+                coords= MainApplication.getFloors().get(selectedFloor).getRooms().get(selectedRoom).getCoords();
+                canvas.drawCircle(coords[0],coords[1],30,new Paint(Color.BLUE));
+            }
         }else {
             image.setImageResource(imageId);
         }
@@ -173,12 +198,12 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
     @Override
     public void retrive() {
         int[] pos = Data.getUserPosition().getPosition();
-        String floor = Data.getUserPosition().getFloor();
+        currentFloor = Data.getUserPosition().getFloor();
 
         position[0] = pos[0];
         position[1] = pos[1];
 
-        String map = "m".concat(floor).concat("_color");
+        String map = "m".concat(currentFloor).concat("_color");
 
         int resID = getResources().getIdentifier(map , "drawable", getPackageName());
 

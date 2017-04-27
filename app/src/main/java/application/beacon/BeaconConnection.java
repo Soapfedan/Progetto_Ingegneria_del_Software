@@ -183,10 +183,7 @@ public class BeaconConnection extends StateMachine {
         switch (intent.getAction()) {
             //messaggio ricevuto in condizioni normali, quando uno stato termina le istruzioni da eseguire
             case(ACKNOWLEDGE):
-                Bundle bund = intent.getExtras();
-                if (bund!=null) {
-                    running = false;
-                }
+                if (GattLeService.getmConnectionState()==0) running = false;
                 int next = nextState();
                 changeState(next);
                 executeState();

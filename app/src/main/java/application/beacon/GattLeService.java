@@ -118,6 +118,10 @@ public class GattLeService {
         context.sendBroadcast(intent);
     }
 
+    public static int getmConnectionState() {
+        return mConnectionState;
+    }
+
     // Various callback methods defined by the BLE API.
     public static BluetoothGattCallback mGattCallback =
             new BluetoothGattCallback() {
@@ -132,9 +136,7 @@ public class GattLeService {
                     } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                         mConnectionState = STATE_DISCONNECTED;
                         Log.i(TAG, "Disconnected from GATT server.");
-                        Intent mex = new Intent(BeaconConnection.ACKNOWLEDGE);
-                        mex.putExtra("State_Disconnected","State Disconnected");
-                        context.sendBroadcast(mex);
+                        context.sendBroadcast(new Intent(BeaconConnection.ACKNOWLEDGE));
                     }
                 }
 

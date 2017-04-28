@@ -156,6 +156,7 @@ public class BeaconScanner extends StateMachine implements DataListener {
     }
     //contiene le istruzioni relative alla sospesione dello scan, diverse in base allo stato in cui ci si trova
     public void suspendScan() {
+        Log.i("SUSPENDSCAN","suspend scan");
         running = false;
 //        if (currentState==0) {
 //            int next = nextState();
@@ -320,7 +321,6 @@ public class BeaconScanner extends StateMachine implements DataListener {
                     currentBeacon = mLeDeviceListAdapter.getCurrentBeacon();
                     update();
                 }
-
 
             }
 

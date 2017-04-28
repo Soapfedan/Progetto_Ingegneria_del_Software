@@ -168,6 +168,7 @@ public class MainApplication {
 
                 }
                 else {
+                    context.sendBroadcast(new Intent("EXIT_MAPS"));
                     scanner.closeScan();
                     scanner = null;
 

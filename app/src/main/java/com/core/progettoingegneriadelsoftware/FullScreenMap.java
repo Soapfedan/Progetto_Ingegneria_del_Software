@@ -1,6 +1,10 @@
 package com.core.progettoingegneriadelsoftware;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,6 +16,7 @@ import android.graphics.PointF;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import application.MainApplication;
@@ -56,6 +61,8 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
     private String selectedRoom;
     private String currentFloor;
 
+    private static final String EXIT_MAPS = "EXIT_MAPS";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,7 +90,6 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
         image = new TouchImageView(this);
         image.setMaxZoom(4f);
 
-
         if(MainApplication.getEmergency()) {
             MainApplication.initializeScanner(this,"EMERGENCY");
         }
@@ -96,8 +102,11 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
     protected void onStart() {
         super.onStart();
         if(!MainApplication.controlBluetooth()) MainApplication.activateBluetooth(this);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(EXIT_MAPS);
 //        setImageGrid(s);
 //        setContentView(image);
+        getBaseContext().registerReceiver(broadcastReceiver,intentFilter);
     }
 
     protected void onResume() {
@@ -106,7 +115,7 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
 
     protected void onPause() {
         super.onPause();
-
+        if(broadcastReceiver!=null) getBaseContext().unregisterReceiver(broadcastReceiver);
     }
 
     protected void onStop() {
@@ -219,10 +228,20 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
         if (backpress>1) {
             MainApplication.getScanner().suspendScan();
             MainApplication.setEmergency(false);
-            this.finish();
         }
 
 
     }
+
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("ACTIVTY MAPS","ricevuto broadcast: " + intent.getAction());
+            if(intent.getAction().equals(EXIT_MAPS)) {
+                finish();
+            }
+        }
+    };
+
 
 }

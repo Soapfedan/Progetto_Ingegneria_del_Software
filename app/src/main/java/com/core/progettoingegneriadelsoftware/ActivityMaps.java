@@ -50,7 +50,7 @@ public class ActivityMaps extends AppCompatActivity {
     private ArrayList<String> floorsname;
     private JSONObject s;
     private int resID;
-    private static String STARTMAPS = "STARTMAPS";
+    private static final String STARTMAPS = "STARTMAPS";
 
     private boolean buttonPressed;
 
@@ -78,7 +78,6 @@ public class ActivityMaps extends AppCompatActivity {
         e.printStackTrace();
     }
 */
-
 
         InputStream inputStreamRooms = getResources().openRawResource(R.raw.roomlist);
         roomsList = MapLoader.read(inputStreamRooms);
@@ -247,9 +246,11 @@ public class ActivityMaps extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.i("ACTIVTY MAPS","ricevuto broadcast: " + intent.getAction());
-            if(intent.getAction().equals(STARTMAPS)) startFullMaps();
+            if(intent.getAction().equals(STARTMAPS)) {
+
+                startFullMaps();
+            }
         }
     };
-
 }
 

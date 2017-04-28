@@ -64,6 +64,8 @@ public class BeaconConnection extends StateMachine {
     //contatore utilizzato per scandire i servizi del beacon
     private int cont;
 
+    private boolean readData;
+
     //identifica il servizio di cui si stanno leggendo i valori
     private BeaconService currentService;
     //identifica il dispositivo (beacon) con cui ci si è collegati
@@ -82,6 +84,7 @@ public class BeaconConnection extends StateMachine {
         Log.i("CONNECTION","new connection");
         device = d;
         cont = 0;
+        readData = false;
         activity = a;
         initializeFilter();
         initializeServices();
@@ -123,9 +126,8 @@ public class BeaconConnection extends StateMachine {
                 next = 6;
                 break;
             case(6):
-//                if (!running) next = 8;
-//                else next = 7;
-                next = 7;
+                if(readData) next = 7;
+                else next = 8;
                 break;
             case(7):
                 if (!running || cont>=services.size()) next = 8;
@@ -147,6 +149,7 @@ public class BeaconConnection extends StateMachine {
                 GattLeService.execute(device, activity.getBaseContext());
                 break;
             case(1):
+                readData = false;
                 findServices = GattLeService.getServices();
                 searchService();
                 break;
@@ -158,6 +161,7 @@ public class BeaconConnection extends StateMachine {
                 break;
             case(4):
                 GattLeService.initializeData();
+                readData = true;
                 break;
             case(5):
                 GattLeService.setSampleFlag(false);
@@ -239,7 +243,6 @@ public class BeaconConnection extends StateMachine {
         values.add(new Timestamp(System.currentTimeMillis()).toString());
 
         int c = 0;
-
 
         for (int i=0;i<services.size(); i++) {
             for (int j=0; j<services.get(i).getValue().size(); j++) {

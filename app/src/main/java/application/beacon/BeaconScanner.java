@@ -9,12 +9,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
 import application.MainApplication;
 import application.comunication.message.MessageBuilder;
+import application.maps.components.Node;
 import application.sharedstorage.Data;
 import application.sharedstorage.DataListener;
 import application.user.UserHandler;
@@ -47,8 +49,11 @@ public class BeaconScanner extends StateMachine implements DataListener {
     //activity in cui viene fatto partire lo scan (in modo da poterne ricavare il context)
     private Activity activity;
 
-    //rappresenta il beacon più vicino, con cui si deve effettuare il collegamento
+        //rappresenta il beacon più vicino, con cui si deve effettuare il collegamento
     private BluetoothDevice currentBeacon;
+        //rappresenta il beacon trovato dallo scan
+    private BluetoothDevice selectedBeacon;
+
     //uuid dei sensortag utilizati
     private static final String beaconUUID = "0000aa80-0000-1000-8000-00805f9b34fb";
 
@@ -187,6 +192,13 @@ public class BeaconScanner extends StateMachine implements DataListener {
         }
     };
 
+    public BluetoothDevice getSelectedBeacon() {
+        return selectedBeacon;
+    }
+
+    public BluetoothDevice getCurrentBeacon() {
+        return currentBeacon;
+    }
 
     public Setup getSetup() {
         return setup;
@@ -221,7 +233,7 @@ public class BeaconScanner extends StateMachine implements DataListener {
         switch(currentState) {
             case(0):
                 if (!running) next = 3;
-                else if (running && mLeDeviceListAdapter.getCount()>0 && setup.mustAnalyze()) next = 1;
+                else if (running && mLeDeviceListAdapter.getCurrentBeacon()!=null && setup.mustAnalyze()) next = 1;
                 else next = 2;
                 break;
             case(1):
@@ -293,6 +305,8 @@ public class BeaconScanner extends StateMachine implements DataListener {
         public void run() {
             //cancella la lista di sensortag precedentemente trovati
             mLeDeviceListAdapter.clear();
+            mLeDeviceListAdapter.setCurrentBeacon(null);
+
             Log.e(TAG, "Start Scan");
             //parte effettivamente la ricerca dei sensortag
             MainApplication.getmBluetoothAdapter().startLeScan(uuids, mLeScanCallback);
@@ -316,12 +330,13 @@ public class BeaconScanner extends StateMachine implements DataListener {
             //TODO DEVI CONTROLLARE SE IL BEACON E' UGUALE A QUELLO VECCHIO
 //            currentBeacon = mLeDeviceListAdapter.getCurrentBeacon();
 
-            if(mLeDeviceListAdapter.getCurrentBeacon()!=null){
+            selectedBeacon = mLeDeviceListAdapter.selectedDevice();
+
+            if(selectedBeacon!=null){
                 if (currentBeacon==null || !currentBeacon.getAddress().equals(mLeDeviceListAdapter.getCurrentBeacon().getAddress())) {
                     currentBeacon = mLeDeviceListAdapter.getCurrentBeacon();
                     update();
                 }
-
             }
 
             //finita l'esecuzione dello stato richiama
@@ -375,10 +390,9 @@ public class BeaconScanner extends StateMachine implements DataListener {
         String mex = packingMessage();
 //        if(MainApplication.getFloors()!=null) {
             String cod = currentBeacon.getAddress();
-//            MainApplication.getSensors().get(cod).getCoords();
-//            int[] position = MainApplication.getFloors().get("145").getRooms().get("145RG2").getCoords();
-            Data.getUserPosition().setPosition(MainApplication.getSensors().get(cod).getCoords());
-            Data.getUserPosition().setFloor(MainApplication.getSensors().get(cod).getFloor());
+            Node n = MainApplication.getSensors().get(cod);
+            Data.getUserPosition().setPosition(n.getCoords());
+            Data.getUserPosition().setFloor(n.getFloor());
             Data.getUserPosition().updateInformation();
 //        }
     }

@@ -200,6 +200,11 @@ public class MainApplication {
         return b;
     }
 
+    public static Node getSensor(String cod) {
+        Node n = sensors.get(cod);
+        return n;
+    }
+
     //attiva il bluetooth
     public static void activateBluetooth (Activity activity) {
         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);

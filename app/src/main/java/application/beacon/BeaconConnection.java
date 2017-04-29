@@ -8,7 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -64,6 +66,10 @@ public class BeaconConnection extends StateMachine {
     //contatore utilizzato per scandire i servizi del beacon
     private int cont;
 
+    private Handler timer;
+
+    private static final long timerPeriod = 50000l;
+
     private boolean readData;
 
     //identifica il servizio di cui si stanno leggendo i valori
@@ -86,6 +92,8 @@ public class BeaconConnection extends StateMachine {
         cont = 0;
         readData = false;
         activity = a;
+        timer = new Handler();
+        timer.postDelayed(runnable,timerPeriod);
         initializeFilter();
         initializeServices();
         connectionStarted = true;
@@ -175,6 +183,7 @@ public class BeaconConnection extends StateMachine {
                 break;
             case(8):
                 String mex = packingMessage();
+                timer.removeCallbacks(runnable);
                 close();
                 GattLeService.closeConnection();
                 activity.getBaseContext().sendBroadcast(new Intent("ScanPhaseFinished"));
@@ -334,5 +343,16 @@ public class BeaconConnection extends StateMachine {
             activity.getBaseContext().unregisterReceiver(broadcastReceiver);
         }
     }
+
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            Log.e("error","si è verificato un problema");
+            running = false;
+            int next = nextState();
+            changeState(next);
+            executeState();
+        }
+    };
 
 }

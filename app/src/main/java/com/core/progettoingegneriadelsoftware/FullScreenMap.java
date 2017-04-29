@@ -14,10 +14,14 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import application.MainApplication;
 import application.maps.grid.TouchImageView;
@@ -55,11 +59,15 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
     private float oldDist = 1f;
     private String savedItemClicked;
 
+    private static final long timerPeriod = 20000l;
+
     private int s;
 
     private String selectedFloor;
     private String selectedRoom;
     private String currentFloor;
+
+    private Handler handler;
 
     private static final String EXIT_MAPS = "EXIT_MAPS";
 
@@ -67,6 +75,9 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.activity_maps_scrool);
+
+        handler = new Handler();
+
         Data.getUserPosition().addDataListener(this);
         s = 0;
         position = new int[2];
@@ -82,7 +93,7 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
             //The key argument here must match that used in the other activity
         }
 
-
+//        Toast.makeText(getApplicationContext(), " A breve verrà visualizzata la mappa ", Toast.LENGTH_SHORT).show();
 
        /* image = (ImageView) findViewById(R.id.imageHelp);
         image.setImageResource(s);
@@ -96,6 +107,7 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
         else {
             MainApplication.initializeScanner(this,"SEARCHING");
         }
+
     }
 
 
@@ -104,9 +116,24 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
         if(!MainApplication.controlBluetooth()) MainApplication.activateBluetooth(this);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(EXIT_MAPS);
-//        setImageGrid(s);
-//        setContentView(image);
+
+        String floor = Data.getUserPosition().getFloor();
+        if (floor!=null) {
+            String curPos = "m".concat(floor).concat("_color");
+            int val = getResources().getIdentifier(curPos , "drawable", getPackageName());
+
+            setImageGrid(val);
+            setContentView(image);
+            Toast.makeText(getApplicationContext(), " questa mappa rappresenta la tua posizione attuale ", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            setImageGrid(s);
+            setContentView(image);
+            Toast.makeText(getApplicationContext(), " non trovo sensori, questa mappa rappresenta la destinazione ", Toast.LENGTH_SHORT).show();
+        }
+
         getBaseContext().registerReceiver(broadcastReceiver,intentFilter);
+        startTimer();
     }
 
     protected void onResume() {
@@ -115,6 +142,7 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
 
     protected void onPause() {
         super.onPause();
+        stopTimer();
         if(broadcastReceiver!=null) getBaseContext().unregisterReceiver(broadcastReceiver);
     }
 
@@ -123,12 +151,20 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
 
     }
 
+    private void startTimer() {
+        handler.postDelayed(timerTask,timerPeriod);
+    }
+
+    private void stopTimer() {
+        handler.removeCallbacks(timerTask);
+    }
+
     public void onDestroy() {
         super.onDestroy();
     }
 
     private void extractDatafromMessage(String mex) {
-        String[] m = new String[2];
+        String[] m;
         m = mex.split(";");
         selectedFloor = m[0];
         selectedRoom = m[1];
@@ -136,37 +172,41 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
     }
 
     private void setImageGrid(int imageId){
+        BitmapFactory.Options myOptions = new BitmapFactory.Options();
+        myOptions.inDither = true;
+        myOptions.inScaled = false;
+        myOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;// important
+        myOptions.inPurgeable = true;
+
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), imageId, myOptions);
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        paint.setColor(Color.RED);
+
+
+        Bitmap workingBitmap = Bitmap.createBitmap(bitmap);
+        Bitmap mutableBitmap = workingBitmap.copy(Bitmap.Config.ARGB_8888, true);
+
+
+        Canvas canvas = new Canvas(mutableBitmap);
+
         if(position[0]!=0&&position[1]!=0) {
 
-            BitmapFactory.Options myOptions = new BitmapFactory.Options();
-            myOptions.inDither = true;
-            myOptions.inScaled = false;
-            myOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;// important
-            myOptions.inPurgeable = true;
-
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), imageId, myOptions);
-            Paint paint = new Paint();
-            paint.setAntiAlias(true);
-            paint.setColor(Color.RED);
-
-
-            Bitmap workingBitmap = Bitmap.createBitmap(bitmap);
-            Bitmap mutableBitmap = workingBitmap.copy(Bitmap.Config.ARGB_8888, true);
-
-
-            Canvas canvas = new Canvas(mutableBitmap);
             //int[] c = coordsMapping(position);
             canvas.drawCircle(position[0], position[1], 30, paint); //x y radius paint
             image.setImageBitmap(mutableBitmap);
 
                 //disegno obiettivo
             if(selectedFloor.equals(currentFloor)) {
-                int[] coords = new int[2];
-                coords= MainApplication.getFloors().get(selectedFloor).getRooms().get(selectedRoom).getCoords();
+                image.setImageBitmap(mutableBitmap);
+                int[] coords = MainApplication.getFloors().get(selectedFloor).getRooms().get(selectedRoom).getCoords();
                 canvas.drawCircle(coords[0],coords[1],30,new Paint(Color.BLUE));
             }
-        }else {
+        }
+        else {
             image.setImageResource(imageId);
+            int[] coords = MainApplication.getFloors().get(selectedFloor).getRooms().get(selectedRoom).getCoords();
+            canvas.drawCircle(coords[0],coords[1],30,new Paint(Color.BLUE));
         }
     }
 /*
@@ -206,6 +246,7 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
 
     @Override
     public void retrive() {
+        stopTimer();
         int[] pos = Data.getUserPosition().getPosition();
         currentFloor = Data.getUserPosition().getFloor();
 
@@ -218,6 +259,7 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
 
         setImageGrid(resID);
         setContentView(image);
+        startTimer();
     }
 
     @Override
@@ -243,5 +285,18 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
         }
     };
 
+    private Runnable timerTask = new Runnable() {
+        @Override
+        public void run() {
+            if (MainApplication.getScanner().getSelectedBeacon()==null &&
+                    MainApplication.getScanner().getCurrentBeacon()==null) {
+                Toast.makeText(getApplicationContext(), " Non è stato trovato nessun sensore a cui collegarsi," +
+                        " prova a spostarti o riaccendere l'applicazione", Toast.LENGTH_SHORT).show();
+            }
+            else if (MainApplication.getScanner().getSelectedBeacon()==null) {
+                Toast.makeText(getApplicationContext(), " Non è stato trovato nessun sensore a cui collegarsi", Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
 
 }

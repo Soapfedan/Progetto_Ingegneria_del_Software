@@ -534,7 +534,7 @@ public class InformationsHandler extends AppCompatActivity {
     }
 
     private void gatheringInformation(){
-
+        boolean isFinished = false;
         //campo vuoto
         boolean error = false;
         //check if some value is empty
@@ -571,14 +571,18 @@ public class InformationsHandler extends AppCompatActivity {
                 info.put("personal_number", infoTxt.get("personal_number")[0].getText().toString());
                 info.put("sex", sex_spinner.getSelectedItem().toString());
                 UserHandler.logup(info);
-                Intent intent = new Intent(getApplicationContext(), Home.class);
-                startActivity(intent);
+                isFinished = true;
+//                Intent intent = new Intent(getApplicationContext(), Home.class);
+//                startActivity(intent);
             Toast.makeText(getApplicationContext(),
                     "Registrazione avvenuta con successo!",Toast.LENGTH_SHORT).show();
-            } else {
-                alert.setMessage(email_msg);
-                alert.show();
-            }
+
+        } else {
+            alert.setMessage(email_msg);
+            alert.show();
+        }
+
+        if (isFinished) finish();
 
     }
 
@@ -620,9 +624,10 @@ public class InformationsHandler extends AppCompatActivity {
             info.put("sex", sex_spinner.getSelectedItem().toString());
 
             UserHandler.editProfile(info);
-            Intent intent = new Intent(getApplicationContext(),
-                    Home.class);
-            startActivity(intent);
+//            Intent intent = new Intent(getApplicationContext(),
+//                    Home.class);
+//            startActivity(intent);
+            finish();
         }
 
     }

@@ -18,9 +18,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 import application.comunication.http.GetRequest;
+import application.comunication.http.PostRequest;
+import application.comunication.message.MessageBuilder;
 
 
 /**
@@ -37,6 +40,15 @@ public class ServerComunication{
 
     public static JSONObject getRequest() throws ExecutionException, InterruptedException {
 
-        return new GetRequest().execute(hostMaster).get();
+        return new GetRequest().execute(hostMaster,"user/test").get();
+    }
+
+    public static String login(String mail, String pass) throws ExecutionException, InterruptedException {
+        ArrayList<String> id = new ArrayList<>();
+        ArrayList<String> password = new ArrayList<>();
+        id.add(mail);
+        password.add(pass);
+        String mex = MessageBuilder.builder(id,password,id.size(),0);
+        return new PostRequest().execute(hostMaster,"user/login",mex).get();
     }
 }

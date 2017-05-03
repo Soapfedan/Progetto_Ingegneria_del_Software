@@ -29,7 +29,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.app.Dialog;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.concurrent.ExecutionException;
+
 import application.MainApplication;
+import application.comunication.ServerComunication;
 import application.user.UserHandler;
 import application.utility.DatabaseUtility;
 
@@ -91,6 +97,15 @@ public class Home extends AppCompatActivity
         setOptionMenu();
         MainApplication.start(this);
 
+        try {
+            JSONObject s = ServerComunication.getRequest();
+//            System.out.println("Risultato "+s.getString("description")+" "+s.getString("summary"));
+            Log.i("JSON","json: " + s.toString());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 
     protected void onStart() {

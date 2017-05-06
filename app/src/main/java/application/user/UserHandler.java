@@ -14,8 +14,10 @@ import java.util.ArrayList;
 
 import java.net.NetworkInterface;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 import application.MainApplication;
+import application.comunication.ServerComunication;
 
 /**
  * Created by Federico-PC on 05/12/2016.
@@ -110,7 +112,7 @@ public class UserHandler {
     public static boolean login(String name, String pass, boolean chk){
         boolean b = false;
             //assegnato valore solo se si trova utente con quel nome, altrimenti null
-        UserProfile u= MainApplication.getDB().open().getUserProfile(name);
+        /*UserProfile u= MainApplication.getDB().open().getUserProfile(name);
         if (u==null) {
             b = false;
         }
@@ -125,7 +127,16 @@ public class UserHandler {
                 b = true;
             }
             else b = false;
+        }*/
+        String s = "";
+        try {
+          s =  ServerComunication.login(name,pass);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+        Log.i("Risp ",s);
         return b;
     }
 

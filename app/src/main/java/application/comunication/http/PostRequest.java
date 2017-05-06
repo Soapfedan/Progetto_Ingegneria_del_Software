@@ -63,11 +63,12 @@ public class PostRequest extends AsyncTask<String,Void,String> {
             connection.setRequestMethod("POST");
                 //scritto header http del messaggio (per inviare json)
             connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("Accept", "application/json");
+            //connection.setRequestProperty("Accept", "application/json");
 
 //            connection.connect();
 
             OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
+            Log.i("json",urls[2]);
             wr.write(urls[2]);
             wr.flush();
             wr.close();
@@ -107,14 +108,21 @@ public class PostRequest extends AsyncTask<String,Void,String> {
             else if (connection.getResponseCode()==201) {
                 result = "post effettuata con successo";
             }
-            else if (connection.getResponseCode()==500) {
+            else if (connection.getResponseCode()==419) {
                 result = "post non andata a buon fine";
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
         finally {
+            try {
+                Log.i("Response"," " + connection.getResponseCode());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             if (connection!=null) connection.disconnect();
+
+
         }
         return result;
     }

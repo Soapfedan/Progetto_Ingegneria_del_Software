@@ -35,7 +35,7 @@ public class ServerComunication{
 
     private static String hostname="172.23.159.153";
     private static String host2 = "192.168.1.102";
-    private static String hostMaster = hostname;
+    private static String hostMaster = host2;
     private static JSONObject jsonObject;
 
     public static JSONObject getRequest() throws ExecutionException, InterruptedException {
@@ -44,11 +44,13 @@ public class ServerComunication{
     }
 
     public static String login(String mail, String pass) throws ExecutionException, InterruptedException {
-        ArrayList<String> id = new ArrayList<>();
-        ArrayList<String> password = new ArrayList<>();
-        id.add(mail);
-        password.add(pass);
-        String mex = MessageBuilder.builder(id,password,id.size(),0);
+        ArrayList<String> name = new ArrayList<>();
+        ArrayList<String> value = new ArrayList<>();
+        name.add("email");
+        name.add("password");
+        value.add(mail);
+        value.add(pass);
+        String mex = MessageBuilder.builder(name,value,value.size(),0);
         return new PostRequest().execute(hostMaster,"user/login",mex).get();
     }
 }

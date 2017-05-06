@@ -36,6 +36,10 @@ public class GetRequest extends AsyncTask<String,Void,JSONObject> {
 
     private static final String SERVER_ID = "RestfulServerTID";
 
+    private URL url;
+
+    private HttpURLConnection connection;
+
     @Override
     protected JSONObject doInBackground(String... urls) {
 
@@ -43,14 +47,14 @@ public class GetRequest extends AsyncTask<String,Void,JSONObject> {
 //        String url = "http://" + urls[0] + ":" + PORT + "/" + SERVER_ID +"/" + urls[1];
         // set the connection timeout value to 30 seconds (30000 milliseconds)
 
-        URL url = null;
+        url = null;
         try {
             url = new URL("http://" + urls[0] + ":" + PORT + "/" + SERVER_ID + "/" + urls[1]);
             Log.i("URL","url: " + url.toString());
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-        HttpURLConnection connection = null;
+        connection = null;
         try {
             connection = (HttpURLConnection) url.openConnection();
         } catch (IOException e) {
@@ -74,6 +78,7 @@ public class GetRequest extends AsyncTask<String,Void,JSONObject> {
                     while ((s = read.readLine()) != null) {
                         sb.append(s);
                     }
+                    read.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -88,6 +93,9 @@ public class GetRequest extends AsyncTask<String,Void,JSONObject> {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        finally {
+            if (connection!=null) connection.disconnect();
         }
 
         return json;

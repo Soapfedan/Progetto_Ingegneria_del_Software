@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -54,15 +55,28 @@ public class PostRequest extends AsyncTask<String,Void,String> {
         }
 
         connection.setConnectTimeout(5000);
+        connection.setConnectTimeout(60000);
 
         try {
 
             connection.setDoOutput(true);   //abilita la scrittura
             connection.setRequestMethod("POST");
+                //scritto header http del messaggio (per inviare json)
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("Accept", "application/json");
+
+//            connection.connect();
 
             OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
             wr.write(urls[2]);
             wr.flush();
+            wr.close();
+
+
+//            DataOutputStream localDataOutputStream = new DataOutputStream(connection.getOutputStream());
+//            localDataOutputStream.writeBytes(urls[2]);
+//            localDataOutputStream.flush();
+//            localDataOutputStream.close();
 
         } catch (ProtocolException e) {
             e.printStackTrace();
@@ -72,17 +86,22 @@ public class PostRequest extends AsyncTask<String,Void,String> {
 
         try {
             if (connection.getResponseCode() == 200) {
-                BufferedReader read = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                InputStreamReader is = new InputStreamReader(connection.getInputStream());
+                BufferedReader read = new BufferedReader(is);
                 String s = null;
                 StringBuffer sb = new StringBuffer();
                 try {
                     while ((s = read.readLine()) != null) {
                         sb.append(s);
                     }
+                    read.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                result = "connection done";
+                finally {
+                    is.close();
+                }
+                result = sb.toString();
 
             }
             else if (connection.getResponseCode()==201) {
@@ -93,6 +112,9 @@ public class PostRequest extends AsyncTask<String,Void,String> {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        finally {
+            if (connection!=null) connection.disconnect();
         }
         return result;
     }

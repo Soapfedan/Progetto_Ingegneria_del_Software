@@ -24,11 +24,12 @@ public class DeleteRequest extends AsyncTask<String,Void,String> {
 
     private static final String SERVER_ID = "RestfulServerTID";
 
+    private static final String DELETE_USER = "deleteuser";
     @Override
     protected String doInBackground(String... urls) {
         URL url = null;
         try {
-            url = new URL("http://" + urls[0] + ":" + PORT + "/" + SERVER_ID + "/" + urls[1]);
+            url = new URL("http://" + urls[0] + ":" + PORT + "/" + SERVER_ID + "/" + DELETE_USER + "/" +urls[1]);
             Log.i("URL","url: " + url.toString());
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -46,18 +47,18 @@ public class DeleteRequest extends AsyncTask<String,Void,String> {
 
         try {
 
-            connection.setDoOutput(true);   //abilita la scrittura
+//            connection.setDoOutput(true);   //abilita la scrittura
             connection.setRequestMethod("DELETE");
             //scritto header http del messaggio (per inviare json)
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("Accept", "application/json");
-
-//            connection.connect();
-
-            OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
-            wr.write(urls[2]);
-            wr.flush();
-            wr.close();
+//            connection.setRequestProperty("Content-Type", "application/json");
+//            connection.setRequestProperty("Accept", "application/json");
+//
+////            connection.connect();
+//
+//            OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
+//            wr.write(urls[2]);
+//            wr.flush();
+//            wr.close();
 
 
 //            DataOutputStream localDataOutputStream = new DataOutputStream(connection.getOutputStream());
@@ -91,10 +92,10 @@ public class DeleteRequest extends AsyncTask<String,Void,String> {
 
             }
             else if (connection.getResponseCode()==201) {
-                result = "post effettuata con successo";
+                result = "delete effettuata con successo";
             }
             else if (connection.getResponseCode()==500) {
-                result = "post non andata a buon fine";
+                result = "delete non andata a buon fine";
             }
         } catch (IOException e) {
             e.printStackTrace();

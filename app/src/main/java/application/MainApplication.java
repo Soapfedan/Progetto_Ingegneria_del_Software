@@ -150,6 +150,10 @@ public class MainApplication {
         scanner = new BeaconScanner(a,cond);
     }
 
+    public static void closeApp() {
+        if(broadcastReceiver!=null) if(broadcastReceiver!=null) activity.getBaseContext().unregisterReceiver(broadcastReceiver);
+    }
+
     private static BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {

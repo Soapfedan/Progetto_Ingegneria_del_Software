@@ -97,15 +97,15 @@ public class Home extends AppCompatActivity
         setOptionMenu();
         MainApplication.start(this);
 
-        try {
-            JSONObject s = ServerComunication.getRequest();
-//            System.out.println("Risultato "+s.getString("description")+" "+s.getString("summary"));
-            Log.i("JSON","json: " + s.toString());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            JSONObject s = ServerComunication.getRequest();
+////            System.out.println("Risultato "+s.getString("description")+" "+s.getString("summary"));
+////            Log.i("JSON","json: " + s.toString());
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        }
     }
 
     protected void onStart() {
@@ -126,6 +126,7 @@ public class Home extends AppCompatActivity
 
     public void onDestroy() {
         super.onDestroy();
+        MainApplication.closeApp();
     }
 
     @Override   //toglie il focus dal menu quando si clicca su altro layer

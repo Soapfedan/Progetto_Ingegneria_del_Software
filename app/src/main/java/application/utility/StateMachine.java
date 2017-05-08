@@ -20,25 +20,10 @@ public abstract class StateMachine {
         running = true;
     }
 
-    public boolean getRunning() {
-        return running;
-    }
-
-    public void setRunning(boolean b) {
-        running = b;
-    }
-
     public int getState() {
         return currentState;
     }
 
-    public void setCurrentState(int s) {
-        currentState = s;
-    }
-
-    public void initializeStates() {
-
-    }
 
     //in base allo stato attuale ed alle condizioni in cui si trova la macchina, viene valutato lo stato successivo
     protected int nextState() {

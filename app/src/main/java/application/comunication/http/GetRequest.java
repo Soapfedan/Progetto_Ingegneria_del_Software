@@ -28,9 +28,9 @@ import javax.net.ssl.HttpsURLConnection;
  * Created by Federico-PC on 08/04/2017.
  */
 
-public class GetRequest extends AsyncTask<String,Void,JSONObject> {
+public class GetRequest extends AsyncTask<String,Void,String> {
 
-    private JSONObject json;
+    private String json;
 
     private static final String PORT = "8080";
 
@@ -41,7 +41,7 @@ public class GetRequest extends AsyncTask<String,Void,JSONObject> {
     private HttpURLConnection connection;
 
     @Override
-    protected JSONObject doInBackground(String... urls) {
+    protected String doInBackground(String... urls) {
 
 
 //        String url = "http://" + urls[0] + ":" + PORT + "/" + SERVER_ID +"/" + urls[1];
@@ -79,17 +79,16 @@ public class GetRequest extends AsyncTask<String,Void,JSONObject> {
                         sb.append(s);
                     }
                     read.close();
+                    json = sb.toString();
                 } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    json = new JSONObject(sb.toString());
-                } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 finally {
                     is.close();
                 }
+
+
+
             }
         } catch (IOException e) {
             e.printStackTrace();

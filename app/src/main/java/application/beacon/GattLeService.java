@@ -251,29 +251,51 @@ public class GattLeService {
             mBluetoothGatt.close();
         }
     }
-    //spegne il sensore, in base al servizio che viene passato
-    public static void turnOffSensor(BluetoothGatt gatt, BeaconService beacon) {
-        UUID serviceUUID = beacon.getService();
-        UUID configUUID = beacon.getServiceConfig();
-
-        BluetoothGattService service = gatt.getService(serviceUUID);
-        BluetoothGattCharacteristic config = service.getCharacteristic(configUUID);
-
-        if (beacon.getName().equals("movement")) {
-            byte[] b = new byte[2];
-            b[0] = 0x00;
-            b[1] = 0x00;
-            config.setValue(b);
-        }
-        else {
-            config.setValue(new byte[]{0});
-        }
-
-        gatt.writeCharacteristic(config);
-    }
-
-    //attiva il sensore in base al Servizio passato, va chiamato necessariamente dopo DiscoverService
-    public static void turnOnSensor(BluetoothGatt gatt, BeaconService beacon) {
+//    //spegne il sensore, in base al servizio che viene passato
+//    public static void turnOffSensor(BluetoothGatt gatt, BeaconService beacon) {
+//        UUID serviceUUID = beacon.getService();
+//        UUID configUUID = beacon.getServiceConfig();
+//
+//        BluetoothGattService service = gatt.getService(serviceUUID);
+//        BluetoothGattCharacteristic config = service.getCharacteristic(configUUID);
+//
+//        if (beacon.getName().equals("movement")) {
+//            byte[] b = new byte[2];
+//            b[0] = 0x00;
+//            b[1] = 0x00;
+//            config.setValue(b);
+//        }
+//        else {
+//            config.setValue(new byte[]{0});
+//        }
+//
+//        gatt.writeCharacteristic(config);
+//    }
+//
+//    //attiva il sensore in base al Servizio passato, va chiamato necessariamente dopo DiscoverService
+//    public static void turnOnSensor(BluetoothGatt gatt, BeaconService beacon) {
+//        currentBeacon = beacon;
+//        UUID serviceUUID = beacon.getService();
+//        UUID configUUID = beacon.getServiceConfig();
+//
+//        BluetoothGattService service = gatt.getService(serviceUUID);
+//        BluetoothGattCharacteristic config = service.getCharacteristic(configUUID);
+//
+//
+//        if (beacon.getName().equals("movement")) {
+//            byte[] b = new byte[2];
+//            b[0] = 0x38;
+//            b[1] = 0x02;
+//            config.setValue(b);
+//        }
+//        else {
+//            config.setValue(new byte[]{1});
+//        }
+//
+//        gatt.writeCharacteristic(config);
+//    }
+    //attiva o disattiva il sensore in base al Servizio passato
+    public static void changeStateSensor(BluetoothGatt gatt, BeaconService beacon, boolean condition) {
         currentBeacon = beacon;
         UUID serviceUUID = beacon.getService();
         UUID configUUID = beacon.getServiceConfig();
@@ -281,22 +303,73 @@ public class GattLeService {
         BluetoothGattService service = gatt.getService(serviceUUID);
         BluetoothGattCharacteristic config = service.getCharacteristic(configUUID);
 
-
-        if (beacon.getName().equals("movement")) {
-            byte[] b = new byte[2];
-            b[0] = 0x38;
-            b[1] = 0x02;
-            config.setValue(b);
+        if (condition) {
+            if (beacon.getName().equals("movement")) {
+                byte[] b = new byte[2];
+                b[0] = 0x38;
+                b[1] = 0x02;
+                config.setValue(b);
+            }
+            else {
+                config.setValue(new byte[]{1});
+            }
         }
         else {
-            config.setValue(new byte[]{1});
+            if (beacon.getName().equals("movement")) {
+                byte[] b = new byte[2];
+                b[0] = 0x00;
+                b[1] = 0x00;
+                config.setValue(b);
+            }
+            else {
+                config.setValue(new byte[]{0});
+            }
         }
 
         gatt.writeCharacteristic(config);
     }
 
-    public static void disableNotifications(BluetoothGatt gatt, BeaconService beacon) {
+//    public static void disableNotifications(BluetoothGatt gatt, BeaconService beacon) {
+//
+//        UUID serviceUUID = beacon.getService();
+//        UUID dataUUID = beacon.getServiceData();
+//        UUID clientCharacteristicConfigUUID = UUID.fromString(CLIENT_CHARACTERISTIC_CONFIG);
+//        currentBeacon = beacon;
+//        serviceAnalyzed = beacon.getName();
+//
+//        BluetoothGattService service = gatt.getService(serviceUUID);
+//        BluetoothGattCharacteristic dataCharacteristic = service.getCharacteristic(dataUUID);
+//        //attiva le notifiche
+//        gatt.setCharacteristicNotification(dataCharacteristic, true);
+//        //Enabled remote notifications
+//        BluetoothGattDescriptor config = dataCharacteristic.getDescriptor(clientCharacteristicConfigUUID);
+//        config.setValue(BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);
+//
+//        gatt.writeDescriptor(config);
+//    }
+//
+//    public static void enableNotifications(BluetoothGatt gatt, BeaconService beacon) {
+//
+//        UUID serviceUUID = beacon.getService();
+//        UUID dataUUID = beacon.getServiceData();
+//        UUID clientCharacteristicConfigUUID = UUID.fromString(CLIENT_CHARACTERISTIC_CONFIG);
+//        currentBeacon = beacon;
+//        serviceAnalyzed = beacon.getName();
+//        Log.i("service ana","service analyzed: " + serviceAnalyzed);
+//
+//        BluetoothGattService service = gatt.getService(serviceUUID);
+//        BluetoothGattCharacteristic dataCharacteristic = service.getCharacteristic(dataUUID);
+//        //attiva le notifiche
+//        gatt.setCharacteristicNotification(dataCharacteristic, true);
+//        //Enabled remote notifications
+//        BluetoothGattDescriptor config = dataCharacteristic.getDescriptor(clientCharacteristicConfigUUID);
+//        config.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+//
+//        gatt.writeDescriptor(config);
+//    }
 
+    //attiva o disattiva le notifiche all'applicazione provenienti dal beacon, in riferimento al servizio passato
+    public static void changeNotificationState(BluetoothGatt gatt, BeaconService beacon, boolean condition) {
         UUID serviceUUID = beacon.getService();
         UUID dataUUID = beacon.getServiceData();
         UUID clientCharacteristicConfigUUID = UUID.fromString(CLIENT_CHARACTERISTIC_CONFIG);
@@ -309,27 +382,13 @@ public class GattLeService {
         gatt.setCharacteristicNotification(dataCharacteristic, true);
         //Enabled remote notifications
         BluetoothGattDescriptor config = dataCharacteristic.getDescriptor(clientCharacteristicConfigUUID);
-        config.setValue(BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);
 
-        boolean b = gatt.writeDescriptor(config);
-    }
-
-    public static void enableNotifications(BluetoothGatt gatt, BeaconService beacon) {
-
-        UUID serviceUUID = beacon.getService();
-        UUID dataUUID = beacon.getServiceData();
-        UUID clientCharacteristicConfigUUID = UUID.fromString(CLIENT_CHARACTERISTIC_CONFIG);
-        currentBeacon = beacon;
-        serviceAnalyzed = beacon.getName();
-        Log.i("service ana","service analyzed: " + serviceAnalyzed);
-
-        BluetoothGattService service = gatt.getService(serviceUUID);
-        BluetoothGattCharacteristic dataCharacteristic = service.getCharacteristic(dataUUID);
-        //attiva le notifiche
-        gatt.setCharacteristicNotification(dataCharacteristic, true);
-        //Enabled remote notifications
-        BluetoothGattDescriptor config = dataCharacteristic.getDescriptor(clientCharacteristicConfigUUID);
-        config.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+        if(condition) {
+            config.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+        }
+        else {
+            config.setValue(BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);
+        }
 
         gatt.writeDescriptor(config);
     }

@@ -162,10 +162,10 @@ public class BeaconConnection extends StateMachine {
                 searchService();
                 break;
             case(2):
-                GattLeService.turnOnSensor(GattLeService.getmBluetoothGatt(), currentService);
+                GattLeService.changeStateSensor(GattLeService.getmBluetoothGatt(), currentService, true);
                 break;
             case(3):
-                GattLeService.enableNotifications(GattLeService.getmBluetoothGatt(), currentService);
+                GattLeService.changeNotificationState(GattLeService.getmBluetoothGatt(), currentService, true);
                 break;
             case(4):
                 GattLeService.initializeData();
@@ -173,10 +173,10 @@ public class BeaconConnection extends StateMachine {
                 break;
             case(5):
                 GattLeService.setSampleFlag(false);
-                GattLeService.disableNotifications(GattLeService.getmBluetoothGatt(), currentService);
+                GattLeService.changeNotificationState(GattLeService.getmBluetoothGatt(), currentService, false);
                 break;
             case(6):
-                GattLeService.turnOffSensor(GattLeService.getmBluetoothGatt(), currentService);
+                GattLeService.changeStateSensor(GattLeService.getmBluetoothGatt(), currentService, false);
                 break;
             case(7):
                 GattLeService.analyzeData();

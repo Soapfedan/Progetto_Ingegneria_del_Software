@@ -32,10 +32,12 @@ import android.app.Dialog;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 import application.MainApplication;
 import application.comunication.ServerComunication;
+import application.comunication.http.GetReceiver;
 import application.user.UserHandler;
 import application.utility.DatabaseUtility;
 
@@ -48,6 +50,7 @@ public class Home extends AppCompatActivity
     private AlertDialog alert;
     private SharedPreferences prefer;
     private TextView tv;
+    private GetReceiver httpServerThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +59,10 @@ public class Home extends AppCompatActivity
         //impostazione dei vari componenti grafici
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //thread che resta in ascolto per le notifiche
+        httpServerThread = new GetReceiver();
+        httpServerThread.start();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -126,6 +133,13 @@ public class Home extends AppCompatActivity
 
     public void onDestroy() {
         super.onDestroy();
+        if (httpServerThread.status()) {
+            try {
+                httpServerThread.closeConnection();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         try {
             ServerComunication.deletePosition(UserHandler.getIpAddress());
         } catch (ExecutionException e) {

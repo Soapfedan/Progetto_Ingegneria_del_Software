@@ -11,6 +11,7 @@ import android.util.Log;
 import com.core.progettoingegneriadelsoftware.FullScreenMap;
 import com.core.progettoingegneriadelsoftware.R;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ import application.maps.components.Node;
 import application.maps.components.Floor;
 import application.maps.components.Room;
 import application.user.UserHandler;
+import application.utility.CSVHandler;
 
 /**
  * Created by Federico-PC on 05/12/2016.
@@ -90,6 +92,24 @@ public class MainApplication {
         beaconList = MapLoader.read(inputStream);
         loadSensors(beaconList);
 
+//        HashMap<String,String>[] s = new HashMap[2];
+//        s[0] = new HashMap<>();
+//        s[0].put("id","B0:B4:48:BC:59:87");
+//        s[0].put("floor","145");
+//        s[0].put("x","320");
+//        s[0].put("y","280");
+//        s[1] = new HashMap<>();
+//        s[1].put("id","B0:B4:48:BC:CE:87");
+//        s[1].put("floor","145");
+//        s[1].put("x","320");
+//        s[1].put("y","280");
+//
+//
+//        try {
+//            CSVHandler.updateCSV(s,activity,"beaconlist");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
     private static void loadSensors(ArrayList<String[]> b) {

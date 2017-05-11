@@ -106,10 +106,10 @@ public class PostRequest extends AsyncTask<String,Void,String> {
 
             }
             else if (connection.getResponseCode()==201) {
-                result = "post effettuata con successo";
+                result = "true";
             }
-            else if (connection.getResponseCode()==419) {
-                result = "post non andata a buon fine";
+            else if (connection.getResponseCode()==500) {
+                result = "false";
             }
         } catch (IOException e) {
             e.printStackTrace();

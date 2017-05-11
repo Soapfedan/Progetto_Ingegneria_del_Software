@@ -18,6 +18,7 @@ import java.util.concurrent.ExecutionException;
 
 import application.MainApplication;
 import application.comunication.ServerComunication;
+import application.comunication.message.MessageBuilder;
 
 /**
  * Created by Federico-PC on 05/12/2016.
@@ -47,34 +48,51 @@ public class UserHandler {
     public static String getMail() {
         return email;
     }
-
+/*
     public static boolean checkUser(String e){
         boolean b;
         if (MainApplication.getDB().checkNewUser(e)==0) b = false;
         else b = true;
         return b;
     }
-
-    public static void logup(HashMap<String,String> info){
+*/
+    public static boolean logup(HashMap<String,String> info){
         //aggiunto il metodo open, in modo che venga creato il collegamento
         //e lavori su un db writable
+
+        try {
+           return ServerComunication.logup(info);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }/*
         MainApplication.getDB().open().createUser(info.get("email"),info.get("pass"),info.get("name"),
                 info.get("surname"),info.get("birth_date"),info.get("birth_city"),
                 info.get("province"),info.get("state"),info.get("phone"),
                 info.get("sex"), info.get("personal_number"));
         //finito ad usare il db, viene chiuso
-        MainApplication.getDB().close();
+        MainApplication.getDB().close();*/
+        return false;
     }
 
     public static void editProfile(HashMap<String,String> info){
         //aggiunto il metodo open, in modo che venga creato il collegamento
         //e lavori su un db writable
+        /*
         MainApplication.getDB().open().updateProfile(info.get("email"),info.get("pass"),info.get("name"),
                 info.get("surname"),info.get("birth_date"),info.get("birth_city"),
                 info.get("province"),info.get("state"),info.get("phone"),
                 info.get("sex"), info.get("personal_number"));
         //finito ad usare il db, viene chiuso
-        MainApplication.getDB().close();
+        MainApplication.getDB().close();*/
+        try {
+            ServerComunication.editprofile(info);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void logout() {
@@ -84,7 +102,16 @@ public class UserHandler {
     }
 
     public static UserProfile getInformation(String email){
-        return MainApplication.getDB().open().getUserProfile(email);
+
+        //return MainApplication.getDB().open().getUserProfile(email);
+        try {
+            return ServerComunication.getprofile(email);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private static void updateEditor() {
@@ -122,28 +149,44 @@ public class UserHandler {
                 email=name;
                 nome = u.nome;
                 cognome = u.cognome;
+
+                b = true;
+            }
+            else b = false;
+        }*/
+
+
+        try {
+          b =  ServerComunication.login(name,pass);
+            if (b) {
+                UserProfile u = null;
+                try {
+                    u = ServerComunication.getprofile(name);
+                    Log.i("nome e cognome"," "+u.getNome()+" "+u.getNome());
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                email=name;
+
+                nome = u.getNome();
+                cognome = u.getCognome();
                 if(chk)updateEditor();
                 else cleanEditor();
                 b = true;
             }
             else b = false;
-        }*/
-        String s = "";
-        try {
-          s =  ServerComunication.login(name,pass);
+
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        Log.i("Risp ",s);
+        Log.i("Risp "," "+b);
         return b;
     }
 
-
-    public void searchRoom(){
-        // TODO: 05/12/2016  procedura di ricerca delle aule offline
-    }
 
     public static String getNome() {
         return nome;

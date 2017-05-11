@@ -1,6 +1,8 @@
 package application.comunication.message;
 
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,16 +17,19 @@ import java.util.HashMap;
 
 public class MessageParser {
 
-    public static ArrayList<String> messageElements;
+    public static HashMap<String,String> messageElements;
 
-    public static ArrayList<String>[] array;
+    public static HashMap<String,String>[] array;
 
-    public static ArrayList<String> analyzeMessage(String s,ArrayList<String> keys) throws JSONException {
-        messageElements.clear();
+    public static HashMap<String,String> analyzeMessage(String s,ArrayList<String> keys) throws JSONException {
+        messageElements = new HashMap<>();
+        //messageElements.clear();
+        Log.i("Messaggio da scomporre",s);
         JSONObject obj = new JSONObject(s);
         for(int k=0;k<keys.size();k++){
             try {
-                messageElements.add(obj.getString(keys.get(k)));
+                messageElements.put(keys.get(k),obj.getString(keys.get(k)));
+                Log.i("key and value :",keys.get(k)+" "+obj.getString(keys.get(k)));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -33,9 +38,10 @@ public class MessageParser {
         return messageElements;
     }
 
-    public static ArrayList<String>[] analyzeMessageArray(String s,ArrayList<String> keys) throws JSONException {
+    public static HashMap<String,String>[] analyzeMessageArray(String s,ArrayList<String> keys) throws JSONException {
         JSONArray jsonArray = new JSONArray(s);
-        array = new ArrayList[jsonArray.length()];
+        messageElements = new HashMap<>();
+        array = new HashMap[jsonArray.length()];
 
         JSONObject jsonobject;
 
@@ -44,7 +50,7 @@ public class MessageParser {
             jsonobject = jsonArray.getJSONObject(i);
             for(int k=0;k<keys.size();k++){
                 try {
-                    messageElements.add(jsonobject.getString(keys.get(k)));
+                    messageElements.put(keys.get(k),jsonobject.getString(keys.get(k)));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

@@ -16,8 +16,10 @@ import org.json.JSONObject;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import application.MainApplication;
+import application.comunication.ServerComunication;
 import application.comunication.message.MessageBuilder;
 import application.user.UserHandler;
 import application.utility.StateMachine;
@@ -183,6 +185,13 @@ public class BeaconConnection extends StateMachine {
                 break;
             case(8):
                 String mex = packingMessage();
+                try {
+                    ServerComunication.sendValue(mex);
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 timer.removeCallbacks(runnable);
                 close();
                 GattLeService.closeConnection();

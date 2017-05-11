@@ -15,18 +15,12 @@
             android:id="@+id/nav2"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="Iscriviti" />
-        <item
-            android:id="@+id/viewuser"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Vedi gli utenti" />
+
         <item
             android:id="@+id/view_information"
             android:icon="@drawable/ic_menu_camera"
             android:title="Vedi Informazioni"
             android:visible="false" />
-        <item
-            android:id="@+id/delete"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Cancella" />
+
     </group>
 </menu>

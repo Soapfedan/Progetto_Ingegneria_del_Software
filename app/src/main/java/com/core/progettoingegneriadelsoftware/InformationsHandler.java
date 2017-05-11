@@ -67,7 +67,7 @@ public class InformationsHandler extends AppCompatActivity {
 
             for (int i = 0; i < 11; i++) {
                 errorValue[i] = false;
-                emptyValue[i] = false;
+                emptyValue[i] = true;
             }
             
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -95,6 +95,7 @@ public class InformationsHandler extends AppCompatActivity {
 
     protected void onResume() {
         super.onResume();
+
     }
 
     protected void onPause() {
@@ -496,8 +497,10 @@ public class InformationsHandler extends AppCompatActivity {
 
         send_b.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //devo aggiungere che prende i dati
-                //11 text 1 spinner e un'immagine
+
+                send_b.setFocusable(true);
+                send_b.setFocusableInTouchMode(true);///add this line
+                send_b.requestFocus();
                 if(UserHandler.isLogged()){
                     editProfile();
                 }else{
@@ -557,29 +560,33 @@ public class InformationsHandler extends AppCompatActivity {
 
         if(error==true){
             alert.show();
-        }else if(!UserHandler.checkUser(infoTxt.get("email")[0].getText().toString())) {
-                HashMap<String, String> info = new HashMap<>();
-                info.put("email", infoTxt.get("email")[0].getText().toString());
-                info.put("pass", infoTxt.get("pass1")[0].getText().toString());
-                info.put("name", infoTxt.get("name")[0].getText().toString());
-                info.put("surname", infoTxt.get("surname")[0].getText().toString());
-                info.put("birth_date", infoTxt.get("birth_date")[0].getText().toString());
-                info.put("birth_city", infoTxt.get("birth_city")[0].getText().toString());
-                info.put("province", infoTxt.get("province")[0].getText().toString());
-                info.put("state", infoTxt.get("state")[0].getText().toString());
-                info.put("phone", infoTxt.get("phone")[0].getText().toString());
-                info.put("personal_number", infoTxt.get("personal_number")[0].getText().toString());
-                info.put("sex", sex_spinner.getSelectedItem().toString());
-                UserHandler.logup(info);
+        }else {
+            HashMap<String, String> info = new HashMap<>();
+            info.put("email", infoTxt.get("email")[0].getText().toString());
+            info.put("pass", infoTxt.get("pass1")[0].getText().toString());
+            info.put("name", infoTxt.get("name")[0].getText().toString());
+            info.put("surname", infoTxt.get("surname")[0].getText().toString());
+            info.put("birth_date", infoTxt.get("birth_date")[0].getText().toString());
+            info.put("birth_city", infoTxt.get("birth_city")[0].getText().toString());
+            info.put("province", infoTxt.get("province")[0].getText().toString());
+            info.put("state", infoTxt.get("state")[0].getText().toString());
+            info.put("phone", infoTxt.get("phone")[0].getText().toString());
+            info.put("personal_number", infoTxt.get("personal_number")[0].getText().toString());
+            info.put("sex", sex_spinner.getSelectedItem().toString());
+
+            if(UserHandler.logup(info)) {
+
+
                 isFinished = true;
 //                Intent intent = new Intent(getApplicationContext(), Home.class);
 //                startActivity(intent);
-            Toast.makeText(getApplicationContext(),
-                    "Registrazione avvenuta con successo!",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),
+                        "Registrazione avvenuta con successo!",Toast.LENGTH_SHORT).show();
 
-        } else {
-            alert.setMessage(email_msg);
-            alert.show();
+            } else {
+                alert.setMessage(email_msg);
+                alert.show();
+            }
         }
 
         if (isFinished) finish();
@@ -605,6 +612,7 @@ public class InformationsHandler extends AppCompatActivity {
 
         if(!infoTxt.get("pass1")[0].getText().toString().equals(infoTxt.get("pass2")[0].getText().toString())){
             error=true;
+            alert.setMessage(pass_msg);
         }
 
         if(error==true) {
@@ -627,6 +635,9 @@ public class InformationsHandler extends AppCompatActivity {
 //            Intent intent = new Intent(getApplicationContext(),
 //                    Home.class);
 //            startActivity(intent);
+
+            Toast.makeText(getApplicationContext(),
+                    "Modifica avvenuta con successo",Toast.LENGTH_SHORT).show();
             finish();
         }
 

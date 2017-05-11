@@ -13,8 +13,10 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 import application.MainApplication;
+import application.comunication.ServerComunication;
 import application.comunication.message.MessageBuilder;
 import application.maps.components.Node;
 import application.sharedstorage.Data;
@@ -257,9 +259,18 @@ public class BeaconScanner extends StateMachine implements DataListener {
         ArrayList<String> values = new ArrayList<>();
         keys.add("beacon_ID");
         keys.add("user_ID");
+        keys.add("nome");
+        keys.add("cognome");
 
         values.add(currentBeacon.getAddress());
         values.add(UserHandler.getIpAddress());
+        if(UserHandler.isLogged()){
+            values.add(UserHandler.getNome());
+            values.add(UserHandler.getCognome());
+        }else {
+            values.add("Guest");
+            values.add("Guest");
+        }
 
         mex = MessageBuilder.builder(keys,values,keys.size(),0);
         Log.i("mex",mex);
@@ -327,7 +338,7 @@ public class BeaconScanner extends StateMachine implements DataListener {
             Log.i(TAG,"numero: " + mLeDeviceListAdapter.getCount());
 
             //trova il beacon più vicino
-            //TODO DEVI CONTROLLARE SE IL BEACON E' UGUALE A QUELLO VECCHIO
+
 //            currentBeacon = mLeDeviceListAdapter.getCurrentBeacon();
 
             selectedBeacon = mLeDeviceListAdapter.selectedDevice();
@@ -394,6 +405,13 @@ public class BeaconScanner extends StateMachine implements DataListener {
             Data.getUserPosition().setPosition(n.getCoords());
             Data.getUserPosition().setFloor(n.getFloor());
             Data.getUserPosition().updateInformation();
+        try {
+            ServerComunication.sendPosition(mex);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 //        }
     }
 

@@ -126,6 +126,13 @@ public class Home extends AppCompatActivity
 
     public void onDestroy() {
         super.onDestroy();
+        try {
+            ServerComunication.deletePosition(UserHandler.getIpAddress());
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         MainApplication.closeApp();
     }
 
@@ -257,7 +264,7 @@ public class Home extends AppCompatActivity
                 startActivity(intent);
             }
         }
-        if(id == R.id.viewuser){
+        /*if(id == R.id.viewuser){
             DatabaseUtility.viewColumn();
         }else if (id == R.id.delete){
             final Dialog loginDialog = new Dialog(this);
@@ -286,7 +293,7 @@ public class Home extends AppCompatActivity
 
             //rende visibile il dialog
             loginDialog.show();
-        }
+        }*/
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

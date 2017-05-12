@@ -87,8 +87,6 @@ public class GetRequest extends AsyncTask<String,Void,String> {
                     is.close();
                 }
 
-
-
             }
         } catch (IOException e) {
             e.printStackTrace();

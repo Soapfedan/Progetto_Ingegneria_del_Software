@@ -89,7 +89,7 @@ public class MainApplication {
 
         InputStream inputStream = activity.getResources().openRawResource(R.raw.beaconlist);
         ArrayList<String[]> beaconList = new ArrayList<>();
-        beaconList = MapLoader.read(inputStream);
+        beaconList = CSVHandler.readCSV("beaconlist",activity.getBaseContext());
         loadSensors(beaconList);
 
 //        HashMap<String,String>[] s = new HashMap[2];

@@ -38,16 +38,19 @@ public class MessageParser {
         return messageElements;
     }
 
-    public static HashMap<String,String>[] analyzeMessageArray(String s,ArrayList<String> keys) throws JSONException {
-        JSONArray jsonArray = new JSONArray(s);
-        messageElements = new HashMap<>();
+    public static HashMap<String,String>[] analyzeMessageArray(String s,ArrayList<String> keys, String name) throws JSONException {
+        JSONObject json = new JSONObject(s);
+        JSONArray jsonArray = json.getJSONArray(name);
+//        messageElements = new HashMap<>();
         array = new HashMap[jsonArray.length()];
 
         JSONObject jsonobject;
 
-        messageElements.clear();
+//        messageElements.clear();
         for (int i = 0; i < jsonArray.length(); i++) {
             jsonobject = jsonArray.getJSONObject(i);
+            messageElements = new HashMap<>();
+            messageElements.clear();
             for(int k=0;k<keys.size();k++){
                 try {
                     messageElements.put(keys.get(k),jsonobject.getString(keys.get(k)));

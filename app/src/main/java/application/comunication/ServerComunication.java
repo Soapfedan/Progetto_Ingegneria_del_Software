@@ -157,6 +157,16 @@ public class ServerComunication{
         keys.add("floor");
         keys.add("x");
         keys.add("y");
-        return MessageParser.analyzeMessageArray(new GetRequest().execute(hostMaster,"beaconnode/getallnodes/"+building).get(),keys);
+        return MessageParser.analyzeMessageArray(new GetRequest().execute(hostMaster,"beaconnode/getallnodes/"+building).get(),keys,"beacons");
+    }
+
+    public static HashMap<String,String>[] getBuildingRoom(String building) throws ExecutionException, InterruptedException, JSONException {
+        ArrayList<String> keys = new ArrayList<>();
+        keys.add("x");
+        keys.add("y");
+        keys.add("floor");
+        keys.add("width");
+        keys.add("room");
+        return MessageParser.analyzeMessageArray(new GetRequest().execute(hostMaster,"room/getallrooms/"+building).get(),keys,"rooms");
     }
 }

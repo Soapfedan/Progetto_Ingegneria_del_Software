@@ -25,6 +25,7 @@ import application.comunication.ServerComunication;
 import application.maps.*;
 import application.maps.components.Floor;
 import application.maps.components.Room;
+import application.utility.CSVHandler;
 
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.AdapterView;
@@ -80,7 +81,7 @@ public class ActivityMaps extends AppCompatActivity {
 */
 
         InputStream inputStreamRooms = getResources().openRawResource(R.raw.roomlist);
-        roomsList = MapLoader.read(inputStreamRooms);
+        roomsList = CSVHandler.readCSV("roomlist",this);
         loadRooms(roomsList);
         floorsname = createNamesArray();
         createIcon();

@@ -1,6 +1,7 @@
 package application.utility;
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -32,25 +33,37 @@ public class CSVHandler {
     private static final String fileBeacon = "beaconlist";
     private static final String fileRoom = "roomlist";
 
-    private static void createCSV(Activity activity) {
+
+    public static void createCSV(Context context) {
         files = new HashMap<>();
-        files.put(fileBeacon,new File(activity.getApplicationContext().getFilesDir(), fileBeacon+".csv"));
-        files.put(fileRoom,new File(activity.getApplicationContext().getFilesDir(), fileRoom+".csv"));
+        files.put(fileBeacon,new File(context.getFilesDir(), fileBeacon+".csv"));
+        files.put(fileRoom,new File(context.getFilesDir(), fileRoom+".csv"));
     }
 
-    public static void updateCSV(HashMap<String,String>[] lists, Activity activity, String fileName) throws IOException {
-        if (files==null) createCSV(activity);
+    public static HashMap<String,File> getFiles() {
+        return files;
+    }
+
+    public static String getFileBeacon() {
+        return fileBeacon;
+    }
+
+    public static String getFileRoom() {
+        return fileRoom;
+    }
+
+    public static void updateCSV(HashMap<String,String>[] lists, Context context, String fileName) throws IOException {
 
         FileOutputStream outputStreamWriter = null;
         try {
-            outputStreamWriter = activity.openFileOutput(fileName+".csv", activity.MODE_PRIVATE);
+            outputStreamWriter = context.openFileOutput(fileName+".csv", context.MODE_PRIVATE);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
         if(fileName.equals(fileBeacon)) {
             for (int i=0; i<lists.length; i++) {
-                outputStreamWriter.write(((lists[i].get("id")+";").getBytes()));
+                outputStreamWriter.write(((lists[i].get("beacon_ID")+";").getBytes()));
                 outputStreamWriter.write(((lists[i].get("floor")+";").getBytes()));
                 outputStreamWriter.write(((lists[i].get("x")+";").getBytes()));
                 outputStreamWriter.write(((lists[i].get("y")+";").getBytes()));
@@ -63,7 +76,7 @@ public class CSVHandler {
                 outputStreamWriter.write(((lists[i].get("y")+";").getBytes()));
                 outputStreamWriter.write(((lists[i].get("floor")+";").getBytes()));
                 outputStreamWriter.write(((lists[i].get("width")+";").getBytes()));
-                outputStreamWriter.write(((lists[i].get("id")+";").getBytes()));
+                outputStreamWriter.write(((lists[i].get("room")+";").getBytes()));
                 outputStreamWriter.write('\n');
             }
         }
@@ -72,7 +85,24 @@ public class CSVHandler {
 
     }
 
-    private static ArrayList<String[]> readCSV(InputStream inputStream) {
+    public static void printCSV(ArrayList<String[]> s) {
+        for (String[] str: s) {
+            for (int i=0; i<str.length; i++) {
+                Log.i("vet",str[i]);
+            }
+        }
+    }
+
+
+    public static ArrayList<String[]> readCSV(String fileName, Context context) {
+
+        FileInputStream inputStream = null;
+        try {
+            inputStream = context.openFileInput(fileName.concat(".csv"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
         ArrayList<String[]> resultList = new ArrayList<>();
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         try {

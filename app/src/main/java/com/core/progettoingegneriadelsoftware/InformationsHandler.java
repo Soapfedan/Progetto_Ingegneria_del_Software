@@ -48,6 +48,7 @@ public class InformationsHandler extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setTitle("Go Safe!");
         // editable = 1 for edit profile , editable = 0 for view information
         int editable = getIntent().getIntExtra("editable",-1);
         if(editable == 0)

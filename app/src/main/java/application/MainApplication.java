@@ -15,8 +15,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
 
 import application.beacon.BeaconScanner;
+import application.comunication.ServerComunication;
+import application.comunication.http.GetReceiver;
 import application.database.UserAdapter;
 import application.maps.MapLoader;
 import application.maps.components.Node;
@@ -34,10 +37,6 @@ public class MainApplication {
     /**
      * array dinamico che contiene tutti i piani di una mappa scaricata
      */
-    // TODO: 06/12/2016  in teoria io potrei switchare tra più mappe es. medicinia o ingengeria ...
-    // devo prevedere come gestire le diverse mappe scaricate, tenendone in memoria solo una???
-    // lasciando le altre sul db??
-
 
     private static HashMap<String,Floor> floors;
     private static UserAdapter db;
@@ -130,13 +129,7 @@ public class MainApplication {
 
     }
 
-    public void loadMap(String tipe){
-        // TODO: 06/12/2016  devo caricare la mappa desiderata dal db
-    }
 
-    public void activateBluetooth(){
-
-    }
 
     public static BluetoothAdapter getmBluetoothAdapter() {
         return mBluetoothAdapter;
@@ -170,8 +163,23 @@ public class MainApplication {
         scanner = new BeaconScanner(a,cond);
     }
 
-    public static void closeApp() {
+    public static void closeApp(GetReceiver httpServerThread) {
         if(broadcastReceiver!=null) if(broadcastReceiver!=null) activity.getBaseContext().unregisterReceiver(broadcastReceiver);
+
+        if (httpServerThread.status()) {
+            try {
+                httpServerThread.closeConnection();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            ServerComunication.deletePosition(UserHandler.getIpAddress());
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private static BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -233,6 +241,10 @@ public class MainApplication {
     public static void activateBluetooth (Activity activity) {
         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
         activity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+    }
+
+    public static boolean isEmergency() {
+        return emergency;
     }
 }
 

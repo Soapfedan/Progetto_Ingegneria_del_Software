@@ -32,6 +32,6 @@ public class UserPositions extends SharedData {
     public void setPosition(int[] pos) {
         this.x = pos[0];
         this.y = pos[1];
-//        updateInformation();
+        updateInformation();
     }
 }

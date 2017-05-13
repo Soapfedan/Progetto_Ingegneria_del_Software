@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -33,16 +35,20 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 import application.MainApplication;
 import application.comunication.ServerComunication;
 import application.comunication.http.GetReceiver;
+import application.maps.components.Notify;
+import application.sharedstorage.Data;
+import application.sharedstorage.DataListener;
 import application.user.UserHandler;
 import application.utility.DatabaseUtility;
 
 public class Home extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,DataListener {
 
     //menu laterale
     private NavigationView navigationView;
@@ -51,6 +57,7 @@ public class Home extends AppCompatActivity
     private SharedPreferences prefer;
     private TextView tv;
     private GetReceiver httpServerThread;
+    private ArrayList<Notify> notifies;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,10 +66,16 @@ public class Home extends AppCompatActivity
         //impostazione dei vari componenti grafici
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Go Safe!");
+
+
 
         //thread che resta in ascolto per le notifiche
         httpServerThread = new GetReceiver();
         httpServerThread.start();
+
+        Data.getNotification().addDataListener(this);
+        notifies = new ArrayList<>();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -133,21 +146,8 @@ public class Home extends AppCompatActivity
 
     public void onDestroy() {
         super.onDestroy();
-        if (httpServerThread.status()) {
-            try {
-                httpServerThread.closeConnection();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        try {
-            ServerComunication.deletePosition(UserHandler.getIpAddress());
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        MainApplication.closeApp();
+
+        MainApplication.closeApp(httpServerThread);
     }
 
     @Override   //toglie il focus dal menu quando si clicca su altro layer
@@ -314,5 +314,34 @@ public class Home extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
             //evita che rimanga selezionato l'item del menu
         return false;
+    }
+
+    @Override
+    public void update() {
+
+    }
+
+    @Override
+    public void retrive() {
+        notifies = Data.getNotification().getNotifies();
+        for (int i = 0;i<notifies.size();i++){
+            Log.i("Notification:","n°: "+notifies.get(i).getId()+
+                    " cod cat: "+notifies.get(i).getCod_cat()+
+                    " floor: "+notifies.get(i).getFloor()+
+                    " room: "+notifies.get(i).getRoom());
+        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(MainApplication.getEmergency()){
+                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ff0000"))); //red
+                }else{
+                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#3F51B5"))); //blue
+                }
+            }
+        });
+
+
+
     }
 }

@@ -41,7 +41,7 @@ public class ServerComunication{
 
     private static String hostname="172.23.159.153";
     private static String host2 = "192.168.1.102";
-    private static String hostMaster = hostname;
+    private static String hostMaster = host2;
     private static JSONObject jsonObject;
     private static final ArrayList<String> userProfileKeys = new ArrayList<String>(){{
         add("email");

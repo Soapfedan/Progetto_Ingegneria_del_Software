@@ -20,10 +20,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import application.MainApplication;
+import application.maps.components.Notify;
 import application.maps.grid.TouchImageView;
 import application.sharedstorage.Data;
 import application.sharedstorage.DataListener;
@@ -68,6 +70,7 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
     private String currentFloor;
 
     private Handler handler;
+    private ArrayList<Notify> notifies;
 
     private static final String EXIT_MAPS = "EXIT_MAPS";
 
@@ -75,14 +78,16 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.activity_maps_scrool);
-
+        getSupportActionBar().setTitle("Go Safe!");
         handler = new Handler();
+        notifies = new ArrayList<>();
 
         Data.getUserPosition().addDataListener(this);
         s = 0;
         position = new int[2];
         //position = MainApplication.getFloors().get("145").getRooms().get("145DICEA").getCoords();
         Data.getUserPosition().addDataListener(this);
+        Data.getNotification().addDataListener(this);
         Bundle extras = getIntent().getExtras();
 
         if (extras != null) {
@@ -116,7 +121,7 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
         if(!MainApplication.controlBluetooth()) MainApplication.activateBluetooth(this);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(EXIT_MAPS);
-
+        notifies = Data.getNotification().getNotifies();
         String floor = Data.getUserPosition().getFloor();
         if (floor!=null) {
             String curPos = "m".concat(floor).concat("_color");
@@ -194,6 +199,7 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
 
             //int[] c = coordsMapping(position);
             canvas.drawCircle(position[0], position[1], 30, paint); //x y radius paint
+
             image.setImageBitmap(mutableBitmap);
 
                 //disegno obiettivo
@@ -202,12 +208,78 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
                 int[] coords = MainApplication.getFloors().get(selectedFloor).getRooms().get(selectedRoom).getCoords();
                 canvas.drawCircle(coords[0],coords[1],30,new Paint(Color.BLUE));
             }
+            if(!notifies.isEmpty()){
+                Paint pt = new Paint();
+                paint.setAntiAlias(true);
+                for(int k=0;k<notifies.size();k++){
+                    if(currentFloor.equals(notifies.get(k).getFloor())) {
+                        int[] c = MainApplication.getFloors().get(currentFloor).getRooms().get(notifies.get(k).getRoom()).getCoords();
+                        //TODO SE CI SONO PIU' NOTIFICHE NELLO STESSO PUNTO?
+                        switch (notifies.get(k).getCod_cat()){
+                            case 1:
+                                pt.setColor(Color.GREEN);
+                                canvas.drawCircle(c[0],c[1],30,pt);
+                                break;
+                            case 2:
+                                pt.setColor(Color.YELLOW);
+                                canvas.drawCircle(c[0],c[1],30,pt);
+                                break;
+                            case 3:
+                                pt.setColor(Color.MAGENTA);
+                                canvas.drawCircle(c[0],c[1],30,pt);
+                                break;
+                            default:
+                                pt.setColor(Color.CYAN);
+                                canvas.drawCircle(c[0],c[1],30,pt);
+                                break;
+                        }
+                    }
+                }
+            }
         }
         else {
-            image.setImageResource(imageId);
+            image.setImageBitmap(mutableBitmap);
             int[] coords = MainApplication.getFloors().get(selectedFloor).getRooms().get(selectedRoom).getCoords();
             canvas.drawCircle(coords[0],coords[1],30,new Paint(Color.BLUE));
+            if(!notifies.isEmpty()){
+                Paint pt = new Paint();
+                paint.setAntiAlias(true);
+                for(int k=0;k<notifies.size();k++){
+                    if(currentFloor.equals(notifies.get(k).getFloor())) {
+                        int[] c = MainApplication.getFloors().get(currentFloor).getRooms().get(notifies.get(k).getRoom()).getCoords();
+                        //TODO SE CI SONO PIU' NOTIFICHE NELLO STESSO PUNTO?
+                        switch (notifies.get(k).getCod_cat()){
+                            case 1:
+                                pt.setColor(Color.GREEN);
+                                canvas.drawCircle(c[0],c[1],30,pt);
+                                break;
+                            case 2:
+                                pt.setColor(Color.YELLOW);
+                                canvas.drawCircle(c[0],c[1],30,pt);
+                                break;
+                            case 3:
+                                pt.setColor(Color.MAGENTA);
+                                canvas.drawCircle(c[0],c[1],30,pt);
+                                break;
+                            default:
+                                pt.setColor(Color.CYAN);
+                                canvas.drawCircle(c[0],c[1],30,pt);
+                                break;
+                        }
+                    }
+                }
+            }
         }
+        //devo disegnare le emergenze
+
+        /*
+				 * codice categoria
+				 * 1 incendio
+				 * 2 gas
+				 * 3 terremoto/crollo
+				 * 4 altro
+				 */
+
     }
 /*
     private int[] coordsMapping(int[] co){
@@ -249,7 +321,7 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
         stopTimer();
         int[] pos = Data.getUserPosition().getPosition();
         currentFloor = Data.getUserPosition().getFloor();
-
+        notifies = Data.getNotification().getNotifies();
         position[0] = pos[0];
         position[1] = pos[1];
 

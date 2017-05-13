@@ -63,7 +63,7 @@ public class ActivityMaps extends AppCompatActivity {
         floorsname = new ArrayList<>();
         ArrayList<String[]> roomsList;
         //selectedFloor = new Floor();
-
+        getSupportActionBar().setTitle("Go Safe!");
 
         selectedRoom = new Room(null,null,null,0);
 /*

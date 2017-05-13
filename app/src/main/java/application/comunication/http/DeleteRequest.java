@@ -24,12 +24,12 @@ public class DeleteRequest extends AsyncTask<String,Void,String> {
 
     private static final String SERVER_ID = "RestfulServerTID";
 
-    private static final String DELETE_USER = "deleteuser";
+
     @Override
     protected String doInBackground(String... urls) {
         URL url = null;
         try {
-            url = new URL("http://" + urls[0] + ":" + PORT + "/" + SERVER_ID + "/" + DELETE_USER + "/" +urls[1]);
+            url = new URL("http://" + urls[0] + ":" + PORT + "/" + SERVER_ID + "/" + urls[1]);
             Log.i("URL","url: " + url.toString());
         } catch (MalformedURLException e) {
             e.printStackTrace();

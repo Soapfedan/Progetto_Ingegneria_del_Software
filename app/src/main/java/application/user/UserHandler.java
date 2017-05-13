@@ -17,6 +17,7 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 import application.MainApplication;
+import application.beacon.BeaconScanner;
 import application.comunication.ServerComunication;
 import application.comunication.message.MessageBuilder;
 
@@ -39,6 +40,42 @@ public class UserHandler {
         macAddress = obtainMacAddr();
         editor = pref.edit();
         ipAddress = obtainLocalIpAddress();
+        initializePosition();
+
+    }
+
+    public static void initializePosition() {
+        String mex;
+        ArrayList<String> keys = new ArrayList<>();
+        ArrayList<String> values = new ArrayList<>();
+        keys.add("beacon_ID");
+        keys.add("user_ID");
+        keys.add("nome");
+        keys.add("cognome");
+        if(MainApplication.getScanner().getCurrentBeacon()==null) {
+            values.add("unknown");
+        }else{
+            values.add(MainApplication.getScanner().getCurrentBeacon().getAddress());
+        }
+        values.add(getIpAddress());
+        if(UserHandler.isLogged()){
+            values.add(getNome());
+            values.add(getCognome());
+        }else {
+            values.add("Guest");
+            values.add("Guest");
+        }
+
+        mex = MessageBuilder.builder(keys,values,keys.size(),0);
+        Log.i("mex",mex);
+
+        try {
+            ServerComunication.sendPosition(mex);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public static String getIpAddress() {
@@ -98,6 +135,8 @@ public class UserHandler {
     public static void logout() {
         email = null;
         cleanEditor();
+        initializePosition();
+
         //rende nulli anche altri elementi
     }
 
@@ -172,9 +211,11 @@ public class UserHandler {
 
                 nome = u.getNome();
                 cognome = u.getCognome();
+
                 if(chk)updateEditor();
                 else cleanEditor();
                 b = true;
+                initializePosition();
             }
             else b = false;
 

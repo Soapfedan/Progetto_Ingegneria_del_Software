@@ -12,6 +12,7 @@ public class SharedData {
 
     public void addDataListener(DataListener listener) {
         listeners.add(listener);
+
     }
 
     public void updateInformation() {

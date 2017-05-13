@@ -2,20 +2,37 @@ package application.comunication.http;
 
 import android.util.Log;
 
+import org.json.JSONException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import application.MainApplication;
+import application.comunication.message.MessageParser;
+import application.maps.components.Notify;
+import application.sharedstorage.Data;
+import application.sharedstorage.DataListener;
 
 /**
  * Created by picci on 09/05/2017.
  */
 
-public class HttpReceiverThread extends Thread {
+public class HttpReceiverThread extends Thread implements DataListener{
 
-    Socket socket;
+    private Socket socket;
+    private String notifies;
+    private final ArrayList<String> notifyKeys = new ArrayList<String>(){{
+        add("id");
+        add("cod_cat");
+        add("floor");
+        add("room");
+    }};
 
     HttpReceiverThread(Socket socket){
         this.socket = socket;
@@ -26,7 +43,7 @@ public class HttpReceiverThread extends Thread {
         BufferedReader is;
         PrintWriter os;
         String line;
-
+        Data.getNotification().addDataListener(this);
 
 
         try {
@@ -63,6 +80,8 @@ public class HttpReceiverThread extends Thread {
             }
             //Charset.forName("utf-8").encode(body.toString());
             Log.i("POST: ", body.toString());
+            notifies = body.toString();
+            update();
 
             os = new PrintWriter(socket.getOutputStream(), true);
 
@@ -98,6 +117,39 @@ public class HttpReceiverThread extends Thread {
         }
 
         return;
+    }
+
+    @Override
+    public void update() {
+        HashMap<String,String>[] not;
+        try {
+          not = MessageParser.analyzeMessageArray(notifies,notifyKeys,"notifications");
+            ArrayList<Notify> n = new ArrayList<>();
+            for(int i = 0;i<not.length;i++){
+                n.add(new Notify(Integer.parseInt(not[i].get("id")),
+                                 Integer.parseInt(not[i].get("cod_cat")),
+                                 not[i].get("floor"),
+                                 not[i].get("room")));
+            }
+            //controllo se ci sono notifiche se è vero vado in modalita emergenza, in caso contrario uscirò da tale modalità
+            Log.e("Lunghezza not ",not.length+"");
+            if(not.length==0){
+                MainApplication.setEmergency(false);
+                Data.getNotification().getNotifies().clear();
+            }else{
+                MainApplication.setEmergency(true);
+                Data.getNotification().setNotifies(n);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void retrive() {
+
     }
 }
 

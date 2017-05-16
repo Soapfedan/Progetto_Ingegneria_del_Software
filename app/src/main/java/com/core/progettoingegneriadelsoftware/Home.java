@@ -142,12 +142,12 @@ public class Home extends AppCompatActivity
 
     protected void onStop() {
         super.onStop();
+        MainApplication.closeApp(httpServerThread);
     }
 
     public void onDestroy() {
         super.onDestroy();
 
-        MainApplication.closeApp(httpServerThread);
     }
 
     @Override   //toglie il focus dal menu quando si clicca su altro layer
@@ -323,25 +323,23 @@ public class Home extends AppCompatActivity
 
     @Override
     public void retrive() {
-        notifies = Data.getNotification().getNotifies();
-        for (int i = 0;i<notifies.size();i++){
-            Log.i("Notification:","n°: "+notifies.get(i).getId()+
-                    " cod cat: "+notifies.get(i).getCod_cat()+
-                    " floor: "+notifies.get(i).getFloor()+
-                    " room: "+notifies.get(i).getRoom());
-        }
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if(MainApplication.getEmergency()){
-                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ff0000"))); //red
-                }else{
-                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#3F51B5"))); //blue
-                }
-            }
-        });
-
-
+//        notifies = Data.getNotification().getNotifies();
+//        for (int i = 0;i<notifies.size();i++){
+//            Log.i("Notification:","n°: "+notifies.get(i).getId()+
+//                    " cod cat: "+notifies.get(i).getCod_cat()+
+//                    " floor: "+notifies.get(i).getFloor()+
+//                    " room: "+notifies.get(i).getRoom());
+//        }
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                if(MainApplication.getEmergency()){
+//                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ff0000"))); //red
+//                }else{
+//                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#3F51B5"))); //blue
+//                }
+//            }
+//        });
 
     }
 }

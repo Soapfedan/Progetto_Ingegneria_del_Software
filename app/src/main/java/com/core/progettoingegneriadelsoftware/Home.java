@@ -142,12 +142,12 @@ public class Home extends AppCompatActivity
 
     protected void onStop() {
         super.onStop();
-        MainApplication.closeApp(httpServerThread);
+
     }
 
     public void onDestroy() {
         super.onDestroy();
-
+        MainApplication.closeApp(httpServerThread);
     }
 
     @Override   //toglie il focus dal menu quando si clicca su altro layer

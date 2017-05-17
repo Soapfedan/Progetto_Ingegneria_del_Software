@@ -194,6 +194,16 @@ public class WelcomeActivity extends AppCompatActivity {
 
     }
 
+    protected void onResume() {
+        super.onResume();
+        MainApplication.setVisible(true);
+    }
+
+    protected void onPause() {
+        super.onPause();
+        MainApplication.setVisible(false);
+    }
+
     private boolean isCSVEmpty(File f) {
         boolean b = false;
         if (f.length()>0) b=true;

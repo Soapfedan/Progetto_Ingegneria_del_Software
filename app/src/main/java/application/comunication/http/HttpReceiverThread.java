@@ -137,8 +137,13 @@ public class HttpReceiverThread extends Thread implements DataListener{
                 MainApplication.setEmergency(false);
                 Data.getNotification().getNotifies().clear();
             }else if (not.length>0 && !MainApplication.getEmergency()){
-                MainApplication.setEmergency(true);
-                MainApplication.launchNotification();
+                if(MainApplication.getVisible()) {
+                    MainApplication.setEmergency(true);
+                }
+                else {
+                    MainApplication.launchNotification();
+                }
+//                MainApplication.launchNotification();
                 Data.getNotification().setNotifies(n);
             }
 

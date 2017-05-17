@@ -115,17 +115,15 @@ public class Home extends AppCompatActivity
         }
 
         setOptionMenu();
-        MainApplication.start(this);
 
-//        try {
-//            JSONObject s = ServerComunication.getRequest();
-////            System.out.println("Risultato "+s.getString("description")+" "+s.getString("summary"));
-////            Log.i("JSON","json: " + s.toString());
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        } catch (ExecutionException e) {
-//            e.printStackTrace();
-//        }
+
+        Bundle extras = getIntent().getExtras();
+        if(extras!=null) {
+            if(extras.getString("MESSAGE").equals("EMERGENCY")) {
+                MainApplication.setEmergency(true);
+            }
+        }
+        else MainApplication.start(this);
     }
 
     protected void onStart() {
@@ -134,10 +132,12 @@ public class Home extends AppCompatActivity
 
     protected void onResume() {
         super.onResume();
+        MainApplication.setVisible(true);
     }
 
     protected void onPause() {
         super.onPause();
+        MainApplication.setVisible(false);
     }
 
     protected void onStop() {

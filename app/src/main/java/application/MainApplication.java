@@ -1,12 +1,17 @@
 package application;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.core.progettoingegneriadelsoftware.FullScreenMap;
 import com.core.progettoingegneriadelsoftware.R;
@@ -25,8 +30,11 @@ import application.maps.MapLoader;
 import application.maps.components.Node;
 import application.maps.components.Floor;
 import application.maps.components.Room;
+import application.sharedstorage.Data;
 import application.user.UserHandler;
 import application.utility.CSVHandler;
+
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 /**
  * Created by Federico-PC on 05/12/2016.
@@ -86,29 +94,15 @@ public class MainApplication {
         //crea il db, ma ancora non è ne leggibile ne scrivibile
         db = new UserAdapter(activity.getBaseContext());
 
-        InputStream inputStream = activity.getResources().openRawResource(R.raw.beaconlist);
-        ArrayList<String[]> beaconList = new ArrayList<>();
-        beaconList = CSVHandler.readCSV("beaconlist",activity.getBaseContext());
+        ServerComunication.setHostMaster(PreferenceManager.getDefaultSharedPreferences(activity.getBaseContext()).getString("serverIp",""));
+        Log.i("ip","" + ServerComunication.getIP());
+//        InputStream inputStream = activity.getResources().openRawResource(R.raw.beaconlist);
+        ArrayList<String[]> beaconList = CSVHandler.readCSV("beaconlist",activity.getBaseContext());
         loadSensors(beaconList);
 
-//        HashMap<String,String>[] s = new HashMap[2];
-//        s[0] = new HashMap<>();
-//        s[0].put("id","B0:B4:48:BC:59:87");
-//        s[0].put("floor","145");
-//        s[0].put("x","320");
-//        s[0].put("y","280");
-//        s[1] = new HashMap<>();
-//        s[1].put("id","B0:B4:48:BC:CE:87");
-//        s[1].put("floor","145");
-//        s[1].put("x","320");
-//        s[1].put("y","280");
-//
-//
-//        try {
-//            CSVHandler.updateCSV(s,activity,"beaconlist");
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        ArrayList<String[]> roomsList = CSVHandler.readCSV("roomlist",activity.getBaseContext());
+        loadRooms(roomsList);
+
     }
 
     private static void loadSensors(ArrayList<String[]> b) {
@@ -129,6 +123,36 @@ public class MainApplication {
 
     }
 
+    //aggiungo manualmente elementi alle barre, dopo andrà fatto diversamente
+    private static void loadRooms(ArrayList<String[]> b) {
+
+        int[] coords = new int[2];
+        double width;
+        String cod;
+        HashMap<String,Floor> f = new HashMap<>();
+        floors = f;
+        for (String[] roomslist : b) {
+            if(floors.containsKey(roomslist[2])) {    //il piano esiste
+                coords[0] = Integer.parseInt(roomslist[0]); //x
+                coords[1] = Integer.parseInt(roomslist[1]); //y
+                width = Double.parseDouble(roomslist[3].replace(",","."));
+                cod = roomslist[4];
+                floors.get(roomslist[2]).addRoom(cod,new Room(cod,coords.clone(),roomslist[2],width));
+            }else{
+                floors.put(roomslist[2],new Floor(roomslist[2]));//aggiungo il nuovo piano
+                //aggiunto il nodo
+                coords[0] = Integer.parseInt(roomslist[0]); //x
+                coords[1] = Integer.parseInt(roomslist[1]); //y
+                width = Double.parseDouble(roomslist[3].replace(",","."));     //larghezza
+                cod = roomslist[4];                         //codice
+                floors.get(roomslist[2]).addRoom(cod,new Room(cod,coords.clone(),roomslist[2],width));
+            }
+
+
+        }
+
+
+    }
 
 
     public static BluetoothAdapter getmBluetoothAdapter() {
@@ -149,6 +173,9 @@ public class MainApplication {
 
     public static void setEmergency(boolean e) {
         emergency = e;
+//        if (emergency) Toast.makeText(activity.getApplicationContext()," C'è un'emergenza ", Toast.LENGTH_SHORT).show();
+//        else Toast.makeText(activity.getApplicationContext()," Fine emergenza ", Toast.LENGTH_SHORT).show();
+        scanner.suspendScan();
     }
 
     public static BeaconScanner getScanner() {
@@ -186,17 +213,38 @@ public class MainApplication {
         @Override
         public void onReceive(Context context, Intent intent) {
         Log.i("MESSAGE ARRIVED","ricevuto broadcast: " + intent.getAction());
-        switch(intent.getAction()) {
-            case("TerminatedScan"):
+        if(intent.getAction().equals("TerminatedScan")) {
+            if(emergency) {
+                if(scanner.getSetup().getState().equals("NORMAL")) {
+                    scanner.closeScan();
+                    scanner = null;
+
+                    String floor = Data.getUserPosition().getFloor();
+
+                    String mex = floor.concat(";").concat(floor).concat("EMERGENCY");
+                    Log.i("mex",mex);
+                    Intent intentTWO = new Intent (context,
+                            FullScreenMap.class);
+                    intentTWO.putExtra("MAP_ID",mex);
+                    context.startActivity(intentTWO);
+
+                }
+                else {
+                    context.sendBroadcast(new Intent("EXIT_MAPS"));
+                    //TODO TOAST EMERGENZA FINITA
+                    scanner.closeScan();
+                    scanner = null;
+
+                    initializeScanner(activity);
+                }
+            }
+            else {
                 if(scanner.getSetup().getState().equals("NORMAL")) {
                     scanner.closeScan();
                     scanner = null;
 
                     context.sendBroadcast(new Intent("STARTMAPS"));
 
-//                        Intent intentTWO = new Intent (activity.getApplicationContext(),
-//                                FullScreenMap.class);
-//                        activity.startActivity(intentTWO);
 
                 }
                 else {
@@ -206,11 +254,8 @@ public class MainApplication {
 
                     initializeScanner(activity);
                 }
-                break;
+            }
 
-            default:
-
-                break;
         }
         }
     };
@@ -229,6 +274,33 @@ public class MainApplication {
         boolean b;
         if (getmBluetoothAdapter()==null || !getmBluetoothAdapter().isEnabled()) b = false;
         else b = true;
+        return b;
+    }
+
+    public static void launchNotification() {
+        Intent intent = new Intent(activity, FullScreenMap.class);
+// use System.currentTimeMillis() to have a unique ID for the pending intent
+        PendingIntent pIntent = PendingIntent.getActivity(activity, (int) System.currentTimeMillis(), intent, 0);
+
+        // build notification
+// the addAction re-use the same intent to keep the example short
+        Notification n  = new Notification.Builder(activity)
+                .setContentTitle("Progetto Ingegneria")
+                .setContentText("C'è un'emergenza")
+                .setSmallIcon(R.drawable.ic_menu_gallery)
+                .setContentIntent(pIntent)
+                .setAutoCancel(true)
+                .addAction(R.drawable.ic_menu_gallery, "Open", pIntent).build();
+
+        NotificationManager notificationManager =
+                (NotificationManager) activity.getSystemService(NOTIFICATION_SERVICE);
+
+        notificationManager.notify(0, n);
+    }
+
+    public static boolean isAppIsInBackground(Context context) {
+        boolean b = false;
+
         return b;
     }
 

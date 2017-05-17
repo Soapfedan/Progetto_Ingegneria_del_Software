@@ -21,6 +21,17 @@ public abstract class FormControl {
         return b;
     }
 
+    public static boolean ipControl(String s) {
+        boolean b;
+        String pattern = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
+                "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
+                "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
+                "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
+        if(s.matches(pattern)) b=true;
+        else b = false;
+        return b;
+    }
+
     //controlla che ci siano solamente lettere, @ e punto
     public static boolean mailControl(String s) {
         boolean b;

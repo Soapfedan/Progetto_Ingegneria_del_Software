@@ -6,20 +6,10 @@
         android:id="@+id/button_map"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="68dp"
+        android:text="Scarica Mappe"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="69dp"
-        android:layout_marginStart="58dp"
-        android:text="Scarica Mappe" />
-
-    <Button
-        android:id="@+id/button_signup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/button_map"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="67dp"
-        android:text="Sign Up" />
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:id="@+id/textView7"
@@ -37,4 +27,24 @@
         android:layout_below="@+id/textView7"
         android:layout_marginTop="52dp"
         android:entries="@array/edifici"/>
+
+    <EditText
+        android:id="@+id/ip_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button_map"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="33dp"
+        android:ems="10"
+        android:inputType="textPersonName" />
+
+    <TextView
+        android:id="@+id/textView_ip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ip_text"
+        android:layout_alignEnd="@+id/ip_text"
+        android:layout_alignStart="@+id/ip_text"
+        android:layout_marginBottom="16dp"
+        android:text="Inserire indirizzo IP del server" />
 </RelativeLayout>

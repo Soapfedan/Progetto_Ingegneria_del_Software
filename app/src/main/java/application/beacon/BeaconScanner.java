@@ -149,13 +149,13 @@ public class BeaconScanner extends StateMachine implements DataListener {
 
                 suspendScan();
                 break;
-            //ricevuto quando si presenta un'emergenza
-            case (EMERGENCY):
-
-                MainApplication.setEmergency(true);
-
-                suspendScan();
-                break;
+//            //ricevuto quando si presenta un'emergenza
+//            case (EMERGENCY):
+//
+//                MainApplication.setEmergency(true);
+//
+//                suspendScan();
+//                break;
 
             default:
                 break;

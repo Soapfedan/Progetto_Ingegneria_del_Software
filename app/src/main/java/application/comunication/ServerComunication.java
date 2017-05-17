@@ -3,6 +3,7 @@ package application.comunication;
 
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -41,7 +42,7 @@ public class ServerComunication{
 
     private static String hostname="172.23.159.153";
     private static String host2 = "192.168.1.102";
-    private static String hostMaster = host2;
+    private static String hostMaster; //= hostname;
     private static JSONObject jsonObject;
     private static final ArrayList<String> userProfileKeys = new ArrayList<String>(){{
         add("email");
@@ -168,5 +169,41 @@ public class ServerComunication{
         keys.add("width");
         keys.add("room");
         return MessageParser.analyzeMessageArray(new GetRequest().execute(hostMaster,"room/getallrooms/"+building).get(),keys,"rooms");
+    }
+
+    public static int checkVersion() {
+        int version = -1;
+        String s;
+        try {
+            s = new GetRequest().execute(hostMaster,"getcsvversion").get();
+            Log.i("s",s);
+            version = Integer.parseInt(s);
+        } catch (InterruptedException e) {
+
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        return version;
+    }
+
+    public static boolean handShake(String ip) {
+        boolean b;
+        try {
+            String s = new GetRequest().execute(ip,"testconnection").get();
+            Log.i("s",s);
+            b = Boolean.parseBoolean(s);
+        } catch (Exception e) {
+            b = false;
+        }
+        return b;
+    }
+
+    public static String getIP() {
+        return hostMaster;
+    }
+
+    public static void setHostMaster (String h) {
+        hostMaster = h;
     }
 }

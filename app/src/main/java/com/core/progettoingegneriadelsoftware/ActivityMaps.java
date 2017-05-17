@@ -80,9 +80,9 @@ public class ActivityMaps extends AppCompatActivity {
     }
 */
 
-        InputStream inputStreamRooms = getResources().openRawResource(R.raw.roomlist);
-        roomsList = CSVHandler.readCSV("roomlist",this);
-        loadRooms(roomsList);
+//        InputStream inputStreamRooms = getResources().openRawResource(R.raw.roomlist);
+//        roomsList = CSVHandler.readCSV("roomlist",this);
+//        loadRooms(roomsList);
         floorsname = createNamesArray();
         createIcon();
 
@@ -92,7 +92,9 @@ public class ActivityMaps extends AppCompatActivity {
         super.onStart();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(STARTMAPS);
+
         buttonPressed = false;
+
         if(!MainApplication.controlBluetooth()) MainApplication.activateBluetooth(this);
 
         getBaseContext().registerReceiver(broadcastReceiver,intentFilter);

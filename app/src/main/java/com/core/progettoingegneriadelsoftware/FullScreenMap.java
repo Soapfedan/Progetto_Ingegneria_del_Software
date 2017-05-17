@@ -336,15 +336,18 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
 
     @Override
     public void onBackPressed() {
-        backpress = (backpress + 1);
-        Toast.makeText(getApplicationContext(), " Press Back again to Exit ", Toast.LENGTH_SHORT).show();
+        if (!MainApplication.getEmergency()) {
+            backpress = (backpress + 1);
+            Toast.makeText(getApplicationContext(), " Press Back again to Exit ", Toast.LENGTH_SHORT).show();
 
-        if (backpress>1) {
-            MainApplication.getScanner().suspendScan();
-            MainApplication.setEmergency(false);
+            if (backpress>1) {
+                MainApplication.getScanner().suspendScan();
+//                MainApplication.setEmergency(false);
+            }
         }
-
-
+        else {
+            Toast.makeText(getApplicationContext(), " C'è un'emergenza in corso ", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -352,6 +355,7 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
         public void onReceive(Context context, Intent intent) {
             Log.i("ACTIVTY MAPS","ricevuto broadcast: " + intent.getAction());
             if(intent.getAction().equals(EXIT_MAPS)) {
+
                 finish();
             }
         }

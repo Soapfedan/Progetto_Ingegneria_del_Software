@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
     <Button
@@ -13,20 +14,35 @@
 
     <TextView
         android:id="@+id/textView7"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Benvenuto!!"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:layout_below="@+id/imageView3"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="11dp" />
+
+    <TextView
+        android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="138dp"
-        android:text="Benvenuto!!" />
+        android:layout_marginTop="19dp"
+        android:text="Seleziona l'edificio"
+        android:textStyle="bold"
+        android:layout_below="@+id/textView7"
+        android:layout_alignStart="@+id/imageView3" />
 
     <Spinner
         android:id="@+id/spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView7"
-        android:layout_marginTop="52dp"
-        android:entries="@array/edifici"/>
+        android:entries="@array/edifici"
+        android:layout_below="@+id/textView6"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="13dp" />
 
     <EditText
         android:id="@+id/ip_text"
@@ -47,4 +63,13 @@
         android:layout_alignStart="@+id/ip_text"
         android:layout_marginBottom="16dp"
         android:text="Inserire indirizzo IP del server" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/safe"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>

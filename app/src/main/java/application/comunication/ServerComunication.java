@@ -5,13 +5,6 @@ package application.comunication;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
 import org.json.JSONException;
 import org.json.JSONObject;
 

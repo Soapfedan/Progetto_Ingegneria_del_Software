@@ -13,12 +13,28 @@
     tools:context="com.core.progettoingegneriadelsoftware.InformationsHandler">
 
 
+    <TextView
+        android:id="@+id/textView10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_column="0"
+        android:layout_marginLeft="0dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_row="1"
+        android:layout_weight="0.02"
+        android:text="Ecco le tue informazioni"
+        android:textColorLink="@color/colorPrimary"
+        android:textSize="30sp" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true">
 
 
     </ScrollView>
@@ -26,25 +42,25 @@
     <GridLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
         android:columnCount="2"
-        android:rowCount="12">
+        android:rowCount="12"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="71dp">
 
         <ImageView
             android:id="@+id/profile_image"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="70dp"
             android:layout_alignParentTop="true"
             android:layout_column="0"
             android:layout_columnSpan="2"
             android:layout_marginTop="0dp"
-            android:layout_row="0"
+            android:layout_row="1"
             android:layout_toEndOf="@+id/textView3"
             android:layout_toRightOf="@+id/textView3"
             android:layout_weight="0.06"
-            app:srcCompat="@android:drawable/btn_star_big_on" />
+            app:srcCompat="@drawable/account" />
 
         <TextView
             android:id="@+id/Email"
@@ -57,9 +73,11 @@
             android:layout_marginLeft="0dp"
             android:layout_marginStart="0dp"
             android:layout_marginTop="10dp"
-            android:layout_row="1"
+            android:layout_row="2"
             android:layout_weight="0.02"
-            android:text="Email" />
+            android:text="Email"
+            android:textAllCaps="true"
+            android:textStyle="bold|italic" />
 
         <TextView
             android:id="@+id/email_txt"
@@ -80,8 +98,10 @@
             android:layout_column="0"
             android:layout_marginBottom="0dp"
             android:layout_marginTop="10dp"
-            android:layout_row="2"
-            android:text="Nome" />
+            android:layout_row="3"
+            android:text="Nome"
+            android:textAllCaps="true"
+            android:textStyle="bold|italic" />
 
         <TextView
             android:id="@+id/name"
@@ -96,8 +116,10 @@
             android:layout_height="wrap_content"
             android:layout_column="0"
             android:layout_marginTop="10dp"
-            android:layout_row="3"
-            android:text="Cognome" />
+            android:layout_row="4"
+            android:text="Cognome"
+            android:textAllCaps="true"
+            android:textStyle="bold|italic" />
 
         <TextView
             android:id="@+id/surname"
@@ -113,8 +135,10 @@
             android:layout_column="0"
             android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"
-            android:layout_row="4"
-            android:text="Luogo di nascita" />
+            android:layout_row="5"
+            android:text="Luogo di nascita"
+            android:textAllCaps="true"
+            android:textStyle="bold|italic" />
 
         <TextView
             android:id="@+id/birth_city"
@@ -129,8 +153,10 @@
             android:layout_height="wrap_content"
             android:layout_column="0"
             android:layout_marginTop="10dp"
-            android:layout_row="5"
-            android:text="provincia" />
+            android:layout_row="6"
+            android:text="Provincia"
+            android:textAllCaps="true"
+            android:textStyle="bold|italic" />
 
         <TextView
             android:id="@+id/province"
@@ -145,8 +171,10 @@
             android:layout_height="wrap_content"
             android:layout_column="0"
             android:layout_marginTop="10dp"
-            android:layout_row="6"
-            android:text="stato" />
+            android:layout_row="7"
+            android:text="Stato"
+            android:textAllCaps="true"
+            android:textStyle="bold|italic" />
 
         <TextView
             android:id="@+id/state"
@@ -161,8 +189,10 @@
             android:layout_height="wrap_content"
             android:layout_column="0"
             android:layout_marginTop="10dp"
-            android:layout_row="7"
-            android:text="telefono" />
+            android:layout_row="8"
+            android:text="Telefono"
+            android:textAllCaps="true"
+            android:textStyle="bold|italic" />
 
         <TextView
             android:id="@+id/phone"
@@ -177,8 +207,10 @@
             android:layout_height="wrap_content"
             android:layout_column="0"
             android:layout_marginTop="10dp"
-            android:layout_row="8"
-            android:text="Codice Fiscale" />
+            android:layout_row="9"
+            android:text="Codice Fiscale"
+            android:textAllCaps="true"
+            android:textStyle="bold|italic" />
 
         <TextView
             android:id="@+id/personal_number"
@@ -192,7 +224,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Data di nascita" />
+            android:text="Data di nascita"
+            android:textAllCaps="true"
+            android:textStyle="bold|italic" />
 
         <TextView
             android:id="@+id/birth_date"
@@ -206,7 +240,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Sesso" />
+            android:text="Sesso"
+            android:textAllCaps="true"
+            android:textStyle="bold|italic" />
 
         <TextView
             android:id="@+id/sex"

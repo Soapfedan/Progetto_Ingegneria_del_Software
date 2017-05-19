@@ -29,15 +29,18 @@
 
 
             <ImageView
-            android:layout_width="340dp"
-            android:layout_height="wrap_content"
-            app:srcCompat="@android:drawable/btn_star_big_on"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="21dp"
-            android:id="@+id/profile_image"
-            android:layout_toRightOf="@+id/textView3"
-            android:layout_toEndOf="@+id/textView3"
-                android:layout_weight="0.06" />
+                android:id="@+id/profile_image"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_alignParentTop="true"
+                android:layout_column="0"
+                android:layout_columnSpan="2"
+                android:layout_marginTop="0dp"
+                android:layout_row="0"
+                android:layout_toEndOf="@+id/textView3"
+                android:layout_toRightOf="@+id/textView3"
+                android:layout_weight="0.06"
+                app:srcCompat="@drawable/account" />
 
             <TextView
                 android:id="@+id/Email"

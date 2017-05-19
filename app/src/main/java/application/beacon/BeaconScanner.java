@@ -79,6 +79,10 @@ public class BeaconScanner extends StateMachine implements DataListener {
     private ScanSettings scanSettings;
     private List<ScanFilter> scanFilters;
 
+    private static final int maxNoUpdate = 5;
+
+    private int cont;
+
     public BeaconScanner(Activity a) {
         super();
 
@@ -93,6 +97,8 @@ public class BeaconScanner extends StateMachine implements DataListener {
         //viene controllato che il bluetooth sia accesso, nel caso in cui ciò non sia vero
         //viene mostrata l'opzione per attivarlo
 //        if(!controlBluetooth()) activateBluetooth(a);
+
+        cont = 0;
 
         //insieme di UUID riconosciuti dallo scan e relativa inizializzazione
         uuids = new UUID[1];
@@ -129,6 +135,8 @@ public class BeaconScanner extends StateMachine implements DataListener {
         //viene controllato che il bluetooth sia accesso, nel caso in cui ciò non sia vero
         //viene mostrata l'opzione per attivarlo
 //        if(!controlBluetooth()) activateBluetooth(a);
+
+        cont = 0;
 
         //insieme di UUID riconosciuti dallo scan e relativa inizializzazione
         uuids = new UUID[1];
@@ -398,7 +406,18 @@ public class BeaconScanner extends StateMachine implements DataListener {
             if(selectedBeacon!=null){
                 if (currentBeacon==null || !currentBeacon.getAddress().equals(mLeDeviceListAdapter.getCurrentBeacon().getAddress())) {
                     currentBeacon = mLeDeviceListAdapter.getCurrentBeacon();
+                    cont = 0;
                     update();
+                }
+                //nel caso per n cicli non venga aggiornato
+                else {
+                    cont++;
+                    if(cont>=maxNoUpdate) {
+                        currentBeacon = selectedBeacon;
+                        update();
+                        cont = 0;
+                    }
+
                 }
             }
 

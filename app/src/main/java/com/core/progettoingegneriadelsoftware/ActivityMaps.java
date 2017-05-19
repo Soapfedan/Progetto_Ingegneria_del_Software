@@ -101,8 +101,16 @@ public class ActivityMaps extends AppCompatActivity {
 
     }
 
+    protected void onResume() {
+        super.onResume();
+        Log.i("back","onresume");
+        MainApplication.setVisible(true);
+    }
+
+
     protected void onPause() {
         super.onPause();
+        MainApplication.setVisible(false);
         if(broadcastReceiver!=null) getBaseContext().unregisterReceiver(broadcastReceiver);
 
     }

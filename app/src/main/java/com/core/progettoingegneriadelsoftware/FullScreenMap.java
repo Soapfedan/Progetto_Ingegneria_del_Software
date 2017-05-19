@@ -143,11 +143,13 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
 
     protected void onResume() {
         super.onResume();
+        MainApplication.setVisible(true);
     }
 
     protected void onPause() {
         super.onPause();
         stopTimer();
+        MainApplication.setVisible(false);
         if(broadcastReceiver!=null) getBaseContext().unregisterReceiver(broadcastReceiver);
     }
 
@@ -281,36 +283,7 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
 				 */
 
     }
-/*
-    private int[] coordsMapping(int[] co){
-        int[] coords = new int[2]; // x y
-        double scaleRatiox,scaleRatioy;
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
-        int width=dm.widthPixels;
-        int height=dm.heightPixels;
-        double wi=(double)width/(double)dm.xdpi;
-        double hi=(double)height/(double)dm.ydpi;
-        /*Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        Resources r = getResources();
-        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 56, r.getDisplayMetrics());
-       // float dimx = size.x;
-        //float dimy = size.y-px;
-        double dimx = wi;
-        double dimy = hi - px;
-        scaleRatiox = 4.44*dimx/1000;
-        scaleRatioy = 6.37*dimy/1600;
-        coords[0] = (int)(co[0]*scaleRatiox);
-        coords[1] = (int) (dimy) - (int)(co[1]*scaleRatioy);
-        coords[0] = 147;
-        coords[1] = 473;
-        coords[0] = 1600 - (int)(co[0]*4.44);
-        coords[1] = 1000 - (int)(co[1]*6.37);
-        return coords;
-    }
-*/
+
     @Override
     public void update() {
 

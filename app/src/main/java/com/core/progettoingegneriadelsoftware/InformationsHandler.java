@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -96,13 +97,13 @@ public class InformationsHandler extends AppCompatActivity {
 
     protected void onResume() {
         super.onResume();
-
+        MainApplication.setVisible(true);
     }
 
     protected void onPause() {
         super.onPause();
+        MainApplication.setVisible(false);
     }
-
 
     protected void onStop() {
         super.onStop();

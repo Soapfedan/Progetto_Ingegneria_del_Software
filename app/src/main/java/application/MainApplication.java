@@ -14,6 +14,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.core.progettoingegneriadelsoftware.FullScreenMap;
+import com.core.progettoingegneriadelsoftware.Home;
 import com.core.progettoingegneriadelsoftware.R;
 
 import java.io.IOException;
@@ -57,6 +58,8 @@ public class MainApplication {
 
     private static Activity activity;
 
+    private static boolean visible;
+
     //costante per attivare il bluetooth
     private static final int REQUEST_ENABLE_BT = 1;
 
@@ -70,6 +73,15 @@ public class MainApplication {
      */
     public void researchNode(Node n){
 
+    }
+
+    public static void setVisible(boolean b) {
+        visible = b;
+        Log.i("visible",""+visible);
+    }
+
+    public static boolean getVisible() {
+        return visible;
     }
 
     public static UserAdapter getDB () {
@@ -278,7 +290,8 @@ public class MainApplication {
     }
 
     public static void launchNotification() {
-        Intent intent = new Intent(activity, FullScreenMap.class);
+        Intent intent = new Intent(activity, Home.class);
+        intent.putExtra("MESSAGE","EMERGENCY");
 // use System.currentTimeMillis() to have a unique ID for the pending intent
         PendingIntent pIntent = PendingIntent.getActivity(activity, (int) System.currentTimeMillis(), intent, 0);
 

@@ -1,40 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:backgroundTint="@android:color/background_light"
+    android:orientation="vertical"
     android:weightSum="1">
 
     <Spinner
         android:id="@+id/spin_floor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_above="@+id/spin_room"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="25dp" />
 
     <Spinner
         android:id="@+id/spin_room"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="33dp"
-        android:layout_below="@+id/spin_floor"
-        android:layout_alignLeft="@+id/spin_floor"
-        android:layout_alignStart="@+id/spin_floor" />
+        android:layout_above="@+id/but_map_search"
+        android:layout_alignStart="@+id/spin_floor"
+        android:layout_marginBottom="41dp" />
 
-    <ImageView android:id="@+id/map_image"
-        android:layout_height="match_parent"
+    <ImageView
+        android:id="@+id/map_image"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:scaleType="fitXY"
-        tools:visibility="invisible"
-        android:layout_width="match_parent">
-    </ImageView>
+        tools:visibility="invisible"></ImageView>
 
     <Button
-        android:text="Cerca"
+        android:id="@+id/but_map_search"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/spin_room"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="36dp"
-        android:id="@+id/but_map_search" />
+        android:layout_marginBottom="89dp"
+        android:text="Cerca" />
+
+    <TextView
+        android:id="@+id/textView23"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/textView22"
+        android:layout_alignTop="@+id/spin_floor"
+        android:text="Stanza"
+        android:textAllCaps="true"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textView22"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/spin_room"
+        android:layout_marginEnd="41dp"
+        android:layout_toStartOf="@+id/but_map_search"
+        android:text="Piano"
+        android:textAllCaps="true"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        app:srcCompat="@drawable/search" />
 
 </RelativeLayout>

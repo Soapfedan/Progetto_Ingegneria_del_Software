@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -46,12 +47,11 @@ import application.validation.FormControl;
 
 public class WelcomeActivity extends AppCompatActivity {
 
-    private boolean mapSelected;
-    private boolean alreadyRun;
+
     private int version;
 
-    private static final String BEACONLISTFILE = "beaconlist";
-    private static final String ROOMLISTFILE = "roomlist";
+    private static final String BEACONLISTFILE = CSVHandler.getFileBeacon();
+    private static final String ROOMLISTFILE = CSVHandler.getFileRoom();
 
     private static final String runFlag = "runFlag";
     private static final String serverIp = "serverIp";
@@ -70,9 +70,8 @@ public class WelcomeActivity extends AppCompatActivity {
 
         CSVHandler.createCSV(this);
 
-        prefer = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
-        alreadyRun = prefer.getBoolean(runFlag,false);
+        prefer = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
         spinner = (Spinner) findViewById(R.id.spinner);
 
@@ -83,112 +82,55 @@ public class WelcomeActivity extends AppCompatActivity {
         editText = (EditText) findViewById(R.id.ip_text);
         editText.setText(prefer.getString(serverIp,""));
 
-        if(!alreadyRun) {
+        String ip = prefer.getString(serverIp,"no ip");
 
-            mapSelected = false;
-
-
-        }
-        else {
-            String ip = prefer.getString(serverIp,"no ip");
+        if(!ip.equals("no ip")) {
             ServerComunication.setHostMaster(ip);
             if(!checkVersion()) {
                 Toast.makeText(getApplicationContext(), " La versione del file CSV non è aggiornata, la sto richiedendo", Toast.LENGTH_SHORT).show();
                 String building = prefer.getString(buildingID,"");
 
-                //TODO get piano (update piano)
-                try {
-                    CSVHandler.updateCSV(ServerComunication.getBuildingBeacon(building),getBaseContext(),CSVHandler.getFileBeacon());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (NullPointerException e) {
-                    Log.e("CSV Error","Update CSV Error");
-                }
-
-                //TODO get beaconlist (update beaconlist)
-                try {
-                    CSVHandler.updateCSV(ServerComunication.getBuildingRoom(building),getBaseContext(),CSVHandler.getFileRoom());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (NullPointerException e) {
-                    Log.e("CSV Error","Update CSV Error");
-                }
+                boolean beaconFile = downloadCSV(building,BEACONLISTFILE);
+                boolean roomFile = downloadCSV(building,ROOMLISTFILE);
 
                 int currentVersion = ServerComunication.checkVersion();
                 version = currentVersion;
 
-                SharedPreferences.Editor edit = prefer.edit();
-                edit.putInt(versionID,version);
-                edit.commit();
-                Toast.makeText(getApplicationContext(), " Ho aggiornato il CSV, riprova ora", Toast.LENGTH_SHORT).show();
+                if(beaconFile && roomFile) {
+                    SharedPreferences.Editor edit = prefer.edit();
+                    edit.putInt(versionID,version);
+                    edit.putString(buildingID,building);
+                    edit.commit();
+                    Toast.makeText(getApplicationContext(), " Ho aggiornato il CSV, riprova ora", Toast.LENGTH_SHORT).show();
+                }
             }
             else {
                 changeActivity();
             }
         }
 
+
         select.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            if(checkIp(editText.getText().toString())) {
-                String building = spinner.getSelectedItem().toString().toLowerCase();
+                if(checkIp(editText.getText().toString())) {
+                    String building = spinner.getSelectedItem().toString().toLowerCase();
 
-                //TODO get piano (update piano)
-                try {
-                    CSVHandler.updateCSV(ServerComunication.getBuildingBeacon(building),getBaseContext(),CSVHandler.getFileBeacon());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (NullPointerException e) {
-                    Log.e("CSV Error","Update CSV Error");
+                    boolean beaconFile = downloadCSV(building,BEACONLISTFILE);
+                    boolean roomFile = downloadCSV(building,ROOMLISTFILE);
+
+                    int currentVersion = ServerComunication.checkVersion();
+                    version = currentVersion;
+
+                    if(beaconFile && roomFile) {
+                        SharedPreferences.Editor edit = prefer.edit();
+                        edit.putInt(versionID,version);
+                        edit.putString(buildingID,building);
+                        edit.commit();
+                        changeActivity();
+                    }
+
                 }
-
-                //TODO get beaconlist (update beaconlist)
-                try {
-                    CSVHandler.updateCSV(ServerComunication.getBuildingRoom(building),getBaseContext(),CSVHandler.getFileRoom());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (NullPointerException e) {
-                    Log.e("CSV Error","Update CSV Error");
-                }
-
-                int currentVersion = ServerComunication.checkVersion();
-                version = currentVersion;
-
-                if(isCSVEmpty(CSVHandler.getFiles().get(CSVHandler.getFileBeacon())) &&
-                        isCSVEmpty(CSVHandler.getFiles().get(CSVHandler.getFileRoom()))) {
-                    SharedPreferences.Editor edit = prefer.edit();
-                    edit.putBoolean(runFlag,true);
-                    edit.putInt(versionID,version);
-                    edit.putString(buildingID,building);
-                    edit.commit();
-                    changeActivity();
-                }
-
-            }
             }
         });
 
@@ -244,6 +186,45 @@ public class WelcomeActivity extends AppCompatActivity {
         boolean b = (version==currentVersion);
         return b;
     }
+
+    private boolean downloadCSV(String building, String fileName) {
+        boolean b = true;
+        HashMap<String,String>[] ma = null;
+        try {
+            if (fileName.equals(BEACONLISTFILE)) {
+                ma = ServerComunication.getBuildingBeacon(building);
+            }
+            else if (fileName.equals(ROOMLISTFILE)) {
+                ma = ServerComunication.getBuildingRoom(building);
+            }
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            b = false;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            b = false;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            b = false;
+        }
+
+        try {
+            CSVHandler.updateCSV(ma,getBaseContext(),fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+            b = false;
+        } catch (NullPointerException e) {
+            Log.e("CSV Error","Update CSV Error");
+            b = false;
+        } catch (Exception e) {
+            b = false;
+        }
+
+        if (b) b = isCSVEmpty(CSVHandler.getFiles().get(fileName));
+
+        return b;
+    }
+
 
     private void changeActivity() {
         startActivity(new Intent(getBaseContext(),Home.class));

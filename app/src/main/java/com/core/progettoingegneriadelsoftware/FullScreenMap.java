@@ -72,6 +72,8 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
     private Handler handler;
     private ArrayList<Notify> notifies;
 
+    int resID;
+
     private static final String EXIT_MAPS = "EXIT_MAPS";
 
     @Override
@@ -298,12 +300,21 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
         position[0] = pos[0];
         position[1] = pos[1];
 
+        Log.i("retrieve","cur f " + currentFloor);
         String map = "m".concat(currentFloor).concat("_color");
 
-        int resID = getResources().getIdentifier(map , "drawable", getPackageName());
+        resID = getResources().getIdentifier(map , "drawable", getPackageName());
 
-        setImageGrid(resID);
-        setContentView(image);
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                setImageGrid(resID);
+                setContentView(image);
+
+            }
+        });
+
         startTimer();
     }
 

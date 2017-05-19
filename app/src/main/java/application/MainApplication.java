@@ -63,6 +63,8 @@ public class MainApplication {
     //costante per attivare il bluetooth
     private static final int REQUEST_ENABLE_BT = 1;
 
+    private static NotificationManager notificationManager;
+
     private static IntentFilter intentFilter;
 
     public static final String TERMINATED_SCAN = "TerminatedScan";
@@ -107,7 +109,7 @@ public class MainApplication {
         db = new UserAdapter(activity.getBaseContext());
 
         ServerComunication.setHostMaster(PreferenceManager.getDefaultSharedPreferences(activity.getBaseContext()).getString("serverIp",""));
-        Log.i("ip","" + ServerComunication.getIP());
+
 //        InputStream inputStream = activity.getResources().openRawResource(R.raw.beaconlist);
         ArrayList<String[]> beaconList = CSVHandler.readCSV("beaconlist",activity.getBaseContext());
         loadSensors(beaconList);
@@ -160,9 +162,7 @@ public class MainApplication {
                 floors.get(roomslist[2]).addRoom(cod,new Room(cod,coords.clone(),roomslist[2],width));
             }
 
-
         }
-
 
     }
 
@@ -185,8 +185,7 @@ public class MainApplication {
 
     public static void setEmergency(boolean e) {
         emergency = e;
-//        if (emergency) Toast.makeText(activity.getApplicationContext()," C'è un'emergenza ", Toast.LENGTH_SHORT).show();
-//        else Toast.makeText(activity.getApplicationContext()," Fine emergenza ", Toast.LENGTH_SHORT).show();
+        Log.i("emergency","emergency: " + emergency);
         scanner.suspendScan();
     }
 
@@ -242,13 +241,11 @@ public class MainApplication {
 
                 }
                 else {
-                    context.sendBroadcast(new Intent("EXIT_MAPS"));
-                    //TODO TOAST EMERGENZA FINITA
                     scanner.closeScan();
                     scanner = null;
-
-                    initializeScanner(activity);
+                    scanner = new BeaconScanner(activity,"EMERGENCY");
                 }
+
             }
             else {
                 if(scanner.getSetup().getState().equals("NORMAL")) {
@@ -256,7 +253,6 @@ public class MainApplication {
                     scanner = null;
 
                     context.sendBroadcast(new Intent("STARTMAPS"));
-
 
                 }
                 else {
@@ -292,11 +288,9 @@ public class MainApplication {
     public static void launchNotification() {
         Intent intent = new Intent(activity, Home.class);
         intent.putExtra("MESSAGE","EMERGENCY");
-// use System.currentTimeMillis() to have a unique ID for the pending intent
+
         PendingIntent pIntent = PendingIntent.getActivity(activity, (int) System.currentTimeMillis(), intent, 0);
 
-        // build notification
-// the addAction re-use the same intent to keep the example short
         Notification n  = new Notification.Builder(activity)
                 .setContentTitle("Progetto Ingegneria")
                 .setContentText("C'è un'emergenza")
@@ -305,17 +299,17 @@ public class MainApplication {
                 .setAutoCancel(true)
                 .addAction(R.drawable.ic_menu_gallery, "Open", pIntent).build();
 
-        NotificationManager notificationManager =
+        notificationManager =
                 (NotificationManager) activity.getSystemService(NOTIFICATION_SERVICE);
 
         notificationManager.notify(0, n);
     }
 
-    public static boolean isAppIsInBackground(Context context) {
-        boolean b = false;
-
-        return b;
+    public static void deleteNotification() {
+        Log.i("del","delete");
+        notificationManager.cancel(0);
     }
+
 
     public static Node getSensor(String cod) {
         Node n = sensors.get(cod);

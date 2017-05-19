@@ -133,10 +133,12 @@ public class HttpReceiverThread extends Thread implements DataListener{
             }
             //controllo se ci sono notifiche se è vero vado in modalita emergenza, in caso contrario uscirò da tale modalità
             Log.e("Lunghezza not ",not.length+"");
-            if(not.length==0 && MainApplication.getEmergency()){
-                MainApplication.setEmergency(false);
+            if(not.length==0){
+                if (MainApplication.getEmergency()) MainApplication.setEmergency(false);
+                if (!MainApplication.getVisible()) MainApplication.deleteNotification();
                 Data.getNotification().getNotifies().clear();
-            }else if (not.length>0 && !MainApplication.getEmergency()){
+            }
+            else if (not.length>0 && !MainApplication.getEmergency()){
                 if(MainApplication.getVisible()) {
                     MainApplication.setEmergency(true);
                 }

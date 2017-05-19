@@ -195,22 +195,28 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
 
         Bitmap workingBitmap = Bitmap.createBitmap(bitmap);
         Bitmap mutableBitmap = workingBitmap.copy(Bitmap.Config.ARGB_8888, true);
-
+        Bitmap curr_pos = BitmapFactory.decodeResource(getResources(), R.drawable.current_position);
+        Bitmap destination = BitmapFactory.decodeResource(getResources(), R.drawable.destination);
+        Bitmap danger = BitmapFactory.decodeResource(getResources(), R.drawable.danger);
+        Bitmap gas = BitmapFactory.decodeResource(getResources(), R.drawable.gas);
+        Bitmap fire = BitmapFactory.decodeResource(getResources(), R.drawable.fire);
+        Bitmap earthquake = BitmapFactory.decodeResource(getResources(), R.drawable.earthquake);
 
         Canvas canvas = new Canvas(mutableBitmap);
 
         if(position[0]!=0&&position[1]!=0) {
 
             //int[] c = coordsMapping(position);
-            canvas.drawCircle(position[0], position[1], 30, paint); //x y radius paint
-
+            //canvas.drawCircle(position[0], position[1], 30, paint); //x y radius paint
+            canvas.drawBitmap(curr_pos,position[0],position[1],null);
             image.setImageBitmap(mutableBitmap);
 
                 //disegno obiettivo
             if(selectedFloor.equals(currentFloor)) {
                 image.setImageBitmap(mutableBitmap);
                 int[] coords = MainApplication.getFloors().get(selectedFloor).getRooms().get(selectedRoom).getCoords();
-                canvas.drawCircle(coords[0],coords[1],30,new Paint(Color.BLUE));
+                canvas.drawBitmap(destination,coords[0],coords[1],null);
+                //canvas.drawCircle(coords[0],coords[1],30,new Paint(Color.BLUE));
             }
             if(!notifies.isEmpty()){
                 Paint pt = new Paint();
@@ -221,20 +227,16 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
                         //TODO SE CI SONO PIU' NOTIFICHE NELLO STESSO PUNTO?
                         switch (notifies.get(k).getCod_cat()){
                             case 1:
-                                pt.setColor(Color.GREEN);
-                                canvas.drawCircle(c[0],c[1],30,pt);
+                                canvas.drawBitmap(fire,c[0],c[1],null);
                                 break;
                             case 2:
-                                pt.setColor(Color.YELLOW);
-                                canvas.drawCircle(c[0],c[1],30,pt);
+                                canvas.drawBitmap(gas,c[0],c[1],null);
                                 break;
                             case 3:
-                                pt.setColor(Color.MAGENTA);
-                                canvas.drawCircle(c[0],c[1],30,pt);
+                                canvas.drawBitmap(earthquake,c[0],c[1],null);
                                 break;
                             default:
-                                pt.setColor(Color.CYAN);
-                                canvas.drawCircle(c[0],c[1],30,pt);
+                                canvas.drawBitmap(danger,c[0],c[1],null);
                                 break;
                         }
                     }
@@ -244,7 +246,8 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
         else {
             image.setImageBitmap(mutableBitmap);
             int[] coords = MainApplication.getFloors().get(selectedFloor).getRooms().get(selectedRoom).getCoords();
-            canvas.drawCircle(coords[0],coords[1],30,new Paint(Color.BLUE));
+            canvas.drawBitmap(destination,coords[0],coords[1],null);
+            //canvas.drawCircle(coords[0],coords[1],30,new Paint(Color.BLUE));
             if(!notifies.isEmpty()){
                 Paint pt = new Paint();
                 paint.setAntiAlias(true);
@@ -254,20 +257,16 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
                         //TODO SE CI SONO PIU' NOTIFICHE NELLO STESSO PUNTO?
                         switch (notifies.get(k).getCod_cat()){
                             case 1:
-                                pt.setColor(Color.GREEN);
-                                canvas.drawCircle(c[0],c[1],30,pt);
+                                canvas.drawBitmap(fire,c[0],c[1],null);
                                 break;
                             case 2:
-                                pt.setColor(Color.YELLOW);
-                                canvas.drawCircle(c[0],c[1],30,pt);
+                                canvas.drawBitmap(gas,c[0],c[1],null);
                                 break;
                             case 3:
-                                pt.setColor(Color.MAGENTA);
-                                canvas.drawCircle(c[0],c[1],30,pt);
+                                canvas.drawBitmap(earthquake,c[0],c[1],null);
                                 break;
                             default:
-                                pt.setColor(Color.CYAN);
-                                canvas.drawCircle(c[0],c[1],30,pt);
+                                canvas.drawBitmap(danger,c[0],c[1],null);
                                 break;
                         }
                     }

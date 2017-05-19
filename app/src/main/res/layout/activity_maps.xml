@@ -12,22 +12,20 @@
         android:id="@+id/spin_floor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/spin_room"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="25dp" />
+        android:layout_alignTop="@+id/textView23"
+        android:layout_centerHorizontal="true" />
 
     <Spinner
         android:id="@+id/spin_room"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/but_map_search"
-        android:layout_alignStart="@+id/spin_floor"
-        android:layout_marginBottom="41dp" />
+        android:layout_alignTop="@+id/textView22"
+        android:layout_alignStart="@+id/spin_floor" />
 
     <ImageView
         android:id="@+id/map_image"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="50dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:scaleType="fitXY"
@@ -37,40 +35,202 @@
         android:id="@+id/but_map_search"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:text="Cerca"
+        android:layout_below="@+id/textView22"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="89dp"
-        android:text="Cerca" />
+        android:layout_marginTop="26dp" />
 
     <TextView
         android:id="@+id/textView23"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/textView22"
-        android:layout_alignTop="@+id/spin_floor"
         android:text="Stanza"
         android:textAllCaps="true"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_below="@+id/imageView2"
+        android:layout_alignStart="@+id/textView22"
+        android:layout_marginTop="21dp" />
 
     <TextView
         android:id="@+id/textView22"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/spin_room"
-        android:layout_marginEnd="41dp"
-        android:layout_toStartOf="@+id/but_map_search"
+        android:layout_marginEnd="42dp"
         android:text="Piano"
         android:textAllCaps="true"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@+id/but_map_search" />
 
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="170dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginTop="10dp"
         app:srcCompat="@drawable/search" />
+
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_below="@+id/but_map_search"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="15dp">
+
+        <ImageView
+            android:id="@+id/imageView6"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentBottom="true"
+            android:layout_column="1"
+            android:layout_marginEnd="10dp"
+            android:layout_row="1"
+            android:layout_toStartOf="@+id/textView23"
+            app:srcCompat="@drawable/destination" />
+
+        <ImageView
+            android:id="@+id/imageView7"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentBottom="true"
+            android:layout_column="1"
+            android:layout_marginEnd="10dp"
+            android:layout_row="2"
+            android:layout_toStartOf="@+id/textView23"
+            app:srcCompat="@drawable/current_position" />
+
+        <ImageView
+            android:id="@+id/imageView8"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentBottom="true"
+            android:layout_column="1"
+            android:layout_marginEnd="10dp"
+            android:layout_row="3"
+            android:layout_toStartOf="@+id/textView23"
+            app:srcCompat="@drawable/danger" />
+
+        <ImageView
+            android:id="@+id/imageView9"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentBottom="true"
+            android:layout_column="3"
+            android:layout_marginEnd="10dp"
+            android:layout_row="1"
+            android:layout_toStartOf="@+id/textView23"
+            app:srcCompat="@drawable/gas" />
+
+        <ImageView
+            android:id="@+id/imageView10"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentBottom="true"
+            android:layout_column="3"
+            android:layout_marginEnd="10dp"
+            android:layout_row="2"
+            android:layout_toStartOf="@+id/textView23"
+            app:srcCompat="@drawable/fire" />
+
+        <ImageView
+            android:id="@+id/imageView11"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentBottom="true"
+            android:layout_column="3"
+            android:layout_marginEnd="10dp"
+            android:layout_row="3"
+            android:layout_toStartOf="@+id/textView23"
+            app:srcCompat="@drawable/earthquake" />
+
+        <TextView
+            android:id="@+id/textView24"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/but_map_search"
+            android:layout_alignBottom="@+id/but_map_search"
+            android:layout_alignEnd="@+id/imageView5"
+            android:layout_column="0"
+            android:layout_row="0"
+            android:text="Legenda:"
+            android:textSize="20sp"
+            android:textStyle="bold|italic" />
+
+        <TextView
+            android:id="@+id/Destinazione"
+            android:layout_width="70dp"
+            android:layout_height="20dp"
+            android:layout_alignParentBottom="true"
+            android:layout_column="0"
+            android:layout_marginEnd="10dp"
+            android:layout_row="1"
+            android:text="Destinazione"
+            android:textSize="12sp"
+            android:textStyle="bold|italic" />
+
+        <TextView
+            android:id="@+id/text10"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_alignParentBottom="true"
+            android:layout_column="0"
+            android:layout_marginEnd="10dp"
+            android:layout_row="2"
+            android:text="Posizione corrente"
+            android:textSize="12sp"
+            android:textStyle="bold|italic" />
+
+        <TextView
+            android:id="@+id/text11"
+            android:layout_width="70dp"
+            android:layout_height="20dp"
+            android:layout_alignParentBottom="true"
+            android:layout_column="0"
+            android:layout_marginEnd="10dp"
+            android:layout_row="3"
+            android:text="Pericolo"
+            android:textSize="12sp"
+            android:textStyle="bold|italic" />
+
+        <TextView
+            android:id="@+id/text12"
+            android:layout_width="70dp"
+            android:layout_height="20dp"
+            android:layout_alignParentBottom="true"
+            android:layout_column="2"
+            android:layout_marginEnd="10dp"
+            android:layout_row="1"
+            android:text="Fuga di gas"
+            android:textSize="12sp"
+            android:textStyle="bold|italic" />
+
+        <TextView
+            android:id="@+id/text123"
+            android:layout_width="70dp"
+            android:layout_height="20dp"
+            android:layout_alignParentBottom="true"
+            android:layout_column="2"
+            android:layout_marginEnd="10dp"
+            android:layout_row="2"
+            android:text="Incendio"
+            android:textSize="12sp"
+            android:textStyle="bold|italic" />
+
+        <TextView
+            android:id="@+id/text14"
+            android:layout_width="70dp"
+            android:layout_height="20dp"
+            android:layout_alignParentBottom="true"
+            android:layout_column="2"
+            android:layout_marginEnd="10dp"
+            android:layout_row="3"
+            android:text="Crollo"
+            android:textSize="12sp"
+            android:textStyle="bold|italic" />
+
+    </GridLayout>
 
 </RelativeLayout>

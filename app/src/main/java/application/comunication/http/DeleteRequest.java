@@ -66,9 +66,7 @@ public class DeleteRequest extends AsyncTask<String,Void,String> {
 //            localDataOutputStream.flush();
 //            localDataOutputStream.close();
 
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        }catch (IOException e) {
             e.printStackTrace();
         }
         try {

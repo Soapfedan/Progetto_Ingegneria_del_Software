@@ -231,7 +231,14 @@ public class MainApplication {
                     scanner = null;
 
                     String floor = Data.getUserPosition().getFloor();
+                    if(floor == null){
+                        if(Data.getNotification().getNotifies()==null || Data.getNotification().getNotifies().size()==0){
+                            floor = "145";
+                        }else {
+                            floor = Data.getNotification().getNotifies().get(0).getFloor();
+                        }
 
+                    }
                     String mex = floor.concat(";").concat(floor).concat("EMERGENCY");
                     Log.i("mex",mex);
                     Intent intentTWO = new Intent (context,

@@ -202,7 +202,7 @@ public class MainApplication {
     }
 
     public static void closeApp(GetReceiver httpServerThread) {
-        if(broadcastReceiver!=null) if(broadcastReceiver!=null) activity.getBaseContext().unregisterReceiver(broadcastReceiver);
+        if(broadcastReceiver!=null) activity.unregisterReceiver(broadcastReceiver);
 
         if (httpServerThread.status()) {
             try {

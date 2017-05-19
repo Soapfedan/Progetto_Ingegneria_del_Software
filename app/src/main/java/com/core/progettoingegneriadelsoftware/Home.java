@@ -58,6 +58,7 @@ public class Home extends AppCompatActivity
     private TextView tv;
     private GetReceiver httpServerThread;
     private ArrayList<Notify> notifies;
+    private int backpress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,11 +117,13 @@ public class Home extends AppCompatActivity
 
         setOptionMenu();
 
+        backpress = 0;
 
         Bundle extras = getIntent().getExtras();
         if(extras!=null) {
             if(extras.getString("MESSAGE").equals("EMERGENCY")) {
                 MainApplication.setEmergency(true);
+                finish();
             }
         }
         else MainApplication.start(this);
@@ -147,7 +150,6 @@ public class Home extends AppCompatActivity
 
     public void onDestroy() {
         super.onDestroy();
-        MainApplication.closeApp(httpServerThread);
     }
 
     @Override   //toglie il focus dal menu quando si clicca su altro layer
@@ -156,8 +158,15 @@ public class Home extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
-        }
+                backpress = (backpress + 1);
+                Toast.makeText(getApplicationContext(), " Press Back again to Exit ", Toast.LENGTH_SHORT).show();
+
+                if (backpress>1) {
+                    Toast.makeText(getApplicationContext(), " Arrivederci ", Toast.LENGTH_SHORT).show();
+//                  TODO uscire spegnendo i receiver
+                }
+            }
+
     }
 
     private void login() {
@@ -342,4 +351,5 @@ public class Home extends AppCompatActivity
 //        });
 
     }
+
 }

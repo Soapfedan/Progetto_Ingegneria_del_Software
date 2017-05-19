@@ -3,15 +3,22 @@ package application.beacon;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanFilter;
+import android.bluetooth.le.ScanResult;
+import android.bluetooth.le.ScanSettings;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Handler;
+import android.os.ParcelUuid;
 import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
@@ -68,6 +75,10 @@ public class BeaconScanner extends StateMachine implements DataListener {
     //connessione con un determinato sensortag, per leggere i dati dai sensori
     private BeaconConnection connection;
 
+    private ScanFilter scanFilter;
+    private ScanSettings scanSettings;
+    private List<ScanFilter> scanFilters;
+
     public BeaconScanner(Activity a) {
         super();
 
@@ -86,6 +97,13 @@ public class BeaconScanner extends StateMachine implements DataListener {
         //insieme di UUID riconosciuti dallo scan e relativa inizializzazione
         uuids = new UUID[1];
         uuids[0] = UUID.fromString(beaconUUID);
+
+        scanFilter = new ScanFilter.Builder().setServiceUuid(new ParcelUuid(UUID.fromString(beaconUUID))).build();
+
+        scanFilters = new ArrayList<>();
+        scanFilters.add(scanFilter);
+        scanSettings = new ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build();
+
         //inizializzazione del filtro per i messaggi e registrazione del broadcast receiver
         initializeFilter();
         //viene registrato il receiver, in modo che possa ricevere messaggi e possa leggere
@@ -115,6 +133,13 @@ public class BeaconScanner extends StateMachine implements DataListener {
         //insieme di UUID riconosciuti dallo scan e relativa inizializzazione
         uuids = new UUID[1];
         uuids[0] = UUID.fromString(beaconUUID);
+
+        scanFilter = new ScanFilter.Builder().setServiceUuid(new ParcelUuid(UUID.fromString(beaconUUID))).build();
+
+        scanFilters = new ArrayList<>();
+        scanFilters.add(scanFilter);
+        scanSettings = new ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build();
+
         //inizializzazione del filtro per i messaggi e registrazione del broadcast receiver
         initializeFilter();
         //viene registrato il receiver, in modo che possa ricevere messaggi e possa leggere
@@ -320,7 +345,22 @@ public class BeaconScanner extends StateMachine implements DataListener {
 
             Log.e(TAG, "Start Scan");
             //parte effettivamente la ricerca dei sensortag
-            MainApplication.getmBluetoothAdapter().startLeScan(uuids, mLeScanCallback);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                if (MainApplication.getmBluetoothAdapter() != null) {
+                    try {
+                        MainApplication.getmBluetoothAdapter().getBluetoothLeScanner()
+                                .startScan(scanFilters, scanSettings, mScanCallback);
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                        Log.e("bluetooth error","accendi il bluetooth");
+                    }
+
+                }
+            }
+            else {
+                //parte effettivamente la ricerca dei sensortag
+                MainApplication.getmBluetoothAdapter().startLeScan(uuids, mLeScanCallback);
+            }
 
             //attende per la durata dello scan e poi lancia la runnable per stopparlo
             scanHandler.postDelayed(stopScan, setup.getScanPeriod());
@@ -334,7 +374,19 @@ public class BeaconScanner extends StateMachine implements DataListener {
         public void run() {
 
             Log.e(TAG, "Stop Scan");
-            MainApplication.getmBluetoothAdapter().stopLeScan(mLeScanCallback);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                try {
+                    MainApplication.getmBluetoothAdapter().getBluetoothLeScanner()
+                            .stopScan(mScanCallback);
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                    Log.e("bluetooth error","accendi il bluetooth");
+                }
+
+            }
+            else {
+                MainApplication.getmBluetoothAdapter().stopLeScan(mLeScanCallback);
+            }
             Log.i(TAG,"numero: " + mLeDeviceListAdapter.getCount());
 
             //trova il beacon più vicino
@@ -395,6 +447,31 @@ public class BeaconScanner extends StateMachine implements DataListener {
 
             };
 
+
+    private ScanCallback mScanCallback = new ScanCallback() {
+
+        @Override
+        public void onScanResult(int callbackType, ScanResult result) {
+            Log.i("result", result.toString());
+            BluetoothDevice btDevice = result.getDevice();
+            mLeDeviceListAdapter.addDevice(btDevice,result.getRssi());
+        }
+
+        @Override
+        public void onBatchScanResults(List<ScanResult> results) {
+            System.out.println("BLE// onBatchScanResults");
+            for (ScanResult sr : results) {
+                Log.i("ScanResult - Results", sr.toString());
+            }
+        }
+
+        @Override
+        public void onScanFailed(int errorCode) {
+            System.out.println("BLE// onScanFailed");
+            Log.e("Scan Failed", "Error Code: " + errorCode);
+        }
+
+    };
 
     @Override
     public void update() {

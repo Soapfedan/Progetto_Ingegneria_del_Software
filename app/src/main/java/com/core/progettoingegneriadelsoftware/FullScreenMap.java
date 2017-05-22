@@ -74,6 +74,8 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
 
     int resID;
 
+    private int[] coords;
+
     private static final String EXIT_MAPS = "EXIT_MAPS";
 
     @Override
@@ -214,7 +216,7 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
                 //disegno obiettivo
             if(selectedFloor.equals(currentFloor)) {
                 image.setImageBitmap(mutableBitmap);
-                int[] coords = MainApplication.getFloors().get(selectedFloor).getRooms().get(selectedRoom).getCoords();
+                coords = MainApplication.getFloors().get(selectedFloor).getRooms().get(selectedRoom).getCoords();
                 canvas.drawBitmap(destination,coords[0],coords[1],null);
                 //canvas.drawCircle(coords[0],coords[1],30,new Paint(Color.BLUE));
             }
@@ -224,7 +226,10 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
                 for(int k=0;k<notifies.size();k++){
                     if(currentFloor.equals(notifies.get(k).getFloor())) {
                         int[] c = MainApplication.getFloors().get(currentFloor).getRooms().get(notifies.get(k).getRoom()).getCoords();
-                        //TODO SE CI SONO PIU' NOTIFICHE NELLO STESSO PUNTO?
+                        if((c[0]==coords[0]&&c[1]==coords[1])||(c[0]==position[0]&&c[1]==position[1])) {
+                            c[0] += 20;
+                            c[1] += 20;
+                        }
                         switch (notifies.get(k).getCod_cat()){
                             case 1:
                                 canvas.drawBitmap(fire,c[0],c[1],null);
@@ -254,7 +259,10 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
                 for(int k=0;k<notifies.size();k++){
                     if(currentFloor.equals(notifies.get(k).getFloor())) {
                         int[] c = MainApplication.getFloors().get(currentFloor).getRooms().get(notifies.get(k).getRoom()).getCoords();
-                        //TODO SE CI SONO PIU' NOTIFICHE NELLO STESSO PUNTO?
+                        if((c[0]==coords[0]&&c[1]==coords[1])||(c[0]==position[0]&&c[1]==position[1])) {
+                            c[0] += 20;
+                            c[1] += 20;
+                        }
                         switch (notifies.get(k).getCod_cat()){
                             case 1:
                                 canvas.drawBitmap(fire,c[0],c[1],null);
@@ -357,5 +365,7 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
             }
         }
     };
+
+
 
 }

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -62,13 +63,19 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private EditText editText;
 
+    private CheckBox checkBox;
+
     SharedPreferences prefer;
+
+    private String ip;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
         CSVHandler.createCSV(this);
+
+        checkBox = (CheckBox) findViewById(R.id.chkOnline);
 
 
         prefer = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
@@ -82,57 +89,50 @@ public class WelcomeActivity extends AppCompatActivity {
         editText = (EditText) findViewById(R.id.ip_text);
         editText.setText(prefer.getString(serverIp,""));
 
-        String ip = prefer.getString(serverIp,"no ip");
+        ip = prefer.getString(serverIp,"no ip");
 
-        if(!ip.equals("no ip")) {
-            ServerComunication.setHostMaster(ip);
-            if(!checkVersion()) {
-                Toast.makeText(getApplicationContext(), " La versione del file CSV non è aggiornata, la sto richiedendo", Toast.LENGTH_SHORT).show();
-                String building = prefer.getString(buildingID,"");
+        boolean b = controlAccess();
 
-                boolean beaconFile = downloadCSV(building,BEACONLISTFILE);
-                boolean roomFile = downloadCSV(building,ROOMLISTFILE);
-
-                int currentVersion = ServerComunication.checkVersion();
-                version = currentVersion;
-
-                if(beaconFile && roomFile) {
-                    SharedPreferences.Editor edit = prefer.edit();
-                    edit.putInt(versionID,version);
-                    edit.putString(buildingID,building);
-                    edit.commit();
-                    Toast.makeText(getApplicationContext(), " Ho aggiornato il CSV, riprova ora", Toast.LENGTH_SHORT).show();
+        if (b) access(b);
+        else {
+            select.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                boolean bb = false;
+                if (checkBox.isChecked()) {
+                    bb = controlAccess();
                 }
-            }
-            else {
-                changeActivity();
-            }
+                else {
+                    ip = editText.getText().toString();
+
+                    if(checkIp(ip)) {
+                        String building = spinner.getSelectedItem().toString().toLowerCase();
+                        ServerComunication.setHostMaster(ip);
+
+
+                        boolean beaconFile = downloadCSV(building,BEACONLISTFILE);
+                        boolean roomFile = downloadCSV(building,ROOMLISTFILE);
+
+                        int currentVersion = ServerComunication.checkVersion();
+                        version = currentVersion;
+
+                        if(beaconFile && roomFile) {
+                            SharedPreferences.Editor edit = prefer.edit();
+                            edit.putString(serverIp,ip);
+                            edit.putInt(versionID,version);
+                            edit.putString(buildingID,building);
+                            edit.commit();
+                            bb = true;
+                        }
+
+                    }
+                }
+                access(bb);
+                }
+            });
         }
 
 
-        select.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(checkIp(editText.getText().toString())) {
-                    String building = spinner.getSelectedItem().toString().toLowerCase();
-
-                    boolean beaconFile = downloadCSV(building,BEACONLISTFILE);
-                    boolean roomFile = downloadCSV(building,ROOMLISTFILE);
-
-                    int currentVersion = ServerComunication.checkVersion();
-                    version = currentVersion;
-
-                    if(beaconFile && roomFile) {
-                        SharedPreferences.Editor edit = prefer.edit();
-                        edit.putInt(versionID,version);
-                        edit.putString(buildingID,building);
-                        edit.commit();
-                        changeActivity();
-                    }
-
-                }
-            }
-        });
 
     }
 
@@ -184,6 +184,70 @@ public class WelcomeActivity extends AppCompatActivity {
         Log.i("version","version " + version + " current " + currentVersion);
 
         boolean b = (version==currentVersion);
+        return b;
+    }
+
+
+    private void access(boolean b) {
+        if (b) {
+            changeActivity();
+        }
+        else {
+            Toast.makeText(getApplicationContext(), "Accesso non riuscito", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private boolean controlAccess() {
+        boolean b = false;
+        if (checkBox.isChecked()) {
+            if(isCSVEmpty(CSVHandler.getFiles().get(BEACONLISTFILE)) && isCSVEmpty(CSVHandler.getFiles().get(ROOMLISTFILE))) b = true;
+            else Toast.makeText(getApplicationContext(), "Collegarsi ad un server per scaricare le mappe", Toast.LENGTH_SHORT).show();
+            MainApplication.setOnlineMode(false);
+        }
+        else {
+                //controllo su ip salvato
+            if(ip.equals("no ip")) {
+                b = false;
+            }
+            else {
+                ServerComunication.setHostMaster(ip);
+                    //controlla che server sia raggiungibile
+                if (ServerComunication.handShake(ip)) {
+                    if (checkVersion()) {
+                        b = true;
+                    }
+                    else {
+                        Toast.makeText(getApplicationContext(), " La versione del file CSV non è aggiornata, la sto richiedendo", Toast.LENGTH_SHORT).show();
+                        String building = prefer.getString(buildingID,"");
+
+                        //scarica i file aggiornati
+                        boolean beaconFile = downloadCSV(building,BEACONLISTFILE);
+                        boolean roomFile = downloadCSV(building,ROOMLISTFILE);
+                        //aggiorna la versione in memoria
+                        int currentVersion = ServerComunication.checkVersion();
+                        version = currentVersion;
+
+                        if(beaconFile && roomFile) {
+                            if(beaconFile && roomFile) {
+                                SharedPreferences.Editor edit = prefer.edit();
+                                edit.putInt(versionID,version);
+                                edit.putString(buildingID,building);
+                                edit.commit();
+                                Toast.makeText(getApplicationContext(), " Ho aggiornato il CSV, riclicca il bottone", Toast.LENGTH_SHORT).show();
+                                b = false;
+                            }
+                        }
+                        else {
+                            b = false;
+                        }
+                    }
+                }
+                else {
+                    b = false;
+                    Toast.makeText(getApplicationContext(), " l'indirizzo ip non è corretto", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
         return b;
     }
 

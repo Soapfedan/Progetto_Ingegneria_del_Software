@@ -7,10 +7,10 @@
         android:id="@+id/button_map"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="68dp"
-        android:text="Scarica Mappe"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="68dp"
+        android:text="Avvio" />
 
     <TextView
         android:id="@+id/textView7"
@@ -71,5 +71,15 @@
         app:srcCompat="@drawable/safe"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
+
+    <CheckBox
+        android:id="@+id/chkOnline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="28dp"
+        android:checked="false"
+        android:text="Modalità Offline" />
 
 </RelativeLayout>

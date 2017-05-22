@@ -67,6 +67,12 @@ public class MainApplication {
 
     public static final String TERMINATED_SCAN = "TerminatedScan";
 
+    private static boolean onlineMode = true;
+
+    public static void setOnlineMode(boolean b) {
+        onlineMode = b;
+    }
+
     /**
      * Method used t
      * @param n

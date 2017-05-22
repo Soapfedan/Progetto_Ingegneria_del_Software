@@ -501,12 +501,14 @@ public class BeaconScanner extends StateMachine implements DataListener {
             Data.getUserPosition().setPosition(n.getCoords());
             Data.getUserPosition().setFloor(n.getFloor());
             //Data.getUserPosition().updateInformation();
-        try {
-            ServerComunication.sendPosition(mex);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if(!MainApplication.getOnlineMode()) {
+            try {
+                ServerComunication.sendPosition(mex);
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 //        }
     }

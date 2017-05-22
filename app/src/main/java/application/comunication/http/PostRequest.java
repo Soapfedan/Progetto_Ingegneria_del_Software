@@ -2,6 +2,7 @@ package application.comunication.http;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 
 import java.io.BufferedReader;
@@ -12,7 +13,10 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
+
+import application.MainApplication;
 
 /**
  * Classe che implementa una HTTP POST, impacchetta un messaggio passandolo come parametro
@@ -51,6 +55,8 @@ public class PostRequest extends AsyncTask<String,Void,String> {
         HttpURLConnection connection = null;
         try {
             connection = (HttpURLConnection) url.openConnection();
+        }catch (SocketTimeoutException e1){
+            Toast.makeText(MainApplication.getActivity().getApplicationContext(), "Connessione al server scaduta, riavviare l'applicazione", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             e.printStackTrace();
         }

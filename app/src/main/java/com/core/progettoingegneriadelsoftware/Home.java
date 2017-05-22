@@ -222,6 +222,11 @@ public class Home extends AppCompatActivity
             navigationView.getMenu().findItem(R.id.view_information).setVisible(false);
             if(tv!= null) tv.setText("utente non registrato");
         }
+        if(!MainApplication.getOnlineMode()){
+            navigationView.getMenu().findItem(R.id.nav1).setEnabled(false);
+            navigationView.getMenu().findItem(R.id.nav2).setEnabled(false);
+            navigationView.getMenu().findItem(R.id.view_information).setEnabled(false);
+        }
     }
 
     @SuppressWarnings("StatementWithEmptyBody")

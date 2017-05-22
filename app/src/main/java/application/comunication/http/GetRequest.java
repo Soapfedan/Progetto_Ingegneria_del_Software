@@ -2,7 +2,7 @@ package application.comunication.http;
 
 import android.os.AsyncTask;
 import android.util.Log;
-
+import android.widget.Toast;
 
 
 import java.io.BufferedReader;
@@ -14,6 +14,8 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+
+import application.MainApplication;
 
 
 /**
@@ -59,6 +61,8 @@ public class GetRequest extends AsyncTask<String,Void,String> {
         connection = null;
         try {
             connection = (HttpURLConnection) url.openConnection();
+        }catch (SocketTimeoutException e1){
+            Toast.makeText(MainApplication.getActivity().getApplicationContext(), "Connessione al server scaduta, riavviare l'applicazione", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             e.printStackTrace();
         }

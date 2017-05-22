@@ -40,7 +40,10 @@ public class UserHandler {
         macAddress = obtainMacAddr();
         editor = pref.edit();
         ipAddress = obtainLocalIpAddress();
-        initializePosition();
+        if(!MainApplication.getOnlineMode()){
+            initializePosition();
+        }
+
 
     }
 
@@ -68,14 +71,15 @@ public class UserHandler {
 
         mex = MessageBuilder.builder(keys,values,keys.size(),0);
         Log.i("mex",mex);
-
-        try {
-            ServerComunication.sendPosition(mex);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        if(!MainApplication.getOnlineMode()) {
+            try {
+                ServerComunication.sendPosition(mex);
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            }
     }
 
     public static String getIpAddress() {
@@ -96,13 +100,14 @@ public class UserHandler {
     public static boolean logup(HashMap<String,String> info){
         //aggiunto il metodo open, in modo che venga creato il collegamento
         //e lavori su un db writable
-
-        try {
-           return ServerComunication.logup(info);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if(!MainApplication.getOnlineMode()) {
+            try {
+               return ServerComunication.logup(info);
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }/*
         MainApplication.getDB().open().createUser(info.get("email"),info.get("pass"),info.get("name"),
                 info.get("surname"),info.get("birth_date"),info.get("birth_city"),
@@ -123,12 +128,14 @@ public class UserHandler {
                 info.get("sex"), info.get("personal_number"));
         //finito ad usare il db, viene chiuso
         MainApplication.getDB().close();*/
-        try {
-            ServerComunication.editprofile(info);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if(!MainApplication.getOnlineMode()) {
+            try {
+                ServerComunication.editprofile(info);
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -143,12 +150,14 @@ public class UserHandler {
     public static UserProfile getInformation(String email){
 
         //return MainApplication.getDB().open().getUserProfile(email);
-        try {
-            return ServerComunication.getprofile(email);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if(!MainApplication.getOnlineMode()) {
+            try {
+                return ServerComunication.getprofile(email);
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
@@ -194,35 +203,36 @@ public class UserHandler {
             else b = false;
         }*/
 
+        if(!MainApplication.getOnlineMode()) {
+            try {
+              b =  ServerComunication.login(name,pass);
+                if (b) {
+                    UserProfile u = null;
+                    try {
+                        u = ServerComunication.getprofile(name);
+                        Log.i("nome e cognome"," "+u.getNome()+" "+u.getNome());
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    email=name;
 
-        try {
-          b =  ServerComunication.login(name,pass);
-            if (b) {
-                UserProfile u = null;
-                try {
-                    u = ServerComunication.getprofile(name);
-                    Log.i("nome e cognome"," "+u.getNome()+" "+u.getNome());
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    nome = u.getNome();
+                    cognome = u.getCognome();
+
+                    if(chk)updateEditor();
+                    else cleanEditor();
+                    b = true;
+                    initializePosition();
                 }
-                email=name;
+                else b = false;
 
-                nome = u.getNome();
-                cognome = u.getCognome();
-
-                if(chk)updateEditor();
-                else cleanEditor();
-                b = true;
-                initializePosition();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            else b = false;
-
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
         Log.i("Risp "," "+b);
         return b;

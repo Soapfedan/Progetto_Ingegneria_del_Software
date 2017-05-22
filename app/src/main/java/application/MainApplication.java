@@ -73,6 +73,7 @@ public class MainApplication {
         onlineMode = b;
     }
 
+    public static boolean getOnlineMode(){ return onlineMode;}
     /**
      * Method used t
      * @param n
@@ -210,12 +211,14 @@ public class MainApplication {
                 e.printStackTrace();
             }
         }
-        try {
-            ServerComunication.deletePosition(UserHandler.getIpAddress());
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if(!MainApplication.getOnlineMode()) {
+            try {
+                ServerComunication.deletePosition(UserHandler.getIpAddress());
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 

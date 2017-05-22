@@ -211,7 +211,7 @@ public class MainApplication {
                 e.printStackTrace();
             }
         }
-        if(!MainApplication.getOnlineMode()) {
+        if(MainApplication.getOnlineMode()) {
             try {
                 ServerComunication.deletePosition(UserHandler.getIpAddress());
             } catch (ExecutionException e) {

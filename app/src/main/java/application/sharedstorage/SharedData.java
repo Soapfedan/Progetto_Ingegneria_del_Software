@@ -3,7 +3,8 @@ package application.sharedstorage;
 import java.util.ArrayList;
 
 /**
- * Created by Federico-PC on 20/03/2017.
+ * Classe padre che permette di aggiungere una serie di subscriber alla lista (listeners) e metodo updateInformation che
+ * permette di richiamare tutte le retrive per prendere una copia aggiornata.
  */
 
 public class SharedData {

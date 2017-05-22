@@ -185,7 +185,7 @@ public class BeaconConnection extends StateMachine {
                 break;
             case(8):
                 String mex = packingMessage();
-                if(!MainApplication.getOnlineMode()) {
+                if(MainApplication.getOnlineMode()) {
                     try {
                         ServerComunication.sendValue(mex);
                     } catch (ExecutionException e) {

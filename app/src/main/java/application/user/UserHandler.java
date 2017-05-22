@@ -22,7 +22,11 @@ import application.comunication.ServerComunication;
 import application.comunication.message.MessageBuilder;
 
 /**
- * Created by Federico-PC on 05/12/2016.
+ * Classe che gestirà tutte le operazioni su un utente, quali login, iscrizione, modifica profilo, logout, ecc..
+ * Inoltre c'è un campo pref (SharedPreferences) che conterrà le informazioni, quali username, nome e cognome.
+ * Queste vengono mantenute all'interno della struttura anche dopo la chiusura dell'applicazione. Si tratta di uno
+ * storage di tipo Session. In questo modo se l'utente rimane loggato, ad un nuovo accesso avrà ancora in memoria
+ * le informazioni pregresse.
  */
 
 public class UserHandler {
@@ -31,6 +35,7 @@ public class UserHandler {
     private static String nome;
     private static String cognome;
     private static UserProfile profile;
+    //variabile di tipo sessione
     private static SharedPreferences pref;
     private static Editor editor;
     //private ArrayList<Beacon> beacons;
@@ -40,12 +45,19 @@ public class UserHandler {
         macAddress = obtainMacAddr();
         editor = pref.edit();
         ipAddress = obtainLocalIpAddress();
-        if(!MainApplication.getOnlineMode()){
+        if(MainApplication.getOnlineMode()){
             initializePosition();
         }
 
 
     }
+
+    /**
+     * Metodo che inizializza la posizione dell'utente e costruisce il messaggio considerando le seguenti condizioni:
+     * - se è già loggato nel messaggio verranno inseriti Nome e Cognome dell'utente altrimenti verrà utilizzata la coppia Guest e Guest
+     * - se si conosce la sua posizione, rilevata da un beacon, si inserisce il codice del beacon altrimenti posizione sconosciuta (unkonwn).
+     *
+     */
 
     public static void initializePosition() {
         String mex;
@@ -71,7 +83,7 @@ public class UserHandler {
 
         mex = MessageBuilder.builder(keys,values,keys.size(),0);
         Log.i("mex",mex);
-        if(!MainApplication.getOnlineMode()) {
+        if(MainApplication.getOnlineMode()) {
             try {
                 ServerComunication.sendPosition(mex);
             } catch (ExecutionException e) {
@@ -89,18 +101,15 @@ public class UserHandler {
     public static String getMail() {
         return email;
     }
-/*
-    public static boolean checkUser(String e){
-        boolean b;
-        if (MainApplication.getDB().checkNewUser(e)==0) b = false;
-        else b = true;
-        return b;
-    }
-*/
+
+    /**
+     * Metodo che permette l'iscrizione di un utente, inviando al server le informazioni già controllate in fase di inserimento.
+     * @param info informazioni dell'utente
+     * @return un boolean che indica se la richiesta è andata a buon fine o no
+     */
     public static boolean logup(HashMap<String,String> info){
-        //aggiunto il metodo open, in modo che venga creato il collegamento
-        //e lavori su un db writable
-        if(!MainApplication.getOnlineMode()) {
+
+        if(MainApplication.getOnlineMode()) {
             try {
                return ServerComunication.logup(info);
             } catch (ExecutionException e) {
@@ -108,27 +117,20 @@ public class UserHandler {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }/*
-        MainApplication.getDB().open().createUser(info.get("email"),info.get("pass"),info.get("name"),
-                info.get("surname"),info.get("birth_date"),info.get("birth_city"),
-                info.get("province"),info.get("state"),info.get("phone"),
-                info.get("sex"), info.get("personal_number"));
-        //finito ad usare il db, viene chiuso
-        MainApplication.getDB().close();*/
+        }
         return false;
     }
 
+
+    /**
+     * Metodo che permette la modifica delle informazioni di un utente inviandole al server
+     * @param info informazioni dell'utente
+     * @return un boolean che indica se la richiesta è andata a buon fine o no
+     */
+
     public static void editProfile(HashMap<String,String> info){
-        //aggiunto il metodo open, in modo che venga creato il collegamento
-        //e lavori su un db writable
-        /*
-        MainApplication.getDB().open().updateProfile(info.get("email"),info.get("pass"),info.get("name"),
-                info.get("surname"),info.get("birth_date"),info.get("birth_city"),
-                info.get("province"),info.get("state"),info.get("phone"),
-                info.get("sex"), info.get("personal_number"));
-        //finito ad usare il db, viene chiuso
-        MainApplication.getDB().close();*/
-        if(!MainApplication.getOnlineMode()) {
+
+        if(MainApplication.getOnlineMode()) {
             try {
                 ServerComunication.editprofile(info);
             } catch (ExecutionException e) {
@@ -139,18 +141,28 @@ public class UserHandler {
         }
     }
 
+    /**
+     * Metodo che permette di effettuare la logout
+     */
+
     public static void logout() {
         email = null;
         cleanEditor();
-        initializePosition();
+        if(MainApplication.getOnlineMode()) {
+            initializePosition();
+        }
 
-        //rende nulli anche altri elementi
     }
+
+    /**
+     * Metodo che restituisce le informazioni di un utente
+     * @param email : email dell'utente
+     * @return l'oggetto UserProfile che contiene tutte le info dell'utente
+     */
 
     public static UserProfile getInformation(String email){
 
-        //return MainApplication.getDB().open().getUserProfile(email);
-        if(!MainApplication.getOnlineMode()) {
+        if(MainApplication.getOnlineMode()) {
             try {
                 return ServerComunication.getprofile(email);
             } catch (ExecutionException e) {
@@ -162,6 +174,10 @@ public class UserHandler {
         return null;
     }
 
+    /**
+     * Modifica il contenute dell'oggetto session Pref
+     */
+
     private static void updateEditor() {
         editor.putString("email",email);
         editor.putString("nome",nome);
@@ -169,11 +185,19 @@ public class UserHandler {
         editor.commit();
     }
 
+    /**
+     * Resetta le informazioni dentro l'oggetto session Pref
+     */
+
     private static void cleanEditor() {
         editor.clear();
         editor.commit();
     }
-        //controlla che utente sia loggato o che ci siano dati nella sharedpreferencies
+
+    /**
+     * controlla che utente sia loggato o che ci siano dati nella sharedpreferencies
+     * @return boolen che indica lo stato dell'utente
+     */
     public static boolean isLogged() {
         boolean b = false;
         if(email!=null) b = true;
@@ -184,26 +208,18 @@ public class UserHandler {
         return b;
     }
 
+    /**
+     * Metodo che permette di compiere la login
+     * @param name mail dell'utente
+     * @param pass password dell'utente
+     * @param chk parametro boolean che indica se l'utente ha scelto o no se mantenere i suoi dati di accesso in memoria. Basta pensare alla classica Ricordami su un form di login
+     * @return
+     */
     public static boolean login(String name, String pass, boolean chk){
         boolean b = false;
-            //assegnato valore solo se si trova utente con quel nome, altrimenti null
-        /*UserProfile u= MainApplication.getDB().open().getUserProfile(name);
-        if (u==null) {
-            b = false;
-        }
-        else {
-                //si confronta la password dell'utente con quell salvata nello userprofile
-            if (u.getPassword().equals(pass)) {
-                email=name;
-                nome = u.nome;
-                cognome = u.cognome;
 
-                b = true;
-            }
-            else b = false;
-        }*/
 
-        if(!MainApplication.getOnlineMode()) {
+        if(MainApplication.getOnlineMode()) {
             try {
               b =  ServerComunication.login(name,pass);
                 if (b) {

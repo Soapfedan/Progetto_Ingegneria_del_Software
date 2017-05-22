@@ -176,6 +176,11 @@ public class WelcomeActivity extends AppCompatActivity {
     private void access(boolean b) {
         if (b) {
             changeActivity();
+            if(checkBox.isChecked()){
+                MainApplication.setOnlineMode(false);
+            }else {
+                MainApplication.setOnlineMode(true);
+            }
         }
         else {
             Toast.makeText(getApplicationContext(), "Accesso non riuscito, controllare l'ip", Toast.LENGTH_SHORT).show();
@@ -211,7 +216,7 @@ public class WelcomeActivity extends AppCompatActivity {
                         //aggiorna la versione in memoria
                         int currentVersion = ServerComunication.checkVersion();
                         version = currentVersion;
-
+                        MainApplication.setOnlineMode(true);
                         if(beaconFile && roomFile) {
                             if(beaconFile && roomFile) {
                                 SharedPreferences.Editor edit = prefer.edit();

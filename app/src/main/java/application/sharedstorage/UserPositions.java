@@ -1,7 +1,8 @@
 package application.sharedstorage;
 
 /**
- * Created by Federico-PC on 20/03/2017.
+ * Classe che estende SharedData che contiene la posizione dell'utente.
+ * All'atto della setPosition viene richiamata la updateInformation che richiama la serie di retrive.
  */
 
 public class UserPositions extends SharedData {
@@ -32,6 +33,7 @@ public class UserPositions extends SharedData {
     public void setPosition(int[] pos) {
         this.x = pos[0];
         this.y = pos[1];
+        //Vengono richiamate tutte le diverse retrive dei subscriber
         updateInformation();
     }
 }

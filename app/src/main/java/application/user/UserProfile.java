@@ -1,7 +1,7 @@
 package application.user;
 
 /**
- * Created by Federico-PC on 24/12/2016.
+ * Classe che contiene tutte le informazioni di un utente
  */
 
 public class UserProfile {
@@ -18,6 +18,7 @@ public class UserProfile {
     String sesso;
     String cod_fis;
 
+    //classe costruttore di un'istanza di un profilo di un utente
     public UserProfile(String email, String password, String nome, String cognome, String data_nascita, String luogo_nascita, String provincia,
                        String stato, String telefono, String sesso, String cod_fis){
 
@@ -41,6 +42,10 @@ public class UserProfile {
         this.cognome = cognome;
     }
 
+    /**
+     * getters and setters
+     *
+     */
     public String getPassword() {
         return password;
     }

@@ -1,7 +1,7 @@
 package application.validation;
 
 /**
- * Created by Niccolò on 24/01/2017.
+ * Classe che contiene tutti i pattern per compiere un controllo RegEx sui campi inseriti nelle varie form dell'utente
  */
 
 public abstract class FormControl {
@@ -21,6 +21,7 @@ public abstract class FormControl {
         return b;
     }
 
+    //controllo dell'indirizzo ip
     public static boolean ipControl(String s) {
         boolean b;
         String pattern = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
@@ -41,7 +42,7 @@ public abstract class FormControl {
         return b;
     }
 
-    //control fiscal code
+    //controllo del codice fiscale
     public static boolean PersonalNumberControl(String s) {
         boolean b;
         String pattern= "^[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]$";
@@ -59,6 +60,7 @@ public abstract class FormControl {
         return b;
     }
 
+    //controllo della password sulla lunghezza
     public static boolean passwordControl(String s) {
         boolean b;
         if (s.length()<pass_lenght) b = false;
@@ -66,6 +68,7 @@ public abstract class FormControl {
         return b;
     }
 
+    //controllo della lunghezza della provincia, cioè se è nella forma AA (due lettere)
     public static boolean provenceControl(String s) {
         boolean b;
         if (s.length()!=provence_lenght) b = false;
@@ -73,6 +76,7 @@ public abstract class FormControl {
         return b;
     }
 
+    //controllo del telefono (saranno tutti numeri) se la lunghezza è minore di phone_lenght
     public static boolean phoneControl(String s) {
         boolean b;
         if (s.length()<phone_lenght) b = false;

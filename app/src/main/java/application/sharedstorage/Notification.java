@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import application.maps.components.Notify;
 
 /**
- * Created by Federico-PC on 21/03/2017.
+ * Classe che estende SharedData che contiene le diverse notifiche.
+ * All'atto della setPosition viene richiamata la updateInformation che richiama la serie di retrive.
  */
 
 public class Notification extends SharedData{
@@ -23,6 +24,7 @@ public class Notification extends SharedData{
 
     public void setNotifies(ArrayList<Notify> notifies) {
         this.notifies = notifies;
+        //Vengono richiamate tutte le diverse retrive dei subscriber
         updateInformation();
     }
 }

@@ -1,7 +1,7 @@
 package application.maps.components;
 
 /**
- * Created by Niccolò on 28/12/2016.
+ * Classe che identifica una stanza
  */
 
 public class Room {

@@ -11,7 +11,9 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.support.v7.widget.AppCompatImageView;
 
-
+/**
+ * Classe che permette all'activity FULLSCREENMAP di gestire le gesture di pitch e zoom
+ */
 
 public class TouchImageView extends AppCompatImageView {
     Matrix matrix;

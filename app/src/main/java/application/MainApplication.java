@@ -26,8 +26,6 @@ import java.util.concurrent.ExecutionException;
 import application.beacon.BeaconScanner;
 import application.comunication.ServerComunication;
 import application.comunication.http.GetReceiver;
-import application.database.UserAdapter;
-import application.maps.MapLoader;
 import application.maps.components.Node;
 import application.maps.components.Floor;
 import application.maps.components.Room;
@@ -48,7 +46,7 @@ public class MainApplication {
      */
 
     private static HashMap<String,Floor> floors;
-    private static UserAdapter db;
+
 
     private static HashMap<String, Node> sensors;
 
@@ -86,9 +84,6 @@ public class MainApplication {
         return visible;
     }
 
-    public static UserAdapter getDB () {
-        return db;
-    }
 
     public static HashMap<String,Node> getSensors() {
         return sensors;
@@ -105,8 +100,6 @@ public class MainApplication {
         if(!controlBluetooth()) activateBluetooth(activity);
         if(mBluetoothAdapter!=null) initializeScanner(activity);
         UserHandler.init();
-        //crea il db, ma ancora non è ne leggibile ne scrivibile
-        db = new UserAdapter(activity.getBaseContext());
 
         ServerComunication.setHostMaster(PreferenceManager.getDefaultSharedPreferences(activity.getBaseContext()).getString("serverIp",""));
 

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Created by Federico-PC on 23/03/2017.
+ * Classe scompone una stringa, con struttura JSON, restituendo una lista di coppie(chiave,valore)
  */
 
 public class MessageParser {
@@ -21,6 +21,14 @@ public class MessageParser {
 
     public static HashMap<String,String>[] array;
 
+    /**
+     * Attraverso le classi JSONObject di Android, siamo in grado di trasformare una stinga in un oggetto che dà
+     * la possibilità di scorrerlo e costruire la lista che viene fornita in output.
+     * @param s: messaggio da scomporre
+     * @param keys lista di chiavi che saranno contenute all'interno del messaggio
+     * @return la lista di coppie (k,v) che sono contenute all'interno del messaggio
+     * @throws JSONException
+     */
     public static HashMap<String,String> analyzeMessage(String s,ArrayList<String> keys) throws JSONException {
         messageElements = new HashMap<>();
         //messageElements.clear();
@@ -38,6 +46,16 @@ public class MessageParser {
         return messageElements;
     }
 
+    /**
+     *  Metodo molto simile a quello precendente ma che lavora con JSONArray, cioè array di JSONObject, quindi
+     *  si scorre l'array si estraggono gli oggetti e si costruisce l'array di liste che rappresentano i differenti elementi
+     *  del JSON.
+     * @param s
+     * @param keys
+     * @param name
+     * @return
+     * @throws JSONException
+     */
     public static HashMap<String,String>[] analyzeMessageArray(String s,ArrayList<String> keys, String name) throws JSONException {
         JSONObject json = new JSONObject(s);
         JSONArray jsonArray = json.getJSONArray(name);

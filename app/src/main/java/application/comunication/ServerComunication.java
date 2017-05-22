@@ -8,10 +8,6 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
@@ -51,11 +47,14 @@ public class ServerComunication{
         add("cod_fis");
     }};
 
-    public static JSONObject getRequest() throws ExecutionException, InterruptedException {
-
-        //MessageParser.analyzeMessage(new GetRequest().execute(hostMaster,"user/test").get());
-        return null;
-    }
+    /**
+     *  Metodo che permette di compiere la login
+     * @param mail email dell'utente
+     * @param pass password dell'utente
+     * @return un boolean che indica se la richiesta è stata fatta con successo o no
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
 
     public static boolean login(String mail, String pass) throws ExecutionException, InterruptedException {
         ArrayList<String> name = new ArrayList<>();
@@ -68,6 +67,13 @@ public class ServerComunication{
         return Boolean.parseBoolean(new PostRequest().execute(hostMaster,"user/login",mex).get());
     }
 
+    /**
+     *  Metodo che permette all'utente di inviare i suoi dati per iscriversi
+     * @param info informazioni dell'utente
+     * @return un boolean che indica se la richiesta è stata fatta con successo o no
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
     public static boolean logup(HashMap<String,String> info) throws ExecutionException, InterruptedException {
         ArrayList<String> keys = userProfileKeys;
         ArrayList<String> values = new ArrayList<>();
@@ -90,6 +96,13 @@ public class ServerComunication{
         return Boolean.parseBoolean(new PostRequest().execute(hostMaster,"user/createuser",msg).get());
     }
 
+    /**
+     * Metodo che restituisce tutte le informazioni di un utente
+     * @param email email dell'utente di cui voglio prendere le informazioni
+     * @return l'oggetto userprofile che contiente tutte le info dell'utente
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
 
     public static UserProfile getprofile(String email) throws ExecutionException, InterruptedException {
         HashMap<String,String> info = new HashMap<>();
@@ -111,6 +124,13 @@ public class ServerComunication{
 
     }
 
+
+    /**
+     * Metodo permette di modificare i dati dell'utente
+     * @param info
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
     public static void editprofile(HashMap<String,String> info) throws ExecutionException, InterruptedException {
         ArrayList<String> keys = userProfileKeys;
         ArrayList<String> values = new ArrayList<>();
@@ -133,18 +153,44 @@ public class ServerComunication{
         new PutRequest().execute(hostMaster,"user/updateuser",msg).get();
     }
 
+    /**
+     * Metodo che invia i dati dei sensori di un beacon al server
+     * @param message stringa che contiene tutte i dati prelevati
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
     public static void sendValue(String message) throws ExecutionException, InterruptedException {
         new PostRequest().execute(hostMaster,"beaconvalue/insertvalue",message).get();
     }
+
+    /**
+     * Metodo che invia la posizione dell'utente
+     * @param message stringa che contiene i dati sulla posizione
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
     public static void sendPosition(String message) throws ExecutionException, InterruptedException {
         new PutRequest().execute(hostMaster,"position/setposition",message).get();
     }
 
-    //TODO DA INSERIRE NELLA ONDESTROY DELLA HOME
+    /**
+     * Metodo che cancella la posizione di un utente
+     * @param ip ip dell'utente che dovrò cancellare
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
     public static void deletePosition(String ip) throws ExecutionException, InterruptedException {
         new DeleteRequest().execute(hostMaster,"position/deleteuser/"+ip).get();
     }
 
+    /**
+     * Metodo che restitutisce tutti i beacon di una determinata struttura passata in input
+     * @param building nome dell'edificio
+     * @return la lista di utti i beacon dell'edificio
+     * @throws ExecutionException
+     * @throws InterruptedException
+     * @throws JSONException
+     */
     public static HashMap<String,String>[] getBuildingBeacon(String building) throws ExecutionException, InterruptedException, JSONException {
         ArrayList<String> keys = new ArrayList<>();
         keys.add("beacon_ID");
@@ -153,6 +199,15 @@ public class ServerComunication{
         keys.add("y");
         return MessageParser.analyzeMessageArray(new GetRequest().execute(hostMaster,"beaconnode/getallnodes/"+building).get(),keys,"beacons");
     }
+
+    /**
+     * Metodo che restituisce la lista di tutte le stanze/aule di un determinato edificio
+     * @param building nome dell'edificio
+     * @return lista di tutte le stanze
+     * @throws ExecutionException
+     * @throws InterruptedException
+     * @throws JSONException
+     */
 
     public static HashMap<String,String>[] getBuildingRoom(String building) throws ExecutionException, InterruptedException, JSONException {
         ArrayList<String> keys = new ArrayList<>();
@@ -164,6 +219,10 @@ public class ServerComunication{
         return MessageParser.analyzeMessageArray(new GetRequest().execute(hostMaster,"room/getallrooms/"+building).get(),keys,"rooms");
     }
 
+    /**
+     * Metodo che preleva la versione del csv che è situata sul server
+     * @return un intero che rappresenta la versione corrente del csv sul server
+     */
     public static int checkVersion() {
         int version = -1;
         String s;
@@ -180,6 +239,11 @@ public class ServerComunication{
         return version;
     }
 
+    /**
+     * Metodo che va a testare se è disponibile una connessione con un certo ip
+     * @param ip ip dell'ipotetico server con cui voglio comunicare
+     * @return un boolean che indica se la connessione è andata a buon fine oppure no
+     */
     public static boolean handShake(String ip) {
         boolean b;
         try {

@@ -1,7 +1,7 @@
 package application.maps.components;
 
 /**
- * Created by Federico-PC on 06/12/2016.
+ * Classe che identifica una notifica
  */
 
 public class Notify {

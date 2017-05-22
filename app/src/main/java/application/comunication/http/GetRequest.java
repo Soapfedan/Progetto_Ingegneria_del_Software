@@ -17,7 +17,8 @@ import java.net.URL;
 
 
 /**
- * Created by Federico-PC on 08/04/2017.
+ * Classe che implementa una HTTP GET, impacchetta un messaggio passandolo come parametro
+ * L'url della risorsa sarà http://[ipserver]:8080/[uri della risorsa]
  */
 
 public class GetRequest extends AsyncTask<String,Void,String> {
@@ -31,6 +32,15 @@ public class GetRequest extends AsyncTask<String,Void,String> {
     private URL url;
 
     private HttpURLConnection connection;
+
+    /**
+     *
+     * La richiesta viene effettuata attraverso un oggetto HttpURLConnection che permette di costruire
+     * una connessione utilizzando il protocollo HTTP.
+     * @param urls
+     * @return un stringa che è un documento JSON che rappresenta la risposta del server
+     */
+
 
     @Override
     protected String doInBackground(String... urls) {
@@ -61,6 +71,8 @@ public class GetRequest extends AsyncTask<String,Void,String> {
         }
 
         try {
+            //se la comunicazione è andata a buon fine, il server risponderà con il codice 200, quindi potremmo
+            //prendere il messaggio di risposta e restituirlo come output
             if (connection.getResponseCode() == 200) {
                 InputStreamReader is = new InputStreamReader(connection.getInputStream());
                 BufferedReader read = new BufferedReader(is);
@@ -89,41 +101,4 @@ public class GetRequest extends AsyncTask<String,Void,String> {
         return json;
     }
 
-//        final HttpParams httpParams = new BasicHttpParams();
-//        HttpConnectionParams.setConnectionTimeout(httpParams, 5000);
-//        HttpClient request =  new DefaultHttpClient(httpParams);
-//        HttpGet get = new HttpGet(url);
-//        HttpResponse response = null;
-//        try {
-//            response = request.execute(get);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        int responseCode = response.getStatusLine().getStatusCode();
-//        if (responseCode == 200) {
-//            InputStream istream = null;
-//            try {
-//                istream = response.getEntity().getContent();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            BufferedReader r = new BufferedReader(new InputStreamReader(istream));
-//            String s = null;
-//            StringBuffer sb = new StringBuffer();
-//            try {
-//                while ((s = r.readLine()) != null) {
-//                    sb.append(s);
-//                }
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            try {
-//                json = new JSONObject(sb.toString());
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//
-//        }
-//        return json;
-//    }
 }

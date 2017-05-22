@@ -13,7 +13,7 @@ import java.net.ProtocolException;
 import java.net.URL;
 
 /**
- * Created by Federico-PC on 08/04/2017.
+ * Classe che implementa una HTTP DELETE. L'url della risorsa sarà http://[ipserver]:8080/[uri della risorsa]
  */
 
 public class DeleteRequest extends AsyncTask<String,Void,String> {
@@ -25,6 +25,13 @@ public class DeleteRequest extends AsyncTask<String,Void,String> {
     private static final String SERVER_ID = "RestfulServerTID";
 
 
+    /**
+     *
+     * La richiesta viene effettuata attraverso un oggetto HttpURLConnection che permette di costruire
+     * una connessione utilizzando il protocollo HTTP.
+     * @param urls
+     * @return un stringa di true/false che rappresenta la risposta del server
+     */
     @Override
     protected String doInBackground(String... urls) {
         URL url = null;
@@ -43,7 +50,7 @@ public class DeleteRequest extends AsyncTask<String,Void,String> {
         }
 
         connection.setConnectTimeout(5000);
-        connection.setConnectTimeout(60000);
+        //connection.setConnectTimeout(60000);
 
         try {
 
@@ -60,11 +67,6 @@ public class DeleteRequest extends AsyncTask<String,Void,String> {
 //            wr.flush();
 //            wr.close();
 
-
-//            DataOutputStream localDataOutputStream = new DataOutputStream(connection.getOutputStream());
-//            localDataOutputStream.writeBytes(urls[2]);
-//            localDataOutputStream.flush();
-//            localDataOutputStream.close();
 
         }catch (IOException e) {
             e.printStackTrace();

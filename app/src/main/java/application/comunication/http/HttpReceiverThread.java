@@ -43,10 +43,15 @@ public class HttpReceiverThread extends Thread implements DataListener{
         BufferedReader is;
         PrintWriter os;
         String line;
+
+        //vado a iscrivere tale classe alla struttura dati Notification come subscriber
         Data.getNotification().addDataListener(this);
 
 
         try {
+            //Quando arriva la richesta da parte del serve di connessione http per inviare le notifiche,
+            //l'applicazione apre un canale in ingresso e inizia a leggere la stringa che rappresenta
+            //le notifiche scritte sotto forma di documento JSON
             InputStreamReader lettore = new InputStreamReader(socket.getInputStream());
             is = new BufferedReader(lettore);
             line = is.readLine();
@@ -81,6 +86,11 @@ public class HttpReceiverThread extends Thread implements DataListener{
             //Charset.forName("utf-8").encode(body.toString());
             Log.i("POST: ", body.toString());
             notifies = body.toString();
+
+            //quando la lettura è terminata viene richiamata la update della struttura dati
+            //notification che va ad avvertire tutti i subscriber che la struttura dati è stata
+            // modificata, all'evento update sulla struttura verranno chiamati tutti i metodi retrive dei
+            // sottoscrittori che aggiornanno la loro versione
             update();
 
             os = new PrintWriter(socket.getOutputStream(), true);
@@ -112,13 +122,20 @@ public class HttpReceiverThread extends Thread implements DataListener{
             }); */
 
         } catch (IOException e) {
-            // TODO Auto-generated catch block
+
             e.printStackTrace();
         }
 
         return;
     }
 
+    /**
+     * Il metodo descritto è un'implementazione del medesimo metodo dell'interfaccia DataListener.
+     * Presa la stringa, risultato dell'invio della notifica da parte del server, la si va a scomporre,
+     * mediante un metodo della classe MessageParser che estrarrà tutte le notiche, esse verranno costruite
+     * e inserite all'interno di un arrayList, poi memorizzato dentro la struttura dati condivisa.
+     *
+     */
     @Override
     public void update() {
         HashMap<String,String>[] not;

@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 /**
- * Created by Federico-PC on 23/03/2017.
+ * Classe che costruisce dei messaggi con struttura json, prendendo come parametro la lista di coppia (chiave,valore)
  */
 
 public class MessageBuilder {

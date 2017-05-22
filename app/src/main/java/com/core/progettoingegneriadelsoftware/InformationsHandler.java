@@ -82,7 +82,7 @@ public class InformationsHandler extends AppCompatActivity {
                 });
         alert = builder.create();
 
-            MainApplication.getDB().open();
+
             if (UserHandler.isLogged()) {
                 profile = UserHandler.getInformation(UserHandler.getMail());
                 populate(editable);

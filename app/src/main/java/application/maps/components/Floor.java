@@ -8,7 +8,10 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * Created by Federico-PC on 05/12/2016.
+ * Classe che definisce un piano che ha come proprietà un insieme di:
+ * - stanze/aule (rooms)
+ * - nodi/beacons (nodes)
+ * Viene identificata da un nome
  */
 
 public class Floor {
@@ -16,8 +19,6 @@ public class Floor {
     private HashMap<String,Room> rooms;
     private HashMap<String,Node> nodes;
     private String floorName;
-    private ImageView mapName;
-    private HashMap<String,Notify> notifications; // per ogni nodo ho un insieme di notifiche
 
     public Floor(String s){
         floorName = s;
@@ -54,7 +55,7 @@ public class Floor {
     }
 
 
-
+    // metodo che costruisce un arraylist di stringhe che contiente tutti i nomi delle aule
     public ArrayList<String> nameStringRoom() {
         ArrayList<String> s = new ArrayList();
         Iterator it = rooms.entrySet().iterator();
@@ -66,6 +67,7 @@ public class Floor {
         return s;
     }
 
+    // metodo che costruisce un arraylist di stringhe che contiente tutti i nomi dei beacon
     public ArrayList<String> nameStringNode() {
         ArrayList<String> s = new ArrayList();
         Iterator it = nodes.entrySet().iterator();

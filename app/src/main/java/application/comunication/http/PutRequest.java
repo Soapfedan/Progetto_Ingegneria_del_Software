@@ -13,7 +13,8 @@ import java.net.ProtocolException;
 import java.net.URL;
 
 /**
- * Created by Federico-PC on 08/04/2017.
+ * Classe che implementa una HTTP POST, impacchetta un messaggio passandolo come parametro
+ * L'url della risorsa sarà http://[ipserver]:8080/[uri della risorsa]
  */
 
 public class PutRequest extends AsyncTask<String,Void,String> {
@@ -23,6 +24,14 @@ public class PutRequest extends AsyncTask<String,Void,String> {
     private static final String PORT = "8080";
 
     private static final String SERVER_ID = "RestfulServerTID";
+
+    /**
+     *
+     * La richiesta viene effettuata attraverso un oggetto HttpURLConnection che permette di costruire
+     * una connessione utilizzando il protocollo HTTP.
+     * @param urls
+     * @return un stringa di true/false che rappresenta la risposta del server
+     */
 
 
     @Override
@@ -46,7 +55,7 @@ public class PutRequest extends AsyncTask<String,Void,String> {
         }
 
         connection.setConnectTimeout(5000);
-        connection.setConnectTimeout(60000);
+        //connection.setConnectTimeout(60000);
 
         try {
 
@@ -57,17 +66,14 @@ public class PutRequest extends AsyncTask<String,Void,String> {
             connection.setRequestProperty("Accept", "application/json");
 
 //            connection.connect();
-
+            //vado a creare un writer che permette di iniettare il messaggio json (urls[2])all'interno del corpo
+            //del messaggio
             OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
             wr.write(urls[2]);
             wr.flush();
             wr.close();
 
 
-//            DataOutputStream localDataOutputStream = new DataOutputStream(connection.getOutputStream());
-//            localDataOutputStream.writeBytes(urls[2]);
-//            localDataOutputStream.flush();
-//            localDataOutputStream.close();
 
         } catch (ProtocolException e) {
             e.printStackTrace();
@@ -110,41 +116,4 @@ public class PutRequest extends AsyncTask<String,Void,String> {
         return result;
     }
 
-//        final HttpParams httpParams = new BasicHttpParams();
-//        HttpConnectionParams.setConnectionTimeout(httpParams, 5000);
-//        HttpClient request =  new DefaultHttpClient(httpParams);
-//        HttpGet get = new HttpGet(url);
-//        HttpResponse response = null;
-//        try {
-//            response = request.execute(get);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        int responseCode = response.getStatusLine().getStatusCode();
-//        if (responseCode == 200) {
-//            InputStream istream = null;
-//            try {
-//                istream = response.getEntity().getContent();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            BufferedReader r = new BufferedReader(new InputStreamReader(istream));
-//            String s = null;
-//            StringBuffer sb = new StringBuffer();
-//            try {
-//                while ((s = r.readLine()) != null) {
-//                    sb.append(s);
-//                }
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            try {
-//                json = new JSONObject(sb.toString());
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//
-//        }
-//        return json;
-//    }
 }

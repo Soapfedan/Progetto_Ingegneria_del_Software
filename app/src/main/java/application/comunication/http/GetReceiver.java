@@ -13,7 +13,8 @@ import java.util.logging.Logger;
 
 
 /**
- * Created by picci on 03/05/2017.
+ * Classe che crea un server HTTP sulla porta 8888 che permette di ricevere notifiche dal server,
+ * così da creare una doppia comunicazione.
  */
 
 public class GetReceiver extends Thread {
@@ -35,7 +36,7 @@ public class GetReceiver extends Thread {
                 httpResponseThread.start();
             }
         } catch (IOException e) {
-            // TODO Auto-generated catch block
+
             e.printStackTrace();
         }
 

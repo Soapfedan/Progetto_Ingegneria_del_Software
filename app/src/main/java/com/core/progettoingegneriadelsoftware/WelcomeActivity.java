@@ -200,7 +200,10 @@ public class WelcomeActivity extends AppCompatActivity {
         return b;
     }
 
-
+    /**
+     * Metodo per accedere all'applicazione vera e propria
+     * @param b, booleano in base al quale si passa o meno all'applicazione vera e propria
+     */
     private void access(boolean b) {
         if (b) {
             changeActivity();
@@ -215,6 +218,10 @@ public class WelcomeActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Metodo per controllare se l'indirizzo ip contenuto
+     * @return valore boolean (true se possibile passare ad app, false altrimenti)
+     */
     private boolean controlAccess() {
         boolean b = false;
         if (checkBox.isChecked()) {
@@ -269,8 +276,15 @@ public class WelcomeActivity extends AppCompatActivity {
         return b;
     }
 
+    /**
+     * Metodo scaricare un file CSV dal server
+     * @param building, edificio del quale si vuole scaricare un file
+     * @param fileName, nome del file che si vuole scaricare
+     * @return valore boolean per indicare se il file è stato scaricato o meno
+     */
     private boolean downloadCSV(String building, String fileName) {
         boolean b = true;
+            //struttura dati che deve contenere i dati
         HashMap<String,String>[] ma = null;
         try {
             if (fileName.equals(BEACONLISTFILE)) {
@@ -290,6 +304,7 @@ public class WelcomeActivity extends AppCompatActivity {
             b = false;
         }
 
+            //una volta scaricato il file viene aggiornato il CSV
         try {
             CSVHandler.updateCSV(ma,getBaseContext(),fileName);
         } catch (IOException e) {
@@ -301,13 +316,15 @@ public class WelcomeActivity extends AppCompatActivity {
         } catch (Exception e) {
             b = false;
         }
-
+            //verifica che il download sia andato a buon fine
         if (b) b = csvContainsElements(CSVHandler.getFiles().get(fileName));
 
         return b;
     }
 
-
+    /**
+     * Metodo per accedere all'applicazione vera e propria
+     */
     private void changeActivity() {
         startActivity(new Intent(getBaseContext(),Home.class));
         this.finish();

@@ -54,8 +54,13 @@ public class MainApplication {
     private static BluetoothAdapter mBluetoothAdapter;
     private static BeaconScanner scanner;
 
+        //identifica la home
     private static Activity activity;
 
+        //identifica l'activity corrente dell'app
+    private static Activity currentActivity;
+
+        //flag che indica se l'activity è visibile o meno (serve per vedere se l'app è in background o meno)
     private static boolean visible;
 
     //costante per attivare il bluetooth
@@ -74,12 +79,13 @@ public class MainApplication {
     }
 
     public static boolean getOnlineMode(){ return onlineMode;}
-    /**
-     * Method used t
-     * @param n
-     */
-    public void researchNode(Node n){
 
+    public static void setCurrentActivity (Activity a) {
+        currentActivity = a;
+    }
+
+    public static Activity getCurrentActivity () {
+        return currentActivity;
     }
 
     public static void setVisible(boolean b) {

@@ -63,6 +63,8 @@ public class GetRequest extends AsyncTask<String,Void,String> {
             connection = (HttpURLConnection) url.openConnection();
         }catch (SocketTimeoutException e1){
             Toast.makeText(MainApplication.getActivity().getApplicationContext(), "Connessione al server scaduta, riavviare l'applicazione", Toast.LENGTH_SHORT).show();
+            MainApplication.setOnlineMode(false);
+            Log.e("errore","sessione scadura");
         } catch (IOException e) {
             e.printStackTrace();
         }

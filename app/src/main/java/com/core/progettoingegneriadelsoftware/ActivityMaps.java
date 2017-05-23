@@ -90,6 +90,7 @@ public class ActivityMaps extends AppCompatActivity {
 
     protected void onStart() {
         super.onStart();
+        MainApplication.setCurrentActivity(this);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(STARTMAPS);
 

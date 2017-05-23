@@ -98,7 +98,7 @@ public class Home extends AppCompatActivity
             tv.setText("Utente non registrato");
         }
 
-        setOptionMenu();
+
 
         backpress = 0;
 
@@ -114,6 +114,8 @@ public class Home extends AppCompatActivity
 
     protected void onStart() {
         super.onStart();
+        setOptionMenu();
+        MainApplication.setCurrentActivity(this);
     }
 
     protected void onResume() {
@@ -177,7 +179,8 @@ public class Home extends AppCompatActivity
                     loginDialog.dismiss();
                 }
                 else {
-                    alert.setMessage("login e/o password scorretti");
+                    if (!MainApplication.getOnlineMode()) alert.setMessage("Server non raggiungibile");
+                    else alert.setMessage("login e/o password scorretti");
                     alert.show();
                 }
 

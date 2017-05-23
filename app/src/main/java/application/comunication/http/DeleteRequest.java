@@ -50,7 +50,7 @@ public class DeleteRequest extends AsyncTask<String,Void,String> {
         try {
             connection = (HttpURLConnection) url.openConnection();
         }catch (SocketTimeoutException e1){
-            Toast.makeText(MainApplication.getActivity().getApplicationContext(), "Connessione al server scaduta, riavviare l'applicazione", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainApplication.getCurrentActivity().getApplicationContext(), "Connessione al server scaduta, riavviare l'applicazione", Toast.LENGTH_SHORT).show();
             MainApplication.setOnlineMode(false);
             Log.e("errore","sessione scadura");
         } catch (IOException e) {

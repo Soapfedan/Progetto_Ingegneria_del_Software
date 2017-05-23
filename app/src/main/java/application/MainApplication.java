@@ -116,7 +116,6 @@ public class MainApplication {
 
         ServerComunication.setHostMaster(PreferenceManager.getDefaultSharedPreferences(activity.getBaseContext()).getString("serverIp",""));
 
-//        InputStream inputStream = activity.getResources().openRawResource(R.raw.beaconlist);
         ArrayList<String[]> beaconList = CSVHandler.readCSV("beaconlist",activity.getBaseContext());
         loadSensors(beaconList);
 

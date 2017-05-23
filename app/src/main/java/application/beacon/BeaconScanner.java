@@ -37,20 +37,15 @@ import application.utility.StateMachine;
 
 public class BeaconScanner extends StateMachine implements DataListener {
 
-    //contiene le caratteristiche legate allo scan, in riferimento alla configurazione settata
+        //contiene le caratteristiche legate allo scan, in riferimento alla configurazione settata
     private Setup setup;
 
-    //alcuni possibili messaggi che può ricevere lo scan (vengono utilizzati come parametri per l'intenFilter)
+        //alcuni possibili messaggi che può ricevere lo scan (vengono utilizzati come parametri per l'intenFilter)
     public static final String SCAN_PHASE_FINISHED = "ScanPhaseFinished";
     public static final String SUSPEND_SCAN = "SuspendScan";
     public static final String EMERGENCY = "EMERGENCY";
 
     private static final String TAG = "BeaconRESPONSE";
-
-    //oggetto unico che rappresenta il bluetooth del dispositivo
-//    private BluetoothAdapter mBluetoothAdapter;
-//    //costante per attivare il bluetooth
-//    private static final int REQUEST_ENABLE_BT = 1;
 
     //adapter per ciò che viene trovato nello scan
     private LeDeviceListAdapter mLeDeviceListAdapter;
@@ -178,16 +173,8 @@ public class BeaconScanner extends StateMachine implements DataListener {
                 break;
             //ricevuto quando deve essere sospeso lo scan
             case (SUSPEND_SCAN):
-
                 suspendScan();
                 break;
-//            //ricevuto quando si presenta un'emergenza
-//            case (EMERGENCY):
-//
-//                MainApplication.setEmergency(true);
-//
-//                suspendScan();
-//                break;
 
             default:
                 break;
@@ -197,11 +184,7 @@ public class BeaconScanner extends StateMachine implements DataListener {
     public void suspendScan() {
         Log.i("SUSPENDSCAN","suspend scan");
         running = false;
-//        if (currentState==0) {
-//            int next = nextState();
-//            changeState(next);
-//            executeState();
-//        }
+
         //nel caso in cui si stiano leggendo i dati dai sensori, viene interrotta la procedura
         //fermando la macchina a stati che se ne occupa
         if(currentState==1) {

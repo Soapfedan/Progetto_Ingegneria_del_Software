@@ -61,6 +61,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
         checkBox = (CheckBox) findViewById(R.id.chkOnline);
 
+        MainApplication.setCurrentActivity(this);
 
         prefer = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 

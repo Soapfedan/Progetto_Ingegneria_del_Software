@@ -59,7 +59,7 @@ public class LeDeviceListAdapter {
                 b = dev;
             }
             else {
-                Toast.makeText(MainApplication.getActivity().getApplicationContext(),
+                Toast.makeText(MainApplication.getCurrentActivity().getApplicationContext(),
                         " Si è individuato un sensore non presente nel documento, " +
                                 " dovresti aggiornare il file", Toast.LENGTH_SHORT).show();
             }

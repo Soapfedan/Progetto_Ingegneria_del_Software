@@ -287,7 +287,7 @@ public class BeaconConnection extends StateMachine {
             //arraylist dei valori per creare il JSON
         ArrayList<String> values = new ArrayList<>();
 
-            //creare le chiavi per il documento
+            //create le chiavi per il documento
         keys.add("beacon_ID");
         keys.add("user_ID");
         keys.add("timestamp");

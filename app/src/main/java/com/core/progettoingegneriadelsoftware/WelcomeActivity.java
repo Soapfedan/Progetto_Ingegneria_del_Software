@@ -13,9 +13,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import org.json.JSONException;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -32,38 +30,39 @@ import application.validation.FormControl;
 
 public class WelcomeActivity extends AppCompatActivity {
 
-
+        //versione dei file CSV a disposizione dell'applicazione
     private int version;
-
+        //nomi dei file CSV
     private static final String BEACONLISTFILE = CSVHandler.getFileBeacon();
     private static final String ROOMLISTFILE = CSVHandler.getFileRoom();
 
-    private static final String runFlag = "runFlag";
+        //stringa usata come chiave nello sharedpreferencies per l'indirizzo ip
     private static final String serverIp = "serverIp";
+        //stringa usata come chiave nello sharedpreferencies per il numero della versione
     private static final String versionID = "versionID";
+        //stringa usata come chiave nello sharedpreferencies per l'edificio
     private static final String buildingID = "buildingID";
 
+        //elementi per l'interfaccia grafica
     private Spinner spinner;
-
     private EditText editText;
-
     private CheckBox checkBox;
-
+        //elemento usato per salvare in maniera permanente sul dispositivo alcuni dati
     SharedPreferences prefer;
-
+        //indirizzo ip del server a cui ci si vuole collegare
     private String ip;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
-        CSVHandler.createCSV(this);
-
-        checkBox = (CheckBox) findViewById(R.id.chkOnline);
-
         MainApplication.setCurrentActivity(this);
 
+        CSVHandler.createCSV(this);
+
         prefer = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+
+        checkBox = (CheckBox) findViewById(R.id.chkOnline);
 
         spinner = (Spinner) findViewById(R.id.spinner);
 
@@ -74,34 +73,42 @@ public class WelcomeActivity extends AppCompatActivity {
         editText = (EditText) findViewById(R.id.ip_text);
         editText.setText(prefer.getString(serverIp,""));
 
+            //preso l'indirizzo ip salvato in memoria
         ip = prefer.getString(serverIp,"no ip");
 
+            //flag che verifica se possibile accedere all'app o meno
         boolean b = controlAccess();
 
         if (b) access(b);
         else {
+                //creato il bottone
             select.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                 boolean bb = false;
+
                 if (checkBox.isChecked()) {
                     bb = controlAccess();
                 }
                 else {
                     ip = editText.getText().toString();
-
+                        //controllo sull'indirizzo ip immesso
                     if(checkIp(ip)) {
                         String building = spinner.getSelectedItem().toString().toLowerCase();
                         ServerComunication.setHostMaster(ip);
                         MainApplication.setOnlineMode(true);
 
+                            //scaricati i dati per aggiornare i file CSV
                         boolean beaconFile = downloadCSV(building,BEACONLISTFILE);
                         boolean roomFile = downloadCSV(building,ROOMLISTFILE);
 
+                            //scaricata la versione del server
                         int currentVersion = ServerComunication.checkVersion();
+                            //aggiornata la versione salvata sul dispositivo
                         version = currentVersion;
-
+                            //controllo per poter accedere (si controlla la lunghezza dei documenti csv)
                         if(beaconFile && roomFile) {
+                                //aggiornati i valori nelle preferencies
                             SharedPreferences.Editor edit = prefer.edit();
                             edit.putString(serverIp,ip);
                             edit.putInt(versionID,version);
@@ -131,19 +138,32 @@ public class WelcomeActivity extends AppCompatActivity {
         MainApplication.setVisible(false);
     }
 
-    private boolean isCSVEmpty(File f) {
+    /**
+     * Metodo per controllare se il CSV è vuoto o meno
+     * @param f, file CSV da analizzare
+     * @return valore boolean (true se CSV contiene valori, false se vuoto)
+     */
+    private boolean csvContainsElements(File f) {
         boolean b = false;
         if (f.length()>0) b=true;
         Log.e("csv","bool" + b);
         return b;
     }
 
+    /**
+     * Metodo per controllare se l'indirizzo ip contenuto
+     * @param ip, indirizzo ip da controllare
+     * @return valore boolean (true se CSV contiene valori, false se vuoto)
+     */
     private boolean checkIp(String ip) {
         boolean b;
+            //flag per il controllo formale di come è scritto l'ip
         boolean check;
+            //flag per per controllare se il server sia disponibile
         boolean handshake = false;
         check = FormControl.ipControl(ip);
         if (check) {
+                //contattato il server per verificare la disponibilità
             handshake = ServerComunication.handShake(ip);
             if (!handshake) Toast.makeText(getApplicationContext(), " La comunicazione col server è fallita ", Toast.LENGTH_SHORT).show();
         }
@@ -151,24 +171,31 @@ public class WelcomeActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), " L'ip è scritto male ", Toast.LENGTH_SHORT).show();
         }
 
+            //se entrambi veri ci si può collegare al server
         b = (check && handshake);
         if (b) {
+                //aggiornati i dati relativi all'ip
             SharedPreferences.Editor edit = prefer.edit();
             edit.putString(serverIp,ip);
             edit.commit();
             ServerComunication.setHostMaster(ip);
-
         }
 
         return b;
     }
 
+    /**
+     * Metodo per controllare se la versione salvata dei CSV è corretta
+     * @return valore boolean (true se versione corretta, false altrimenti)
+     */
     private boolean checkVersion() {
+            //versione dei file salvata in memoria
         version = prefer.getInt(versionID,0);
+            //chiesta al server versione corrente dei file
         int currentVersion = ServerComunication.checkVersion();
 
         Log.i("version","version " + version + " current " + currentVersion);
-
+            //confronto tra le due versioni
         boolean b = (version==currentVersion);
         return b;
     }
@@ -191,7 +218,7 @@ public class WelcomeActivity extends AppCompatActivity {
     private boolean controlAccess() {
         boolean b = false;
         if (checkBox.isChecked()) {
-            if(isCSVEmpty(CSVHandler.getFiles().get(BEACONLISTFILE)) && isCSVEmpty(CSVHandler.getFiles().get(ROOMLISTFILE))) b = true;
+            if(csvContainsElements(CSVHandler.getFiles().get(BEACONLISTFILE)) && csvContainsElements(CSVHandler.getFiles().get(ROOMLISTFILE))) b = true;
             else Toast.makeText(getApplicationContext(), "Collegarsi ad un server per scaricare le mappe", Toast.LENGTH_SHORT).show();
             MainApplication.setOnlineMode(false);
         }
@@ -211,10 +238,10 @@ public class WelcomeActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), " La versione del file CSV non è aggiornata, la sto richiedendo", Toast.LENGTH_SHORT).show();
                         String building = prefer.getString(buildingID,"");
 
-                        //scarica i file aggiornati
+                            //scarica i file aggiornati
                         boolean beaconFile = downloadCSV(building,BEACONLISTFILE);
                         boolean roomFile = downloadCSV(building,ROOMLISTFILE);
-                        //aggiorna la versione in memoria
+                            //aggiorna la versione in memoria
                         int currentVersion = ServerComunication.checkVersion();
                         version = currentVersion;
                         MainApplication.setOnlineMode(true);
@@ -275,7 +302,7 @@ public class WelcomeActivity extends AppCompatActivity {
             b = false;
         }
 
-        if (b) b = isCSVEmpty(CSVHandler.getFiles().get(fileName));
+        if (b) b = csvContainsElements(CSVHandler.getFiles().get(fileName));
 
         return b;
     }

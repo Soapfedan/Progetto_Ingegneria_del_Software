@@ -25,7 +25,7 @@ import application.user.UserHandler;
 import application.utility.StateMachine;
 
 /**
- * Created by Niccolo on 29/03/2017.
+
  */
 
 public class BeaconConnection extends StateMachine {

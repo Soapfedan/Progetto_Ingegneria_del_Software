@@ -15,7 +15,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.ParcelUuid;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +32,7 @@ import application.utility.StateMachine;
 
 
 /**
- * Created by Niccolo on 29/03/2017.
+
  */
 
 public class BeaconScanner extends StateMachine implements DataListener {

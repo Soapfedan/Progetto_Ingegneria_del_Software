@@ -2,7 +2,7 @@ package application.beacon;
 import android.util.Log;
 
 /**
- * Created by Niccolo on 06/04/2017.
+
  */
 
 public class Setup {

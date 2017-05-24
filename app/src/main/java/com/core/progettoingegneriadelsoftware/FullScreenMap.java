@@ -123,7 +123,7 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
     protected void onStart() {
         super.onStart();
         MainApplication.setCurrentActivity(this);
-        if(!MainApplication.controlBluetooth()) MainApplication.activateBluetooth(this);
+        if(!MainApplication.controlBluetooth()) MainApplication.activateBluetooth();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(EXIT_MAPS);
         notifies = Data.getNotification().getNotifies();

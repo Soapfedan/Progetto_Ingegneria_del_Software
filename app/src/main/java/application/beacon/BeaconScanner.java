@@ -163,7 +163,7 @@ public class BeaconScanner extends StateMachine implements DataListener {
     }
 
     /**
-     * Metodo per costruire il filtro per i messaggi che può ricevere lo scan
+     * Metodo per costruire il filtro per i messaggi che può ricevere il broadcastReceiver
      */
     //inseriti i filtri per i messaggi ricevuti
     private void initializeFilter() {

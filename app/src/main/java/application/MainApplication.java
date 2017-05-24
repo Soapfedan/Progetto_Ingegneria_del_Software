@@ -41,17 +41,15 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class MainApplication {
 
-    /**
-     * array dinamico che contiene tutti i piani di una mappa scaricata
-     */
-
+        //struttura dati per identificare i piani di un edificio (K: nome piano, V: piano)
     private static HashMap<String,Floor> floors;
-
-
+        //struttura dati per identificare i beacon di un edificio (K: id beacon, V: beacon)
     private static HashMap<String, Node> sensors;
-
+        //flag che permette di capire se è presente o meno un'emergenza
     private static boolean emergency;
+        //struttura utilizzata per interfacciarsi con il bluetooth
     private static BluetoothAdapter mBluetoothAdapter;
+        //scanner per ricercare i dispositivi beacon
     private static BeaconScanner scanner;
 
         //identifica la home
@@ -63,67 +61,172 @@ public class MainApplication {
         //flag che indica se l'activity è visibile o meno (serve per vedere se l'app è in background o meno)
     private static boolean visible;
 
-    //costante per attivare il bluetooth
+        //costante usata per attivare il bluetooth
     private static final int REQUEST_ENABLE_BT = 1;
 
     private static NotificationManager notificationManager;
-
+        //filtro usato per discriminare quali messaggi deve ricevere MainApplication
     private static IntentFilter intentFilter;
-
+        //identificativo del messaggio che si può ricevere
     public static final String TERMINATED_SCAN = "TerminatedScan";
-
+        //modalità di funzionamento dell'applicazione (per gestire le comunicazioni col server)
     private static boolean onlineMode = true;
 
-    public static void setOnlineMode(boolean b) {
-        onlineMode = b;
-    }
-
-    public static boolean getOnlineMode(){ return onlineMode;}
-
-    public static void setCurrentActivity (Activity a) {
-        currentActivity = a;
-    }
-
-    public static Activity getCurrentActivity () {
-        return currentActivity;
-    }
-
-    public static void setVisible(boolean b) {
-        visible = b;
-        Log.i("visible",""+visible);
-    }
-
-    public static boolean getVisible() {
-        return visible;
-    }
-
-
-    public static HashMap<String,Node> getSensors() {
-        return sensors;
-    }
-
+    /**
+     * Metodo che inizializza i parametri legati all'applicazione
+     * @param a, activity in cui vengono inizializzati i parametri (activity home)
+     */
     public static void start(Activity a) {
         activity = a;
         initializeFilter();
         emergency = false;
-
+            //registrato il receiver
         activity.getBaseContext().registerReceiver(broadcastReceiver,intentFilter);
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if(!controlBluetooth()) activateBluetooth(activity);
+            //attivazione del bluetooth (qualora non sia già funzionante)
+        if(!controlBluetooth()) activateBluetooth();
+            //creazione dello scanner
         if(mBluetoothAdapter!=null) initializeScanner(activity);
+            //inizializzata la struttura dati legata all'utente
         UserHandler.init();
-
+            //impostato l'indirizzo ip del server
         ServerComunication.setHostMaster(PreferenceManager.getDefaultSharedPreferences(activity.getBaseContext()).getString("serverIp",""));
 
+            //creata struttura dati legata ai beacon nell'edificio, leggendo dal file salvato in memoria intera
         ArrayList<String[]> beaconList = CSVHandler.readCSV("beaconlist",activity.getBaseContext());
         loadSensors(beaconList);
 
+            //creata struttura dati legata alle stanze nell'edificio, leggendo dal file salvato in memoria intera
         ArrayList<String[]> roomsList = CSVHandler.readCSV("roomlist",activity.getBaseContext());
         loadRooms(roomsList);
 
     }
+    /**
+     * Metodo per impostare la modalità di funzionamento dell'applicazione
+     * @param b, valore che si vuole assegnare al flag per la modalità di funzionamento
+     */
+    public static void setOnlineMode(boolean b) {
+        onlineMode = b;
+    }
 
+    /**
+     * Metodo che indica se il funzionamento dell'applicazione è in modalità online oppure offline
+     * @return true se modalità online, false se offline
+     */
+    public static boolean getOnlineMode(){ return onlineMode;}
+    /**
+     * Metodo per impostare l'activity in cui si trova a lavorare l'applicazione
+     * @param a, activity in cui si trova a lavorare l'applicazione
+     */
+    public static void setCurrentActivity (Activity a) {
+        currentActivity = a;
+    }
+
+    /**
+     * Metodo che restituisce l'activity in cui si trova l'applicazione in quel momento
+     * @return activity in cui si trova a lavorare l'applicazione
+     */
+    public static Activity getCurrentActivity () {
+        return currentActivity;
+    }
+    /**
+     * Metodo per impostare la visibilità o meno dell'applicazione. Considerando che ad ogni cambio di activity
+     * una viene chiusa (il flag diviene false) e l'altra viene aperta (il flag diviene true), quando si il metodo restituisce
+     * un valore false si presuppone che l'applicazione stia lavorando in background
+     * @param b, valore che si vuole assegnare al flag per la visibilità dell'activity
+     */
+    public static void setVisible(boolean b) {
+        visible = b;
+//        Log.i("visible",""+visible);
+    }
+    /**
+     * Metodo che restituisce la visibilità dell'applicazione
+     * @return, visibilità dell'applicazione
+     */
+    public static boolean getVisible() {
+        return visible;
+    }
+
+    /**
+     * Metodo che restituisce la struttura dati in cui sono memorizzati i beacon
+     * @return, struttura dati contenente i beacon
+     */
+    public static HashMap<String,Node> getSensors() {
+        return sensors;
+    }
+    /**
+     * Metodo che restituisce l'adapter necessario per la comunicazione bluetooth
+     * @return, adapter per la comunicazione bluetooth
+     */
+    public static BluetoothAdapter getmBluetoothAdapter() {
+        return mBluetoothAdapter;
+    }
+
+    public static void setFloors(HashMap<String,Floor> f){
+        floors = f;
+    }
+
+    /**
+     * Metodo che restituisce la struttura dati in cui sono memorizzati i piani di un edificio
+     * @return, struttura dati contenente i piani di un edificio
+     */
+    public static HashMap<String,Floor> getFloors(){
+        return floors;
+    }
+    /**
+     * Metodo che indica se sia presente o meno un'emergenza nell'edificio
+     * @return, presenza o meno di un'emergenza
+     */
+    public static boolean getEmergency() {
+        return emergency;
+    }
+    /**
+     * Metodo per impostare lo stato di emergenza dell'applicazione
+     * @param e, flag per indicare la presenza di un'emergenza (true indica la presenza di un'emergenza, false l'assenza)
+     */
+    public static void setEmergency(boolean e) {
+        emergency = e;
+        Log.i("emergency","emergency: " + emergency);
+        scanner.suspendScan();
+    }
+
+    /**
+     * Metodo che restituisce l'oggetto utilizzato per lo scan dei sensori
+     * @return, scanner dei sensori
+     */
+    public static BeaconScanner getScanner() {
+        return scanner;
+    }
+    /**
+     * Metodo che restituisce l'attributo activity
+     * @return, attributo activity
+     */
+    public static Activity getActivity() {
+        return activity;
+    }
+
+    /**
+     * Metodo utilizzato per inizializzare lo scanner, con il setup di default (NORMAL condition).
+     * @param a, activity in cui viene creato lo scan
+     */
+    public static void initializeScanner(Activity a) {
+        scanner = new BeaconScanner(a);
+    }
+
+    /**
+     * Metodo utilizzato per inizializzare lo scanner, con il setup dato dal parametro cond.
+     * @param a, activity in cui viene creato lo scan
+     * @param cond, identificativo del tipo di setup con cui si vuole costruire lo scanner
+     */
+    public static void initializeScanner(Activity a, String cond) {
+        scanner = new BeaconScanner(a,cond);
+    }
+
+    /**
+     * Metodo per caricare nella struttura dati dei beacon, i valori passati come parametro
+     * @param b, i valori dei sensori da caricare in memoria
+     */
     private static void loadSensors(ArrayList<String[]> b) {
         int coords[] = new int[2];
         String fl;
@@ -137,12 +240,14 @@ public class MainApplication {
             coords[1] = Integer.parseInt(beacon[3]);
             fl = beacon[1];
             sensors.put(cod,new Node(coords.clone(),fl));
-//            Log.i("csv","cod: " + beacon[0] + " floor " + fl + " coords " + coords[0] + "," + coords[1]);
         }
 
     }
 
-    //aggiungo manualmente elementi alle barre, dopo andrà fatto diversamente
+    /**
+     * Metodo per caricare nella struttura dati delle stanze, i valori passati come parametro
+     * @param b, i valori delle stanze da caricare in memoria
+     */
     private static void loadRooms(ArrayList<String[]> b) {
 
         int[] coords = new int[2];
@@ -171,41 +276,6 @@ public class MainApplication {
 
     }
 
-
-    public static BluetoothAdapter getmBluetoothAdapter() {
-        return mBluetoothAdapter;
-    }
-
-    public static void setFloors(HashMap<String,Floor> f){
-        floors = f;
-    }
-
-    public static HashMap<String,Floor> getFloors(){
-        return floors;
-    }
-
-    public static boolean getEmergency() {
-        return emergency;
-    }
-
-    public static void setEmergency(boolean e) {
-        emergency = e;
-        Log.i("emergency","emergency: " + emergency);
-        scanner.suspendScan();
-    }
-
-    public static BeaconScanner getScanner() {
-        return scanner;
-    }
-
-    public static void initializeScanner(Activity a) {
-        scanner = new BeaconScanner(a);
-    }
-
-    public static void initializeScanner(Activity a, String cond) {
-        scanner = new BeaconScanner(a,cond);
-    }
-
     public static void closeApp(GetReceiver httpServerThread) {
         if(broadcastReceiver!=null) activity.unregisterReceiver(broadcastReceiver);
 
@@ -227,16 +297,22 @@ public class MainApplication {
         }
     }
 
+        //il broadcast receiver deputato alla ricezione dei messaggi
     private static BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
         Log.i("MESSAGE ARRIVED","ricevuto broadcast: " + intent.getAction());
+            //MainApplication può ricevere solo questo messaggio, che indica il fatto che lo scanner
+            //ha terminato il proprio ciclo di funzionamento, se ne può quindi far partire un altro
         if(intent.getAction().equals("TerminatedScan")) {
+                //viene gestito il cambio di activity nel caso in cui ci sia un'emergenza
             if(emergency) {
+                    //se lo scanner fino a quel momento ha lavorato in modalità normale
+                    //significa che l'applicazione non si trovava in modalità SEARCHING
                 if(scanner.getSetup().getState().equals("NORMAL")) {
                     scanner.closeScan();
                     scanner = null;
-
+                        //presi i dati riferiti alla posizione per poter inizializzare l'activity Full Screen Maps
                     String floor = Data.getUserPosition().getFloor();
                     if(floor == null){
                         if(Data.getNotification().getNotifies()==null || Data.getNotification().getNotifies().size()==0){
@@ -246,6 +322,7 @@ public class MainApplication {
                         }
 
                     }
+                        //viene messo come obiettivo da raggiungere la via di fuga nel piano
                     String mex = floor.concat(";").concat(floor).concat("EMERGENCY");
                     Log.i("mex",mex);
                     Intent intentTWO = new Intent (context,
@@ -254,26 +331,35 @@ public class MainApplication {
                     context.startActivity(intentTWO);
 
                 }
+                    //se già ci si trova nella FullScreenMaps (la modalità di funzionamento è quindi
+                    //SEARCHING oppure EMERGENCY
                 else {
+                        //viene riinizializzato lo scan, in modalità emergenza
                     scanner.closeScan();
                     scanner = null;
                     scanner = new BeaconScanner(activity,"EMERGENCY");
                 }
 
             }
+                //viene gestito il cambio di activity nel caso in cui non sia presente un'emergenza
             else {
+                    //se lo scanner in quel momento si trova in modalità normale,
+                    //significa che non è in corso una ricerca
                 if(scanner.getSetup().getState().equals("NORMAL")) {
                     scanner.closeScan();
                     scanner = null;
-
+                        //viene inviato un messaggio per creare la FullScreenMap activity
                     context.sendBroadcast(new Intent("STARTMAPS"));
 
                 }
+                    //se lo scan sta lavorando in modalità diversa da NORMAL, significa che si trova nella
+                    //FullScreenMaps
                 else {
+                        //viene inviato il messaggio per chiudere la FullScreenMaps
                     context.sendBroadcast(new Intent("EXIT_MAPS"));
                     scanner.closeScan();
                     scanner = null;
-
+                        //riinizializzato lo scanner in modalità NORMAL
                     initializeScanner(activity);
                 }
             }
@@ -282,16 +368,19 @@ public class MainApplication {
         }
     };
 
+    /**
+     * Metodo per costruire il filtro per i messaggi che può ricevere il broadcastReceiver
+     */
     private static void initializeFilter() {
         intentFilter = new IntentFilter();
         intentFilter.addAction(TERMINATED_SCAN);
     }
 
-    public static Activity getActivity() {
-        return activity;
-    }
 
-    //contralla che il bluetooth sia acceso
+
+    /**
+     * Metodo che controlla se il dispositivo su cui sta lavorando l'applicazione ha il bluetooth acceso
+     */
     public static boolean controlBluetooth() {
         boolean b;
         if (getmBluetoothAdapter()==null || !getmBluetoothAdapter().isEnabled()) b = false;
@@ -299,12 +388,17 @@ public class MainApplication {
         return b;
     }
 
+    /**
+     * Metodo per lanciare una notifica push, qualora l'applicazione sia in background nel momento
+     * in cui sopraggiunge un'emergenza
+     */
     public static void launchNotification() {
+            //activity creata al click della notifica
         Intent intent = new Intent(activity, Home.class);
         intent.putExtra("MESSAGE","EMERGENCY");
 
         PendingIntent pIntent = PendingIntent.getActivity(activity, (int) System.currentTimeMillis(), intent, 0);
-
+            //creazione della notifica vera e propria
         Notification n  = new Notification.Builder(activity)
                 .setContentTitle("Progetto Ingegneria")
                 .setContentText("C'è un'emergenza")
@@ -315,29 +409,28 @@ public class MainApplication {
 
         notificationManager =
                 (NotificationManager) activity.getSystemService(NOTIFICATION_SERVICE);
-
+            //lancio della notifica
         notificationManager.notify(0, n);
     }
 
+    /**
+     * Metodo per cancellare eventuali notifiche rimaste sul dispositivo dell'utente, nonostante
+     * l'emergenza sia terminata
+     */
     public static void deleteNotification() {
         Log.i("del","delete");
         notificationManager.cancel(0);
     }
 
 
-    public static Node getSensor(String cod) {
-        Node n = sensors.get(cod);
-        return n;
-    }
 
-    //attiva il bluetooth
-    public static void activateBluetooth (Activity activity) {
+    /**
+     * Metodo per l'attivazione del bluetooth sul dispositivo
+     */
+    public static void activateBluetooth () {
         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
         activity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
     }
 
-    public static boolean isEmergency() {
-        return emergency;
-    }
 }
 

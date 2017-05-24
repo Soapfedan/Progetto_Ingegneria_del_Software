@@ -115,36 +115,36 @@ public class ActivityMaps extends AppCompatActivity {
         if(broadcastReceiver!=null) getBaseContext().unregisterReceiver(broadcastReceiver);
 
     }
-        //aggiungo manualmente elementi alle barre, dopo andrà fatto diversamente
-    private void loadRooms(ArrayList<String[]> b) {
-
-        int[] coords = new int[2];
-        double width;
-        String cod;
-        HashMap<String,Floor> f = new HashMap<>();
-        MainApplication.setFloors(f);
-        for (String[] roomslist : b) {
-            if(MainApplication.getFloors().containsKey(roomslist[2])) {    //il piano esiste
-                coords[0] = Integer.parseInt(roomslist[0]); //x
-                coords[1] = Integer.parseInt(roomslist[1]); //y
-                width = Double.parseDouble(roomslist[3].replace(",","."));
-                cod = roomslist[4];
-                MainApplication.getFloors().get(roomslist[2]).addRoom(cod,new Room(cod,coords.clone(),roomslist[2],width));
-            }else{
-                MainApplication.getFloors().put(roomslist[2],new Floor(roomslist[2]));//aggiungo il nuovo piano
-                //aggiunto il nodo
-                coords[0] = Integer.parseInt(roomslist[0]); //x
-                coords[1] = Integer.parseInt(roomslist[1]); //y
-                width = Double.parseDouble(roomslist[3].replace(",","."));     //larghezza
-                cod = roomslist[4];                         //codice
-                MainApplication.getFloors().get(roomslist[2]).addRoom(cod,new Room(cod,coords.clone(),roomslist[2],width));
-            }
-
-
-        }
-
-
-    }
+//        //aggiungo manualmente elementi alle barre, dopo andrà fatto diversamente
+//    private void loadRooms(ArrayList<String[]> b) {
+//
+//        int[] coords = new int[2];
+//        double width;
+//        String cod;
+//        HashMap<String,Floor> f = new HashMap<>();
+//        MainApplication.setFloors(f);
+//        for (String[] roomslist : b) {
+//            if(MainApplication.getFloors().containsKey(roomslist[2])) {    //il piano esiste
+//                coords[0] = Integer.parseInt(roomslist[0]); //x
+//                coords[1] = Integer.parseInt(roomslist[1]); //y
+//                width = Double.parseDouble(roomslist[3].replace(",","."));
+//                cod = roomslist[4];
+//                MainApplication.getFloors().get(roomslist[2]).addRoom(cod,new Room(cod,coords.clone(),roomslist[2],width));
+//            }else{
+//                MainApplication.getFloors().put(roomslist[2],new Floor(roomslist[2]));//aggiungo il nuovo piano
+//                //aggiunto il nodo
+//                coords[0] = Integer.parseInt(roomslist[0]); //x
+//                coords[1] = Integer.parseInt(roomslist[1]); //y
+//                width = Double.parseDouble(roomslist[3].replace(",","."));     //larghezza
+//                cod = roomslist[4];                         //codice
+//                MainApplication.getFloors().get(roomslist[2]).addRoom(cod,new Room(cod,coords.clone(),roomslist[2],width));
+//            }
+//
+//
+//        }
+//
+//
+//    }
 
    private void createIcon() {
         selectedFloor = MainApplication.getFloors().get(floorsname.get(0));

@@ -25,7 +25,7 @@ import application.user.UserHandler;
 import application.utility.StateMachine;
 
 /**
-
+    Classe utilizzata per gestire la connessione con un beacon
  */
 
 public class BeaconConnection extends StateMachine {

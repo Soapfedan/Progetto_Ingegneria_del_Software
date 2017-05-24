@@ -1,7 +1,7 @@
 package application.beacon;
 
 /**
-
+    Classe utilizzata per la gestione e l'interpretazione dei dispositivi rintracciati dallo scan
  */
 
 import java.util.Collections;

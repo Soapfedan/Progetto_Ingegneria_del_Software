@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 /**
-
+    Classe utilizzata per gestire i servizi messi a disposizione dal beacon (per servizi si intende
+    quali sensori sono disponibili)
  */
 
 public class BeaconService {

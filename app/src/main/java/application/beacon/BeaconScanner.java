@@ -32,7 +32,7 @@ import application.utility.StateMachine;
 
 
 /**
-
+    Classe utilizzata per gestire lo scan dei beacon in prossimità dell'utente
  */
 
 public class BeaconScanner extends StateMachine implements DataListener {

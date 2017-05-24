@@ -2,7 +2,7 @@ package application.beacon;
 import android.util.Log;
 
 /**
-
+    Classe utilizzata per gestire le modalità di scan per la ricerca di beacon
  */
 
 public class Setup {

@@ -17,7 +17,7 @@ import java.util.UUID;
 import static java.lang.Math.pow;
 
 /**
-
+    Classe utilizzata per la connessione vera e propria al beacon
  */
 
 public class GattLeService {

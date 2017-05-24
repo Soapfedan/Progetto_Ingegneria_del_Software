@@ -96,7 +96,7 @@ public class ActivityMaps extends AppCompatActivity {
 
         buttonPressed = false;
 
-        if(!MainApplication.controlBluetooth()) MainApplication.activateBluetooth(this);
+        if(!MainApplication.controlBluetooth()) MainApplication.activateBluetooth();
 
         getBaseContext().registerReceiver(broadcastReceiver,intentFilter);
 

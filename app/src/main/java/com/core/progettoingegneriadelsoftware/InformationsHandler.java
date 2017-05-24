@@ -28,7 +28,8 @@ import android.app.DatePickerDialog.OnDateSetListener;
 import android.widget.Toast;
 
 /**
- * Created by Federico-PC on 28/12/2016.
+ * Classe che gestisce tutte le procedure che coinvolgono il profilo di un utente,
+ * quali iscrizione di un nuovo utente, login, logut, modifica profilo.
  */
 
 public class InformationsHandler extends AppCompatActivity {
@@ -50,7 +51,7 @@ public class InformationsHandler extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().setTitle("Go Safe!");
-        // editable = 1 for edit profile , editable = 0 for view information
+        // Se la variabile editable = 1 allora dovrà modificare il profilo altrimento se è 0 dovrò visualizzare le informazioni (sola lettura)
         int editable = getIntent().getIntExtra("editable",-1);
         if(editable == 0)
         {
@@ -60,7 +61,9 @@ public class InformationsHandler extends AppCompatActivity {
         }else{
             setContentView(R.layout.activity_informations);
             infoTxt = new HashMap<String, TextView[]>();
+            //carico gli elementi della form
             loadResources(editable);
+            //registro tutti gli eventi
             loadEvents();
         }
 
@@ -116,6 +119,10 @@ public class InformationsHandler extends AppCompatActivity {
         super.onDestroy();
     }
 
+    /**
+     * Carico tutte le risorse che si trovano sulla form e le inserisco dentro una hashmap che mi permetterà di lavorarci
+     * @param edit parametro che indica se la form dovrà solo visualizzare o modificare i dati dell'utente
+     */
 
     private void loadResources(int edit) {
         if (edit != 0) {
@@ -227,6 +234,13 @@ public class InformationsHandler extends AppCompatActivity {
                         .append(mDay).append("-")
                         .append(mYear).append(" "));
     }
+
+    /**
+     * Metodo che setta per ogni elemento all'interno della hashmap (cioè tutte le textview della forma che conterranno le informazioni)
+     * un comportantmento in risposta al cambio di focus sull'elemento, in particolar modo, andremo a controllare la text,
+     * vedendo se il contenuto è non conforme con la regola Regex imposta o se è vuota. Nel primo caso la registreremo nell'elenco degli elementi
+     * con contenuto errato, altrimento nella lista delle text vuote.
+     */
 
     private void loadEvents(){
 
@@ -596,6 +610,11 @@ public class InformationsHandler extends AppCompatActivity {
 
     }
 
+    /**
+     * Metodo che permette la modifica del profilo solo se tutti i controlli hanno esito positivo (controllo se non è vuota e se il contenuto
+     * è conforme alla regola Regex
+     */
+
     private void editProfile(){
         //campo vuoto
         boolean error = false;
@@ -645,6 +664,11 @@ public class InformationsHandler extends AppCompatActivity {
         }
 
     }
+
+    /**
+     * Metodo che popola il contenuto della form, tramite i dati prelevati dal server
+     * @param edit
+     */
 
     private void populate(int edit){
         if (edit == 1)

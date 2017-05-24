@@ -32,6 +32,11 @@ import application.sharedstorage.DataListener;
 import application.sharedstorage.UserPositions;
 
 
+/**
+ *  Classe che visualizza la mappa di un piano corredandola con posizione dell'utente,
+ *  destinazione da raggiungere ed eventuali notifiche
+ */
+
 public class FullScreenMap extends AppCompatActivity implements DataListener{
         //indica le volte che si clicca BackButton
     private int backpress;
@@ -86,14 +91,16 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
         handler = new Handler();
         notifies = new ArrayList<>();
 
-        Data.getUserPosition().addDataListener(this);
+
         s = 0;
         position = new int[2];
-        //position = MainApplication.getFloors().get("145").getRooms().get("145DICEA").getCoords();
+        //Registro la classe all'interno delle due strutture dati
+        //in modo tale viene richiamato il suo metodo retrive al cambio della posizione dell'utente o all'arrivo di nuove notifiche
         Data.getUserPosition().addDataListener(this);
         Data.getNotification().addDataListener(this);
         Bundle extras = getIntent().getExtras();
 
+        //Recupero l'id della mappa che dovrà essere visualizzata
         if (extras != null) {
             extractDatafromMessage(extras.getString("MAP_ID"));
 //            s = extras.getInt("MAP_ID");
@@ -183,6 +190,8 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
         currentFloor = selectedFloor;
     }
 
+    //Metodo che inserisce tutte le caratteristiche all'interno della mappa, come la posizione dell'utente o le varie notifiche
+
     private void setImageGrid(int imageId){
         BitmapFactory.Options myOptions = new BitmapFactory.Options();
         myOptions.inDither = true;
@@ -198,6 +207,8 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
 
         Bitmap workingBitmap = Bitmap.createBitmap(bitmap);
         Bitmap mutableBitmap = workingBitmap.copy(Bitmap.Config.ARGB_8888, true);
+
+        //Carico le differenti immagini da visualizzare sulla mappa
         Bitmap curr_pos = BitmapFactory.decodeResource(getResources(), R.drawable.current_position);
         Bitmap destination = BitmapFactory.decodeResource(getResources(), R.drawable.destination);
         Bitmap danger = BitmapFactory.decodeResource(getResources(), R.drawable.danger);
@@ -207,6 +218,7 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
 
         Canvas canvas = new Canvas(mutableBitmap);
 
+        // se la posizione dell'utente è diversa da [0,0]
         if(position[0]!=0&&position[1]!=0) {
 
             //int[] c = coordsMapping(position);
@@ -214,14 +226,14 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
             canvas.drawBitmap(curr_pos,position[0],position[1],null);
             image.setImageBitmap(mutableBitmap);
 
-                //disegno obiettivo
+            //se mi trovo sullo stesso piano della destinazione visualizzo l'immagine della destinazione
             if(selectedFloor.equals(currentFloor)) {
                 image.setImageBitmap(mutableBitmap);
                 coords = MainApplication.getFloors().get(selectedFloor).getRooms().get(selectedRoom).getCoords();
                 canvas.drawBitmap(destination,coords[0],coords[1],null);
                 //canvas.drawCircle(coords[0],coords[1],30,new Paint(Color.BLUE));
             }
-            if(!notifies.isEmpty()){
+            if(!notifies.isEmpty()){//se ci sono delle notifiche scorro l'array e le visualizzo sulla mappa
                 Paint pt = new Paint();
                 paint.setAntiAlias(true);
                 for(int k=0;k<notifies.size();k++){
@@ -249,12 +261,12 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
                 }
             }
         }
-        else {
+        else {//se la posizione dell'utente non è stata settata ed è ancora quella di default [0,0]
             image.setImageBitmap(mutableBitmap);
             int[] coords = MainApplication.getFloors().get(selectedFloor).getRooms().get(selectedRoom).getCoords();
             canvas.drawBitmap(destination,coords[0],coords[1],null);
             //canvas.drawCircle(coords[0],coords[1],30,new Paint(Color.BLUE));
-            if(!notifies.isEmpty()){
+            if(!notifies.isEmpty()){//se ci sono delle notifiche scorro l'array e le visualizzo sulla mappa
                 Paint pt = new Paint();
                 paint.setAntiAlias(true);
                 for(int k=0;k<notifies.size();k++){

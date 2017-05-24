@@ -1,8 +1,6 @@
 package com.core.progettoingegneriadelsoftware;
 
-/**
- * Created by Niccolò on 28/12/2016.
- */
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -36,53 +34,39 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by Niccolò on 27/12/2016.
+ *
  */
 
 public class ActivityMaps extends AppCompatActivity {
-
+        //indica il piano da ricercare, selezionato dall'utente
     private Floor selectedFloor;
+        //indica la stanza da ricercare, selezionata dall'utente
     private Room selectedRoom;
         //elementi grafici
     private Button b_search;
     private Spinner spinner_floor;
     private Spinner spinner_room;
     private ImageView image;
+        //insieme dei nomi di piano che compaiono nello spinner
     private ArrayList<String> floorsname;
     private JSONObject s;
     private int resID;
+        //identificativo del messaggio che si può ricevere
     private static final String STARTMAPS = "STARTMAPS";
-
+        //flag usato per evitare che si prema più volte il bottone
     private boolean buttonPressed;
-
+        //messaggio impacchettato nell'intent per passare informazioni alla creazione di FullScreenMap
     private String message;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         floorsname = new ArrayList<>();
-        ArrayList<String[]> roomsList;
-        //selectedFloor = new Floor();
+
         getSupportActionBar().setTitle("Go Safe!");
 
         selectedRoom = new Room(null,null,null,0);
-/*
 
-        try {
-            s = ServerComunication.getRequest();
-            System.out.println("Risultato "+s.getString("description")+" "+s.getString("summary"));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }  catch (JSONException e) {
-        e.printStackTrace();
-    }
-*/
-
-//        InputStream inputStreamRooms = getResources().openRawResource(R.raw.roomlist);
-//        roomsList = CSVHandler.readCSV("roomlist",this);
-//        loadRooms(roomsList);
         floorsname = createNamesArray();
         createIcon();
 
@@ -91,13 +75,14 @@ public class ActivityMaps extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         MainApplication.setCurrentActivity(this);
+            //inizializzato filtro per i messaggi
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(STARTMAPS);
 
         buttonPressed = false;
 
         if(!MainApplication.controlBluetooth()) MainApplication.activateBluetooth();
-
+            //registrato il receiver nell'activity
         getBaseContext().registerReceiver(broadcastReceiver,intentFilter);
 
     }
@@ -112,41 +97,15 @@ public class ActivityMaps extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         MainApplication.setVisible(false);
+            //cancellata la registrazione del receiver
         if(broadcastReceiver!=null) getBaseContext().unregisterReceiver(broadcastReceiver);
 
     }
-//        //aggiungo manualmente elementi alle barre, dopo andrà fatto diversamente
-//    private void loadRooms(ArrayList<String[]> b) {
-//
-//        int[] coords = new int[2];
-//        double width;
-//        String cod;
-//        HashMap<String,Floor> f = new HashMap<>();
-//        MainApplication.setFloors(f);
-//        for (String[] roomslist : b) {
-//            if(MainApplication.getFloors().containsKey(roomslist[2])) {    //il piano esiste
-//                coords[0] = Integer.parseInt(roomslist[0]); //x
-//                coords[1] = Integer.parseInt(roomslist[1]); //y
-//                width = Double.parseDouble(roomslist[3].replace(",","."));
-//                cod = roomslist[4];
-//                MainApplication.getFloors().get(roomslist[2]).addRoom(cod,new Room(cod,coords.clone(),roomslist[2],width));
-//            }else{
-//                MainApplication.getFloors().put(roomslist[2],new Floor(roomslist[2]));//aggiungo il nuovo piano
-//                //aggiunto il nodo
-//                coords[0] = Integer.parseInt(roomslist[0]); //x
-//                coords[1] = Integer.parseInt(roomslist[1]); //y
-//                width = Double.parseDouble(roomslist[3].replace(",","."));     //larghezza
-//                cod = roomslist[4];                         //codice
-//                MainApplication.getFloors().get(roomslist[2]).addRoom(cod,new Room(cod,coords.clone(),roomslist[2],width));
-//            }
-//
-//
-//        }
-//
-//
-//    }
 
-   private void createIcon() {
+    /**
+     * Metodo per caricare tutti gli elementi dell'interfaccia grafica (gli spinner ed il bottone)
+     */
+    private void createIcon() {
         selectedFloor = MainApplication.getFloors().get(floorsname.get(0));
         selectedRoom = MainApplication.getFloors().get(floorsname.get(0)).getRooms().get(
                 MainApplication.getFloors().get(floorsname.get(0)).nameStringRoom().get(0));
@@ -206,47 +165,51 @@ public class ActivityMaps extends AppCompatActivity {
         b_search = (Button) findViewById(R.id.but_map_search);
         b_search.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-               // Toast.makeText(getApplicationContext(),
-                        //"cercata stanza " + selectedRoom.getName() + " nel piano " + selectedFloor.getName() ,Toast.LENGTH_SHORT).show();
-               // b_search.setVisibility(View.INVISIBLE);
-                //spinner_floor.setVisibility(View.INVISIBLE);
-                //spinner_room.setVisibility(View.INVISIBLE);
-                if (!buttonPressed) selectImage();
-                buttonPressed = true;
+            if (!buttonPressed) selectImage();
+            buttonPressed = true;
 
             }
         });
     }
 
+    /**
+     * Metodo per caricare le immagini della mappa in base al piano ed alla stanza ricercata
+     */
     private void selectImage() {
-
+            //
         String floor = selectedFloor.getFloorName();
         String room = selectedRoom.getCod();
+
         message = floor.concat(";").concat(room);
 
 //        String map = "m".concat(floor).concat("_color");
 //        resID = getResources().getIdentifier(map , "drawable", getPackageName());
 
-
+            //inviato un messaggio per sospendere lo scan, in vista del passaggio a FullScreenMaps (di conseguenza
+            //viene cambiata anche la modalità di scan)
         getApplicationContext().sendBroadcast(new Intent("SuspendScan"));
 
         if(!MainApplication.controlBluetooth())
             Toast.makeText(getApplicationContext(), "Si è verificato un problema, verificare che il Bluetooth sia attivo", Toast.LENGTH_SHORT).show();
     }
 
-    //a partire da arrayList di stanze ne crea uno parallelo con i nomi delle stanze
+    /**
+     * Metodo che restituisce una lista di stringhe, contenente i nomi dei piani
+     * @return lista di stringhe contenente i nomi dei piani
+     */
     private ArrayList<String> createNamesArray(){
         ArrayList<String> s = new ArrayList();
             Iterator it = MainApplication.getFloors().entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry pair = (Map.Entry) it.next();
                 s.add(pair.getKey().toString());
-                //it.remove(); // avoids a ConcurrentModificationException
             }
             return s;
 
     }
-
+    /**
+     * Metodo all'interno del quale viene creata e fatta partire la FullScreenMap activity
+     */
     private void startFullMaps(){
         Intent intentTWO = new Intent (this.getApplicationContext(),
                 FullScreenMap.class);
@@ -254,10 +217,12 @@ public class ActivityMaps extends AppCompatActivity {
         this.startActivity(intentTWO);
     }
 
+        //il broadcast receiver deputato alla ricezione dei messaggi
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.i("ACTIVTY MAPS","ricevuto broadcast: " + intent.getAction());
+                //questo messaggio viene ricevuto quando si deve passare alla FullScreenMaps
             if(intent.getAction().equals(STARTMAPS)) {
 
                 startFullMaps();

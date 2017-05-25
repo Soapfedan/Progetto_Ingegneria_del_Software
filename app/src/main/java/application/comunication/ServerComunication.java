@@ -228,8 +228,10 @@ public class ServerComunication{
         String s;
         try {
             s = new GetRequest().execute(hostMaster,"getcsvversion").get();
-            Log.i("s",s);
-            version = Integer.parseInt(s);
+            if (s!=null && !s.equals("0")) {
+                Log.i("s",s);
+                version = Integer.parseInt(s);
+            }
         } catch (InterruptedException e) {
 
         } catch (ExecutionException e) {

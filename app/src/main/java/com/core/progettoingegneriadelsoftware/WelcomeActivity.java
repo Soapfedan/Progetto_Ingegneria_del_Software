@@ -95,17 +95,25 @@ public class WelcomeActivity extends AppCompatActivity {
                         //controllo sull'indirizzo ip immesso
                     if(checkIp(ip)) {
                         String building = spinner.getSelectedItem().toString().toLowerCase();
-                        ServerComunication.setHostMaster(ip);
-                        MainApplication.setOnlineMode(true);
 
-                            //scaricati i dati per aggiornare i file CSV
-                        boolean beaconFile = downloadCSV(building,BEACONLISTFILE);
-                        boolean roomFile = downloadCSV(building,ROOMLISTFILE);
+                        boolean beaconFile = false;
+                        boolean roomFile = false;
 
-                            //scaricata la versione del server
+                        //scaricata la versione del server
                         int currentVersion = ServerComunication.checkVersion();
+
+                        Log.e("current","current " + currentVersion);
+
+                        if (currentVersion!=-1) {
+                            ServerComunication.setHostMaster(ip);
+                            MainApplication.setOnlineMode(true);
+                            //scaricati i dati per aggiornare i file CSV
+                            beaconFile = downloadCSV(building,BEACONLISTFILE);
+                            roomFile = downloadCSV(building,ROOMLISTFILE);
                             //aggiornata la versione salvata sul dispositivo
-                        version = currentVersion;
+                            version = currentVersion;
+                        }
+
                             //controllo per poter accedere (si controlla la lunghezza dei documenti csv)
                         if(beaconFile && roomFile) {
                                 //aggiornati i valori nelle preferencies
@@ -116,7 +124,10 @@ public class WelcomeActivity extends AppCompatActivity {
                             edit.commit();
                             bb = true;
                         }
-
+                        else {
+                            Toast.makeText(getApplicationContext(), " Ci sono problemi con il download delle mappe ", Toast.LENGTH_SHORT).show();
+                            bb = false;
+                        }
                     }
                 }
                 access(bb);
@@ -261,6 +272,7 @@ public class WelcomeActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(), " Ho aggiornato il CSV, riclicca il bottone", Toast.LENGTH_SHORT).show();
                                 b = false;
                             }
+
                         }
                         else {
                             b = false;

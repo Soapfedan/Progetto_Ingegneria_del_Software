@@ -518,9 +518,15 @@ public class BeaconScanner extends StateMachine implements DataListener {
                 //viene aggiornato il beacon a cui si è collegato l'utente
             String cod = currentBeacon.getAddress();
             Node n = MainApplication.getSensors().get(cod);
+
+            Log.e("get","coords " + n.getCoords() + " flor " + n.getFloor());
+
                 //viene aggiornato il piano in cui si trova l'utente e le sue coordinate x,y
-            Data.getUserPosition().setPosition(n.getCoords());
             Data.getUserPosition().setFloor(n.getFloor());
+            Data.getUserPosition().setPosition(n.getCoords());
+
+
+
             //Data.getUserPosition().updateInformation();
         if(MainApplication.getOnlineMode()) {
             try {

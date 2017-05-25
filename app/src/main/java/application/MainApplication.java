@@ -72,6 +72,7 @@ public class MainApplication {
         //modalità di funzionamento dell'applicazione (per gestire le comunicazioni col server)
     private static boolean onlineMode = true;
 
+
     /**
      * Metodo che inizializza i parametri legati all'applicazione
      * @param a, activity in cui vengono inizializzati i parametri (activity home)

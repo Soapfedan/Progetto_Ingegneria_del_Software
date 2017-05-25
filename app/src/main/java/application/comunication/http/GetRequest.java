@@ -69,7 +69,7 @@ public class GetRequest extends AsyncTask<String,Void,String> {
             e.printStackTrace();
         }
 
-        connection.setConnectTimeout(5000);
+        connection.setConnectTimeout(2000);
         try {
             connection.setRequestMethod("GET");
         } catch (ProtocolException e) {

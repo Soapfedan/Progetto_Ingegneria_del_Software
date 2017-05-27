@@ -221,6 +221,9 @@ public class WelcomeActivity extends AppCompatActivity {
                 setup = createParameters(s);
                 MainApplication.setScanParameters(setup);
             }
+            else {
+                MainApplication.setScanParameters(null);
+            }
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -233,8 +236,10 @@ public class WelcomeActivity extends AppCompatActivity {
     private HashMap<String,Long> createParameters(HashMap<String,String> s) {
         HashMap<String,Long> setup = new HashMap<>();
         for (String str: s.keySet()) {
-            Long l = Long.parseLong(s.get(str));
-            setup.put(str,l);
+            if (!s.get(str).equals("")) {
+                Long l = Long.parseLong(s.get(str));
+                setup.put(str,l);
+            }
         }
         return setup;
     }

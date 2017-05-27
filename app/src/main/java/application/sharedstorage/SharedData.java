@@ -16,6 +16,10 @@ public class SharedData {
 
     }
 
+    public ArrayList<DataListener> getListeners() {
+        return listeners;
+    }
+
     public void updateInformation() {
         for (DataListener dataListener : listeners) {
             dataListener.retrive();

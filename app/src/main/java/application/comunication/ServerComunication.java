@@ -209,7 +209,7 @@ public class ServerComunication{
         keys.add("periodBetweenScanSearching");
         keys.add("periodBetweenScanEmergency");
 
-        return MessageParser.analyzeMessage(new GetRequest().execute(hostMaster,"url da server").get(),keys);
+        return MessageParser.analyzeMessage(new GetRequest().execute(hostMaster,"parameters").get(),keys);
     }
 
     /**

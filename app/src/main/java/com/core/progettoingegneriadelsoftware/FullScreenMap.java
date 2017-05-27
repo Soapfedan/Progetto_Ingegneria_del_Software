@@ -96,8 +96,13 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
         position = new int[2];
         //Registro la classe all'interno delle due strutture dati
         //in modo tale viene richiamato il suo metodo retrive al cambio della posizione dell'utente o all'arrivo di nuove notifiche
-        Data.getUserPosition().addDataListener(this);
-        Data.getNotification().addDataListener(this);
+        if(!Data.getUserPosition().getListeners().contains(this)){
+            Data.getUserPosition().addDataListener(this);
+        }
+        if(!Data.getNotification().getListeners().contains(this)){
+            Data.getNotification().addDataListener(this);
+        }
+
         Bundle extras = getIntent().getExtras();
 
         //Recupero l'id della mappa che dovrà essere visualizzata

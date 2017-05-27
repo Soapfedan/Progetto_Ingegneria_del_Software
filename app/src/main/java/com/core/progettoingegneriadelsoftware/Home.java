@@ -31,7 +31,7 @@ import application.sharedstorage.DataListener;
 import application.user.UserHandler;
 
 public class Home extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,DataListener {
+        implements NavigationView.OnNavigationItemSelectedListener{
 
     //menu laterale
     private NavigationView navigationView;
@@ -40,7 +40,6 @@ public class Home extends AppCompatActivity
     private SharedPreferences prefer;
     private TextView tv;
     private GetReceiver httpServerThread;
-    private ArrayList<Notify> notifies;
     private int backpress;
 
     @Override
@@ -58,8 +57,8 @@ public class Home extends AppCompatActivity
         httpServerThread = new GetReceiver();
         httpServerThread.start();
 
-        Data.getNotification().addDataListener(this);
-        notifies = new ArrayList<>();
+
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -316,31 +315,5 @@ public class Home extends AppCompatActivity
         return false;
     }
 
-    @Override
-    public void update() {
-
-    }
-
-    @Override
-    public void retrive() {
-//        notifies = Data.getNotification().getNotifies();
-//        for (int i = 0;i<notifies.size();i++){
-//            Log.i("Notification:","n°: "+notifies.get(i).getId()+
-//                    " cod cat: "+notifies.get(i).getCod_cat()+
-//                    " floor: "+notifies.get(i).getFloor()+
-//                    " room: "+notifies.get(i).getRoom());
-//        }
-//        runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                if(MainApplication.getEmergency()){
-//                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ff0000"))); //red
-//                }else{
-//                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#3F51B5"))); //blue
-//                }
-//            }
-//        });
-
-    }
 
 }

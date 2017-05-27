@@ -217,7 +217,7 @@ public class WelcomeActivity extends AppCompatActivity {
         HashMap<String,Long> setup;
         try {
             s = ServerComunication.getScanParameters();
-            if (s!=null) {
+            if (!s.isEmpty() && s!=null) {
                 setup = createParameters(s);
                 MainApplication.setScanParameters(setup);
             }

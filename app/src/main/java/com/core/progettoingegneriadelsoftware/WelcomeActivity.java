@@ -117,6 +117,7 @@ public class WelcomeActivity extends AppCompatActivity {
                             //controllo per poter accedere (si controlla la lunghezza dei documenti csv)
                         if(beaconFile && roomFile) {
                                 //aggiornati i valori nelle preferencies
+                            downloadSetup();
                             SharedPreferences.Editor edit = prefer.edit();
                             edit.putString(serverIp,ip);
                             edit.putInt(versionID,version);
@@ -211,6 +212,33 @@ public class WelcomeActivity extends AppCompatActivity {
         return b;
     }
 
+    private void downloadSetup () {
+        HashMap<String,String> s;
+        HashMap<String,Long> setup;
+        try {
+            s = ServerComunication.getScanParameters();
+            if (s!=null) {
+                setup = createParameters(s);
+                MainApplication.setScanParameters(setup);
+            }
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private HashMap<String,Long> createParameters(HashMap<String,String> s) {
+        HashMap<String,Long> setup = new HashMap<>();
+        for (String str: s.keySet()) {
+            Long l = Long.parseLong(s.get(str));
+            setup.put(str,l);
+        }
+        return setup;
+    }
+
     /**
      * Metodo per accedere all'applicazione vera e propria
      * @param b, booleano in base al quale si passa o meno all'applicazione vera e propria
@@ -251,6 +279,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 if (ServerComunication.handShake(ip)) {
                     if (checkVersion()) {
                         b = true;
+                        downloadSetup();
                     }
                     else {
                         Toast.makeText(getApplicationContext(), " La versione del file CSV non è aggiornata, la sto richiedendo", Toast.LENGTH_SHORT).show();

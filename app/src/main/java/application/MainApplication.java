@@ -72,6 +72,7 @@ public class MainApplication {
         //modalità di funzionamento dell'applicazione (per gestire le comunicazioni col server)
     private static boolean onlineMode = true;
 
+    private static HashMap<String, Long> scanParameters;
 
     /**
      * Metodo che inizializza i parametri legati all'applicazione
@@ -147,6 +148,14 @@ public class MainApplication {
      */
     public static boolean getVisible() {
         return visible;
+    }
+
+    public static HashMap<String,Long> getScanParameters() {
+        return scanParameters;
+    }
+
+    public static void setScanParameters(HashMap<String,Long> s) {
+        scanParameters = s;
     }
 
     /**

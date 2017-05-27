@@ -200,6 +200,18 @@ public class ServerComunication{
         return MessageParser.analyzeMessageArray(new GetRequest().execute(hostMaster,"beaconnode/getallnodes/"+building).get(),keys,"beacons");
     }
 
+    public static HashMap<String,String> getScanParameters() throws ExecutionException, InterruptedException, JSONException {
+        ArrayList<String> keys = new ArrayList<>();
+        keys.add("scanPeriodNormal");
+        keys.add("scanPeriodSearching");
+        keys.add("scanPeriodEmergency");
+        keys.add("periodBetweenScanNormal");
+        keys.add("periodBetweenScanSearching");
+        keys.add("periodBetweenScanEmergency");
+
+        return MessageParser.analyzeMessage(new GetRequest().execute(hostMaster,"url da server").get(),keys);
+    }
+
     /**
      * Metodo che restituisce la lista di tutte le stanze/aule di un determinato edificio
      * @param building nome dell'edificio
@@ -257,6 +269,8 @@ public class ServerComunication{
         }
         return b;
     }
+
+
 
     public static String getIP() {
         return hostMaster;

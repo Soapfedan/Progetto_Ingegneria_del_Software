@@ -21,10 +21,6 @@
             android:icon="@drawable/ic_menu_send"
             android:title="Vedi Informazioni"
             android:visible="false" />
-        <item
-            android:icon="@drawable/ic_menu_manage"
-            android:id="@+id/configuration"
-            android:title="Configurazione IP" />
 
     </group>
 </menu>

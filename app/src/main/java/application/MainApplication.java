@@ -71,8 +71,11 @@ public class MainApplication {
     public static final String TERMINATED_SCAN = "TerminatedScan";
         //modalità di funzionamento dell'applicazione (per gestire le comunicazioni col server)
     private static boolean onlineMode = true;
-
+        //parametri per la durata dello scan (presi dal server)
     private static HashMap<String, Long> scanParameters;
+
+    private static boolean isFinishing;
+
 
     /**
      * Metodo che inizializza i parametri legati all'applicazione
@@ -103,6 +106,7 @@ public class MainApplication {
         ArrayList<String[]> roomsList = CSVHandler.readCSV("roomlist",activity.getBaseContext());
         loadRooms(roomsList);
 
+        isFinishing = false;
     }
     /**
      * Metodo per impostare la modalità di funzionamento dell'applicazione
@@ -152,6 +156,14 @@ public class MainApplication {
 
     public static HashMap<String,Long> getScanParameters() {
         return scanParameters;
+    }
+
+    public static void setIsFinishing(boolean b) {
+        isFinishing = b;
+    }
+
+    public static boolean getIsFinishing() {
+        return isFinishing;
     }
 
     public static void setScanParameters(HashMap<String,Long> s) {
@@ -287,7 +299,11 @@ public class MainApplication {
     }
 
     public static void closeApp(GetReceiver httpServerThread) {
-        if(broadcastReceiver!=null) activity.unregisterReceiver(broadcastReceiver);
+
+//        isFinishing = true;
+//
+//        activity.sendBroadcast(new Intent("SuspendScan"));
+
 
         if (httpServerThread.status()) {
             try {
@@ -315,62 +331,68 @@ public class MainApplication {
             //MainApplication può ricevere solo questo messaggio, che indica il fatto che lo scanner
             //ha terminato il proprio ciclo di funzionamento, se ne può quindi far partire un altro
         if(intent.getAction().equals("TerminatedScan")) {
+            if (isFinishing) {
+                if(broadcastReceiver!=null) activity.unregisterReceiver(broadcastReceiver);
+                scanner.closeScan();
+            }
+            else {
                 //viene gestito il cambio di activity nel caso in cui ci sia un'emergenza
-            if(emergency) {
+                if(emergency) {
                     //se lo scanner fino a quel momento ha lavorato in modalità normale
                     //significa che l'applicazione non si trovava in modalità SEARCHING
-                if(scanner.getSetup().getState().equals("NORMAL")) {
-                    scanner.closeScan();
-                    scanner = null;
+                    if(scanner.getSetup().getState().equals("NORMAL")) {
+                        scanner.closeScan();
+                        scanner = null;
                         //presi i dati riferiti alla posizione per poter inizializzare l'activity Full Screen Maps
-                    String floor = Data.getUserPosition().getFloor();
-                    if(floor == null){
-                        if(Data.getNotification().getNotifies()==null || Data.getNotification().getNotifies().size()==0){
-                            floor = "145";
-                        }else {
-                            floor = Data.getNotification().getNotifies().get(0).getFloor();
+                        String floor = Data.getUserPosition().getFloor();
+                        if(floor == null){
+                            if(Data.getNotification().getNotifies()==null || Data.getNotification().getNotifies().size()==0){
+                                floor = "145";
+                            }else {
+                                floor = Data.getNotification().getNotifies().get(0).getFloor();
+                            }
+
                         }
+                        //viene messo come obiettivo da raggiungere la via di fuga nel piano
+                        String mex = floor.concat(";").concat(floor).concat("EMERGENCY");
+                        Log.i("mex",mex);
+                        Intent intentTWO = new Intent (context,
+                                FullScreenMap.class);
+                        intentTWO.putExtra("MAP_ID",mex);
+                        context.startActivity(intentTWO);
 
                     }
-                        //viene messo come obiettivo da raggiungere la via di fuga nel piano
-                    String mex = floor.concat(";").concat(floor).concat("EMERGENCY");
-                    Log.i("mex",mex);
-                    Intent intentTWO = new Intent (context,
-                            FullScreenMap.class);
-                    intentTWO.putExtra("MAP_ID",mex);
-                    context.startActivity(intentTWO);
-
-                }
                     //se già ci si trova nella FullScreenMaps (la modalità di funzionamento è quindi
                     //SEARCHING oppure EMERGENCY
-                else {
+                    else {
                         //viene riinizializzato lo scan, in modalità emergenza
-                    scanner.closeScan();
-                    scanner = null;
-                    scanner = new BeaconScanner(activity,"EMERGENCY");
-                }
+                        scanner.closeScan();
+                        scanner = null;
+                        scanner = new BeaconScanner(activity,"EMERGENCY");
+                    }
 
-            }
+                }
                 //viene gestito il cambio di activity nel caso in cui non sia presente un'emergenza
-            else {
+                else {
                     //se lo scanner in quel momento si trova in modalità normale,
                     //significa che non è in corso una ricerca
-                if(scanner.getSetup().getState().equals("NORMAL")) {
-                    scanner.closeScan();
-                    scanner = null;
+                    if(scanner.getSetup().getState().equals("NORMAL")) {
+                        scanner.closeScan();
+                        scanner = null;
                         //viene inviato un messaggio per creare la FullScreenMap activity
-                    context.sendBroadcast(new Intent("STARTMAPS"));
+                        context.sendBroadcast(new Intent("STARTMAPS"));
 
-                }
+                    }
                     //se lo scan sta lavorando in modalità diversa da NORMAL, significa che si trova nella
                     //FullScreenMaps
-                else {
+                    else {
                         //viene inviato il messaggio per chiudere la FullScreenMaps
-                    context.sendBroadcast(new Intent("EXIT_MAPS"));
-                    scanner.closeScan();
-                    scanner = null;
+                        context.sendBroadcast(new Intent("EXIT_MAPS"));
+                        scanner.closeScan();
+                        scanner = null;
                         //riinizializzato lo scanner in modalità NORMAL
-                    initializeScanner(activity);
+                        initializeScanner(activity);
+                    }
                 }
             }
 

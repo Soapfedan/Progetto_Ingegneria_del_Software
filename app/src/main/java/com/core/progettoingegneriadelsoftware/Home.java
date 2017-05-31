@@ -152,13 +152,16 @@ public class Home extends AppCompatActivity
 
             if (backpress>1) {
                 Toast.makeText(getApplicationContext(), " Arrivederci ", Toast.LENGTH_SHORT).show();
-//                  TODO uscire spegnendo i receiver
+
+                MainApplication.setIsFinishing(true);
+                this.sendBroadcast(new Intent("SuspendScan"));
+
                 if (MainApplication.getOnlineMode()) {
                     MainApplication.closeApp(httpServerThread);
                 }
-                else {
 
-                }
+                finish();
+
             }
         }
 
@@ -316,37 +319,6 @@ public class Home extends AppCompatActivity
                 }
             }
         }
-
-        /*if(id == R.id.viewuser){
-            DatabaseUtility.viewColumn();
-        }else if (id == R.id.delete){
-            final Dialog loginDialog = new Dialog(this);
-            loginDialog.setContentView(R.layout.login_dialog);
-            loginDialog.setTitle("Login");
-            //inizializzo componenti del dialog
-            Button btnCancel = (Button) loginDialog.findViewById(R.id.btnLoginCancel);
-            Button btnConfirm = (Button) loginDialog.findViewById(R.id.btnLoginEnter);
-            final EditText txtUser = (EditText) loginDialog.findViewById(R.id.txtLoginUsername);
-            btnConfirm.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //richiama il metodo dello user per gestire i dati inerenti il login
-                    //in base alla riuscita del login si cambiano i menu oppure si mostra alert
-                    DatabaseUtility.deleteColumn(txtUser.getText().toString());
-
-
-                }
-            });
-            btnCancel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    loginDialog.dismiss();
-                }
-            });
-
-            //rende visibile il dialog
-            loginDialog.show();
-        }*/
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

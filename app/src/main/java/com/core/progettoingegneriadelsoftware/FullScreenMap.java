@@ -244,7 +244,7 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
                 for(int k=0;k<notifies.size();k++){
                     if(currentFloor.equals(notifies.get(k).getFloor())) {
                         int[] c = MainApplication.getFloors().get(currentFloor).getRooms().get(notifies.get(k).getRoom()).getCoords();
-                        if((c[0]==coords[0]&&c[1]==coords[1])||(c[0]==position[0]&&c[1]==position[1])) {
+                        if(((c[0]==coords[0]&&c[1]==coords[1])||(c[0]==position[0]&&c[1]==position[1]))&&(coords!=null&&position!=null)) {
                             c[0] += 20;
                             c[1] += 20;
                         }

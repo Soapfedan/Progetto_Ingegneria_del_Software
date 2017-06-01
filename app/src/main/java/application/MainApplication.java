@@ -1,5 +1,6 @@
 package application;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -9,7 +10,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -73,7 +77,7 @@ public class MainApplication {
     private static boolean onlineMode = true;
         //parametri per la durata dello scan (presi dal server)
     private static HashMap<String, Long> scanParameters;
-
+        //flag che indica quando l'applicazione sta per essere chiusa (passando dal backbutton)
     private static boolean isFinishing;
 
 
@@ -153,19 +157,26 @@ public class MainApplication {
     public static boolean getVisible() {
         return visible;
     }
-
+    /**
+     * Metodo che restituisce l'istanza contenente le durata per le varie fasi dello scan, ricevute dal server
+     * @return, hashmap (K: nome parametro, V:sua durata in millisecondi) contenente i valori per le varie fasi dello scan
+     */
     public static HashMap<String,Long> getScanParameters() {
         return scanParameters;
     }
 
+    /**
+     * Metodo imposta l'attributo isFinishing, che indica se l'applicazione sta per essere chiusa
+     * @param b, booleano che indica se l'applicazione sta per essere chiusa o meno
+     */
     public static void setIsFinishing(boolean b) {
         isFinishing = b;
     }
 
-    public static boolean getIsFinishing() {
-        return isFinishing;
-    }
-
+    /**
+     * Metodo che assegna l'istanza contenente le durata per le varie fasi dello scan, ricevute dal server
+     * @param s, hashmap (K: nome parametro, V:sua durata in millisecondi) contenente i valori per le varie fasi dello scan
+     */
     public static void setScanParameters(HashMap<String,Long> s) {
         scanParameters = s;
     }
@@ -183,10 +194,6 @@ public class MainApplication {
      */
     public static BluetoothAdapter getmBluetoothAdapter() {
         return mBluetoothAdapter;
-    }
-
-    public static void setFloors(HashMap<String,Floor> f){
-        floors = f;
     }
 
     /**
@@ -300,11 +307,6 @@ public class MainApplication {
 
     public static void closeApp(GetReceiver httpServerThread) {
 
-//        isFinishing = true;
-//
-//        activity.sendBroadcast(new Intent("SuspendScan"));
-
-
         if (httpServerThread.status()) {
             try {
                 httpServerThread.closeConnection();
@@ -409,7 +411,6 @@ public class MainApplication {
     }
 
 
-
     /**
      * Metodo che controlla se il dispositivo su cui sta lavorando l'applicazione ha il bluetooth acceso
      */
@@ -454,7 +455,24 @@ public class MainApplication {
         notificationManager.cancel(0);
     }
 
+    /**
+     * Metodo che si occupa dell'attivazione del sistema di localizzazione del dispositivo
+     * (questa funzionalità è necessaria per i dispositivi con installata una versione di Android
+     * superiore alla 6.0, in quanto senza di essa non può funzionare il Bluetooth)
+     */
+    public static void activateLocation() {
+        if (ContextCompat.checkSelfPermission(activity,
+                Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
 
+            Log.i("activate","activate location");
+
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                    Home.MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
+
+        }
+    }
 
     /**
      * Metodo all'interno del quale viene richiesta l'attivazione del bluetooth

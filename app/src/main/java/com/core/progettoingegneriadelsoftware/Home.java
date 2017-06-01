@@ -65,7 +65,7 @@ public class Home extends AppCompatActivity
         toggle.syncState();
             //nel caso in cui l'applicazione lavori su una versione di Android
             //superiore alla 6.0, per far funzionare il Bluetooth bisogna attivare la localizzazione
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) activateLocation();
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) MainApplication.activateLocation();
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -162,11 +162,12 @@ public class Home extends AppCompatActivity
 
             if (backpress>1) {
                 Toast.makeText(getApplicationContext(), " Arrivederci ", Toast.LENGTH_SHORT).show();
-
+                    //cliccato due volte il bottone, l'applicazione si prepara per essere spenta
                 MainApplication.setIsFinishing(true);
                 this.sendBroadcast(new Intent("SuspendScan"));
 
                 if (MainApplication.getOnlineMode()) {
+                        //chiuse tutte le connessioni al server
                     MainApplication.closeApp(httpServerThread);
                 }
 
@@ -336,19 +337,19 @@ public class Home extends AppCompatActivity
      * (questa funzionalità è necessaria per i dispositivi con installata una versione di Android
      * superiore alla 6.0, in quanto senza di essa non può funzionare il Bluetooth)
      */
-    private void activateLocation() {
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            Log.i("activate","activate location");
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                    MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
-
-        }
-    }
+//    private void activateLocation() {
+//        if (ContextCompat.checkSelfPermission(this,
+//                Manifest.permission.ACCESS_COARSE_LOCATION)
+//                != PackageManager.PERMISSION_GRANTED) {
+//
+//            Log.i("activate","activate location");
+//
+//            ActivityCompat.requestPermissions(this,
+//                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+//                    MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
+//
+//        }
+//    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode,

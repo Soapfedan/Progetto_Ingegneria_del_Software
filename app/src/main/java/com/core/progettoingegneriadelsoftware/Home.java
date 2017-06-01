@@ -1,11 +1,17 @@
 package com.core.progettoingegneriadelsoftware;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -39,7 +45,8 @@ public class Home extends AppCompatActivity
     private GetReceiver httpServerThread;
         //contatore delle volte in cui si clicca il tasto onBack, utilizzato quando si vuole uscire dall'applicazione
     private int backpress;
-
+        //codice utilizzato come risposta alla richiesta di attivazione della localizzazione sul dispositivo
+    public static final int MY_PERMISSIONS_REQUEST_ACCESS_LOCATION = 101;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +63,9 @@ public class Home extends AppCompatActivity
                 R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
+            //nel caso in cui l'applicazione lavori su una versione di Android
+            //superiore alla 6.0, per far funzionare il Bluetooth bisogna attivare la localizzazione
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) activateLocation();
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -282,12 +292,6 @@ public class Home extends AppCompatActivity
         else {
             if (UserHandler.isLogged()) {
                 switch(id){
-//                case R.id.nav_maps:
-//                //passa ad activity maps
-//                Intent intentMap = new Intent (getApplicationContext(),
-//                        ActivityMaps.class);
-//                startActivity(intentMap);
-//                    break;
                     case R.id.nav1 :
                             //modifica il profilo
                         Intent intentModify = new Intent (getApplicationContext(),
@@ -327,5 +331,43 @@ public class Home extends AppCompatActivity
         return false;
     }
 
+    /**
+     * Metodo che si occupa dell'attivazione del sistema di localizzazione del dispositivo
+     * (questa funzionalità è necessaria per i dispositivi con installata una versione di Android
+     * superiore alla 6.0, in quanto senza di essa non può funzionare il Bluetooth)
+     */
+    private void activateLocation() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            Log.i("activate","activate location");
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
+
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_ACCESS_LOCATION: {
+
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    Log.i("prova","guaranteed");
+
+                } else {
+
+                    Log.i("prova","non guaranteed");
+                }
+            }
+
+        }
+    }
 
 }

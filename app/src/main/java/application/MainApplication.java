@@ -457,7 +457,7 @@ public class MainApplication {
 
 
     /**
-     * Metodo per l'attivazione del bluetooth sul dispositivo
+     * Metodo all'interno del quale viene richiesta l'attivazione del bluetooth
      */
     public static void activateBluetooth () {
         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);

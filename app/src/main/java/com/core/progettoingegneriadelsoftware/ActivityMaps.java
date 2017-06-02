@@ -23,6 +23,7 @@ import application.comunication.ServerComunication;
 import application.maps.*;
 import application.maps.components.Floor;
 import application.maps.components.Room;
+import application.sharedstorage.Data;
 import application.utility.CSVHandler;
 
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -215,6 +216,18 @@ public class ActivityMaps extends AppCompatActivity {
                 FullScreenMap.class);
         intentTWO.putExtra("MAP_ID",message);
         this.startActivity(intentTWO);
+        comunicateDestination();
+    }
+
+    private void comunicateDestination() {
+        if(Data.getUserPosition().getFloor().equals(selectedFloor.getFloorName())) {
+            Toast.makeText(getApplicationContext(), " Ti trovi sullo stesso piano della tua destinazione, dirigiti" +
+                    "verso la bandierina", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(getApplicationContext(), " La tua destinazione non si trova su questo piano, dirigiti" +
+                    "verso le scale", Toast.LENGTH_SHORT).show();
+        }
     }
 
         //il broadcast receiver deputato alla ricezione dei messaggi

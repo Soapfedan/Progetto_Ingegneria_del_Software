@@ -238,6 +238,13 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
                 canvas.drawBitmap(destination,coords[0],coords[1],null);
                 //canvas.drawCircle(coords[0],coords[1],30,new Paint(Color.BLUE));
             }
+            else {
+                String str = currentFloor.concat("A3");
+                image.setImageBitmap(mutableBitmap);
+                coords = MainApplication.getFloors().get(currentFloor).getRooms().get(str).getCoords();
+                canvas.drawBitmap(destination,coords[0],coords[1],null);
+            }
+
             if(!notifies.isEmpty()){//se ci sono delle notifiche scorro l'array e le visualizzo sulla mappa
                 Paint pt = new Paint();
                 paint.setAntiAlias(true);

@@ -455,24 +455,24 @@ public class MainApplication {
         notificationManager.cancel(0);
     }
 
-    /**
-     * Metodo che si occupa dell'attivazione del sistema di localizzazione del dispositivo
-     * (questa funzionalità è necessaria per i dispositivi con installata una versione di Android
-     * superiore alla 6.0, in quanto senza di essa non può funzionare il Bluetooth)
-     */
-    public static void activateLocation() {
-        if (ContextCompat.checkSelfPermission(activity,
-                Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            Log.i("activate","activate location");
-
-            ActivityCompat.requestPermissions(activity,
-                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                    Home.MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
-
-        }
-    }
+//    /**
+//     * Metodo che si occupa dell'attivazione del sistema di localizzazione del dispositivo
+//     * (questa funzionalità è necessaria per i dispositivi con installata una versione di Android
+//     * superiore alla 6.0, in quanto senza di essa non può funzionare il Bluetooth)
+//     */
+//    public static void activateLocation() {
+//        if (ContextCompat.checkSelfPermission(activity,
+//                Manifest.permission.ACCESS_COARSE_LOCATION)
+//                != PackageManager.PERMISSION_GRANTED) {
+//
+//            Log.i("activate","activate location");
+//
+//            ActivityCompat.requestPermissions(activity,
+//                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+//                    Home.MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
+//
+//        }
+//    }
 
     /**
      * Metodo all'interno del quale viene richiesta l'attivazione del bluetooth

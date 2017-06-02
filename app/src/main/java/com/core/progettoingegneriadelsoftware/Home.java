@@ -65,7 +65,7 @@ public class Home extends AppCompatActivity
         toggle.syncState();
             //nel caso in cui l'applicazione lavori su una versione di Android
             //superiore alla 6.0, per far funzionare il Bluetooth bisogna attivare la localizzazione
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) MainApplication.activateLocation();
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) activateLocation();
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -337,19 +337,19 @@ public class Home extends AppCompatActivity
      * (questa funzionalità è necessaria per i dispositivi con installata una versione di Android
      * superiore alla 6.0, in quanto senza di essa non può funzionare il Bluetooth)
      */
-//    private void activateLocation() {
-//        if (ContextCompat.checkSelfPermission(this,
-//                Manifest.permission.ACCESS_COARSE_LOCATION)
-//                != PackageManager.PERMISSION_GRANTED) {
-//
-//            Log.i("activate","activate location");
-//
-//            ActivityCompat.requestPermissions(this,
-//                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-//                    MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
-//
-//        }
-//    }
+    private void activateLocation() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            Log.i("activate","activate location");
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
+
+        }
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode,

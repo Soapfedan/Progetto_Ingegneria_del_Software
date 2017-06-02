@@ -52,6 +52,8 @@ public class WelcomeActivity extends AppCompatActivity {
         //indirizzo ip del server a cui ci si vuole collegare
     private String ip;
 
+    private boolean maps;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
@@ -258,7 +260,11 @@ public class WelcomeActivity extends AppCompatActivity {
             }
         }
         else {
-            Toast.makeText(getApplicationContext(), "Accesso non riuscito, controllare l'ip", Toast.LENGTH_SHORT).show();
+            if(maps) {
+                maps=false;
+            }else{
+                Toast.makeText(getApplicationContext(), "Accesso non riuscito, controllare l'ip", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -270,7 +276,10 @@ public class WelcomeActivity extends AppCompatActivity {
         boolean b = false;
         if (checkBox.isChecked()) {
             if(csvContainsElements(CSVHandler.getFiles().get(BEACONLISTFILE)) && csvContainsElements(CSVHandler.getFiles().get(ROOMLISTFILE))) b = true;
-            else Toast.makeText(getApplicationContext(), "Collegarsi ad un server per scaricare le mappe", Toast.LENGTH_SHORT).show();
+            else {
+                Toast.makeText(getApplicationContext(), "Collegarsi ad un server per scaricare le mappe", Toast.LENGTH_SHORT).show();
+                maps=true;
+            }
             MainApplication.setOnlineMode(false);
         }
         else {

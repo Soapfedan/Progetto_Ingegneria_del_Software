@@ -28,6 +28,7 @@ import android.widget.Toast;
 import android.app.Dialog;
 
 import application.MainApplication;
+import application.comunication.ServerComunication;
 import application.comunication.http.GetReceiver;
 import application.user.UserHandler;
 
@@ -199,9 +200,16 @@ public class Home extends AppCompatActivity
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                boolean b=false;
                 //richiama il metodo dello user per gestire i dati inerenti il login
                     //in base alla riuscita del login si cambiano i menu oppure si mostra alert
-                boolean b = UserHandler.login(txtUser.getText().toString(),txtPass.getText().toString(),chkLog.isChecked());
+                if(txtUser.getText().toString().equals("")||txtPass.getText().toString().equals("")||
+                        txtUser.getText().toString()==null||txtPass.getText().toString()==null ){
+                    b=false;
+                }else{
+                    b = UserHandler.login(txtUser.getText().toString(),txtPass.getText().toString(),chkLog.isChecked());
+                }
+
                 if (b) {
                         //modificate le voci del menù
                     setOptionMenu();
@@ -291,38 +299,48 @@ public class Home extends AppCompatActivity
             startActivity(intentMap);
         }
         else {
-            if (UserHandler.isLogged()) {
-                switch(id){
-                    case R.id.nav1 :
+            //controllo che il server sia online e il database raggiungibile
+            boolean b = ServerComunication.handShake(ServerComunication.getIP());
+            int s=-1;
+            if(b) s = ServerComunication.checkVersion();
+            if(b==false || s==-1) {
+               Toast.makeText(getApplicationContext(),"Attento il server non e' raggiungibile",Toast.LENGTH_SHORT);
+                Log.e("ERRORE","ERRORE");
+            }else{
+                if (UserHandler.isLogged()) {
+                    switch(id){
+                        case R.id.nav1 :
                             //modifica il profilo
-                        Intent intentModify = new Intent (getApplicationContext(),
-                                InformationsHandler.class);
-                        intentModify.putExtra("editable", 1);
-                        startActivity(intentModify);
-                        break;
-                            //caso in cui si vogliano vedere le informazioni dell'utente
-                    case R.id.view_information:
-                        Intent intentView = new Intent (getApplicationContext(),
-                                InformationsHandler.class);
-                        intentView.putExtra("editable", 0);
-                        startActivity(intentView);
-                        break;
-                    case R.id.nav2:
-                        logout();
-                        break;
+                            Intent intentModify = new Intent (getApplicationContext(),
+                                    InformationsHandler.class);
+                            intentModify.putExtra("editable", 1);
+                            startActivity(intentModify);
+                            break;
+                        //caso in cui si vogliano vedere le informazioni dell'utente
+                        case R.id.view_information:
+                            Intent intentView = new Intent (getApplicationContext(),
+                                    InformationsHandler.class);
+                            intentView.putExtra("editable", 0);
+                            startActivity(intentView);
+                            break;
+                        case R.id.nav2:
+                            logout();
+                            break;
+                    }
                 }
-            }
-            else {
+                else {
                     //caso in cui si voglia effetuare il login
-                if (id == R.id.nav1) {
-                    login();
-                    //caso in cui si voglia registrare alla piattaforma
-                } else if (id == R.id.nav2) {
-                    Intent intent = new Intent (getApplicationContext(),
-                            InformationsHandler.class);
-                    startActivity(intent);
+                    if (id == R.id.nav1) {
+                        login();
+                        //caso in cui si voglia registrare alla piattaforma
+                    } else if (id == R.id.nav2) {
+                        Intent intent = new Intent (getApplicationContext(),
+                                InformationsHandler.class);
+                        startActivity(intent);
+                    }
                 }
             }
+
         }
 
 

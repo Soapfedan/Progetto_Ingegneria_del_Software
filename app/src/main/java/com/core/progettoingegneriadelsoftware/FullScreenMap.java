@@ -333,7 +333,13 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
         position[1] = pos[1];
 
         Log.i("retrieve","cur f " + currentFloor);
-        String map = "m".concat(currentFloor).concat("_color");
+        String map;
+        if (currentFloor!=null) {
+            map = "m".concat(currentFloor).concat("_color");
+        }
+        else {
+            map = "m".concat(MainApplication.getFloors().get(0).getFloorName()).concat("_color");
+        }
 
         resID = getResources().getIdentifier(map , "drawable", getPackageName());
 

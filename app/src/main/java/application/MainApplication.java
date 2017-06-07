@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -446,7 +447,8 @@ public class MainApplication {
         Notification n  = new Notification.Builder(activity)
                 .setContentTitle("Progetto Ingegneria")
                 .setContentText("C'è un'emergenza")
-                .setSmallIcon(R.drawable.ic_menu_gallery)
+                .setSmallIcon(R.drawable.danger)
+                .setLargeIcon(BitmapFactory.decodeResource(activity.getResources(), R.drawable.danger))
                 .setContentIntent(pIntent)
                 .setAutoCancel(true)
                 .addAction(R.drawable.ic_menu_gallery, "Open", pIntent).build();

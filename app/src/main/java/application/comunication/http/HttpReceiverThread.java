@@ -140,7 +140,7 @@ public class HttpReceiverThread extends Thread implements DataListener{
     public void update() {
         HashMap<String,String>[] not;
         try {
-          not = MessageParser.analyzeMessageArray(notifies,notifyKeys,"notifications");
+            not = MessageParser.analyzeMessageArray(notifies,notifyKeys,"notifications");
             ArrayList<Notify> n = new ArrayList<>();
             for(int i = 0;i<not.length;i++){
                 n.add(new Notify(Integer.parseInt(not[i].get("id")),

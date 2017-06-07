@@ -307,6 +307,14 @@ public class MainApplication {
 
     public static void closeApp(GetReceiver httpServerThread) {
 
+//        if (scanner!=null) {
+//            if (scanner.getConnection()!=null) scanner.getConnection().close();
+//            scanner.closeScan();
+//        }
+//        activity.getBaseContext().unregisterReceiver(broadcastReceiver);
+        scanner.suspendScan();
+
+
         if (httpServerThread.status()) {
             try {
                 httpServerThread.closeConnection();
@@ -336,6 +344,9 @@ public class MainApplication {
             if (isFinishing) {
                 if(broadcastReceiver!=null) activity.unregisterReceiver(broadcastReceiver);
                 scanner.closeScan();
+                scanner = null;
+//                activity.getBaseContext().unregisterReceiver(broadcastReceiver);
+                activity.finish();
             }
             else {
                 //viene gestito il cambio di activity nel caso in cui ci sia un'emergenza

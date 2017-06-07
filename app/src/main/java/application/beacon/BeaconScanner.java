@@ -248,6 +248,9 @@ public class BeaconScanner extends StateMachine implements DataListener {
      * Metodo che restituisce il setup con cui sta lavorando lo scan
      * @return setup con cui sta lavorando lo scan
      */
+
+    public BeaconConnection getConnection() { return connection; }
+
     public Setup getSetup() {
         return setup;
     }

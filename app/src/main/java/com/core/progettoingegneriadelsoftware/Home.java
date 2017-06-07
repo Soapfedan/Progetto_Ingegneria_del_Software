@@ -172,7 +172,7 @@ public class Home extends AppCompatActivity
                     MainApplication.closeApp(httpServerThread);
                 }
 
-                finish();
+//                finish();
 
             }
         }

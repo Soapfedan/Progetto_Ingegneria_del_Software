@@ -216,7 +216,7 @@ public class ActivityMaps extends AppCompatActivity {
                 FullScreenMap.class);
         intentTWO.putExtra("MAP_ID",message);
         this.startActivity(intentTWO);
-        comunicateDestination();
+        if (Data.getUserPosition().getFloor()!=null) comunicateDestination();
     }
 
     private void comunicateDestination() {

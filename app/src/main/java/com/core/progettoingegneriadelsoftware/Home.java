@@ -304,7 +304,7 @@ public class Home extends AppCompatActivity
             int s=-1;
             if(b) s = ServerComunication.checkVersion();
             if(b==false || s==-1) {
-               Toast.makeText(getApplicationContext(),"Attento il server non e' raggiungibile",Toast.LENGTH_SHORT);
+               Toast.makeText(this.getApplicationContext(),"Attenzione il server non e' raggiungibile",Toast.LENGTH_SHORT).show();
                 Log.e("ERRORE","ERRORE");
             }else{
                 if (UserHandler.isLogged()) {

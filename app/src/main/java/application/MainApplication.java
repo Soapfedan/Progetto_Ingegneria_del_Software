@@ -451,7 +451,7 @@ public class MainApplication {
                 .setLargeIcon(BitmapFactory.decodeResource(activity.getResources(), R.drawable.danger))
                 .setContentIntent(pIntent)
                 .setAutoCancel(true)
-                .addAction(R.drawable.ic_menu_gallery, "Open", pIntent).build();
+                .addAction(R.drawable.danger, "Open", pIntent).build();
 
         notificationManager =
                 (NotificationManager) activity.getSystemService(NOTIFICATION_SERVICE);

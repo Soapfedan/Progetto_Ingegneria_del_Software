@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Created by Niccolo on 09/05/2017.
+ * Questa classe è stata creata per la gestione dei documenti CSV
  */
 
 public class CSVHandler {

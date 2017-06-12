@@ -16,7 +16,7 @@ import application.user.UserProfile;
 
 
 /**
- * Created by Federico-PC on 23/03/2017.
+ * Questa classe serve per gestire la comunicazione con il server
  */
 
 public class ServerComunication{

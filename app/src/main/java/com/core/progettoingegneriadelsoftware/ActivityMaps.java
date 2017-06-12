@@ -35,7 +35,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- *
+ *  Classe attraverso cui è possibile selezionare un punto da ricercare.
  */
 
 public class ActivityMaps extends AppCompatActivity {

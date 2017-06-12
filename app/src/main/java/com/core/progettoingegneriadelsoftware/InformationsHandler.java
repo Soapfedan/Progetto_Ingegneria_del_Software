@@ -181,16 +181,6 @@ public class InformationsHandler extends AppCompatActivity {
             sex_spinner = (Spinner) findViewById(R.id.sex_spinner);
 
 
-            /* AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("")
-                    .setCancelable(false)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            //do nothings
-                        }
-                    });
-            alert = builder.create(); */
-
         } else {
             TextView tv;
             // creo una hashmap con tutti gli elementi di una form
@@ -534,23 +524,6 @@ public class InformationsHandler extends AppCompatActivity {
         });
 
 
-        /*
-        infoTxt.get("pass2").setOnFocusChangeListener(new View.OnFocusChangeListener(){
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!(infoTxt.get("pass1").getText().toString().equals(infoTxt.get("pass2").getText().toString())&&
-                        infoTxt.get("pass1").getText().toString()!=null && !infoTxt.get("pass1").getText().toString().isEmpty())){
-
-                    //se sono diversi E la password non è nulle e non è vuota
-
-                    alert.setMessage(pass_msg);
-                    alert.show();
-
-                }else {
-                    //se sono uguali
-                }
-            }
-        });*/
     }
 
     private void gatheringInformation(){
@@ -595,8 +568,7 @@ public class InformationsHandler extends AppCompatActivity {
 
 
                 isFinished = true;
-//                Intent intent = new Intent(getApplicationContext(), Home.class);
-//                startActivity(intent);
+
                 Toast.makeText(getApplicationContext(),
                         "Registrazione avvenuta con successo!",Toast.LENGTH_SHORT).show();
 

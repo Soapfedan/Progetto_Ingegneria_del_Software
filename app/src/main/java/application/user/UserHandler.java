@@ -1,23 +1,16 @@
 package application.user;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
-
-import java.net.InetAddress;
-import java.net.SocketException;
 import java.util.ArrayList;
-
 import java.net.NetworkInterface;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
-
 import application.MainApplication;
-import application.beacon.BeaconScanner;
 import application.comunication.ServerComunication;
 import application.comunication.message.MessageBuilder;
 
@@ -221,7 +214,7 @@ public class UserHandler {
 
         if(MainApplication.getOnlineMode()) {
             try {
-              b =  ServerComunication.login(name,pass);
+                b =  ServerComunication.login(name,pass);
                 if (b) {
                     UserProfile u = null;
                     try {
@@ -250,7 +243,7 @@ public class UserHandler {
                 e.printStackTrace();
             }
         }
-        Log.i("Risp "," "+b);
+        Log.i("Risp "," " + b);
         return b;
     }
 

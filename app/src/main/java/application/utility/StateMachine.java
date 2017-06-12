@@ -1,9 +1,8 @@
 package application.utility;
 
-import java.util.HashMap;
 
 /**
- * Created by Niccolo on 14/04/2017.
+ * Questa classe astratta è stata usata per modellare le macchine a stati
  */
 
 public abstract class StateMachine {

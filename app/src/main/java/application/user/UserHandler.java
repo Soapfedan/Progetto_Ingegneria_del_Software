@@ -38,10 +38,6 @@ public class UserHandler {
         macAddress = obtainMacAddr();
         editor = pref.edit();
         ipAddress = obtainLocalIpAddress();
-        if(MainApplication.getOnlineMode()){
-            initializePosition();
-        }
-
 
     }
 

@@ -6,9 +6,9 @@ package application.sharedstorage;
 
 public class Data {
 
-    //struttura dati per memorizzare la posizione dell'utente
+        //struttura dati per memorizzare la posizione dell'utente
     private static UserPositions userPosition = new UserPositions();
-    //struttura dati per memorizzare le diverse notifiche
+        //struttura dati per memorizzare le diverse notifiche
     private static Notification notification = new Notification();
 
     public static UserPositions getUserPosition() {

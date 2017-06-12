@@ -15,12 +15,10 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.ParcelUuid;
 import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
-
 import application.MainApplication;
 import application.comunication.ServerComunication;
 import application.comunication.message.MessageBuilder;

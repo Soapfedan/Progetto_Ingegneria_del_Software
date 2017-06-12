@@ -1,6 +1,5 @@
 package application.maps.components;
 
-
 /**
  * Classe che identifica un beacon
  */

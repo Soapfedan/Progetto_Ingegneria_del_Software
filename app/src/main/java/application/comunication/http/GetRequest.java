@@ -3,11 +3,8 @@ package application.comunication.http;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
-
-
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -36,7 +33,6 @@ public class GetRequest extends AsyncTask<String,Void,String> {
     private HttpURLConnection connection;
 
     /**
-     *
      * La richiesta viene effettuata attraverso un oggetto HttpURLConnection che permette di costruire
      * una connessione utilizzando il protocollo HTTP.
      * @param urls
@@ -47,9 +43,6 @@ public class GetRequest extends AsyncTask<String,Void,String> {
     @Override
     protected String doInBackground(String... urls) {
 
-
-//        String url = "http://" + urls[0] + ":" + PORT + "/" + SERVER_ID +"/" + urls[1];
-        // set the connection timeout value to 30 seconds (30000 milliseconds)
 
         url = null;
         try {

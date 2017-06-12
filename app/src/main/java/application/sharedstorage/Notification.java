@@ -2,7 +2,6 @@ package application.sharedstorage;
 
 
 import java.util.ArrayList;
-
 import application.maps.components.Notify;
 
 /**
@@ -24,7 +23,7 @@ public class Notification extends SharedData{
 
     public void setNotifies(ArrayList<Notify> notifies) {
         this.notifies = notifies;
-        //Vengono richiamate tutte le diverse retrive dei subscriber
+            //Vengono richiamate tutte le diverse retrive dei subscriber
         updateInformation();
     }
 }

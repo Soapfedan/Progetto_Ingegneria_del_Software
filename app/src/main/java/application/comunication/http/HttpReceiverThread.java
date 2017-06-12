@@ -1,18 +1,14 @@
 package application.comunication.http;
 
 import android.util.Log;
-
 import org.json.JSONException;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import application.MainApplication;
 import application.comunication.message.MessageParser;
 import application.maps.components.Notify;
@@ -60,9 +56,7 @@ public class HttpReceiverThread extends Thread implements DataListener{
             boolean isPost = line.startsWith("POST");
             int contentLength = 0;
             String request;
-            /*while ((request = is.readLine()) != null){
-                Log.i("prova",request);
-            }*/
+
 
             while (!(line = is.readLine()).equals("")) {
                 raw.append('\n' + line);
@@ -80,10 +74,8 @@ public class HttpReceiverThread extends Thread implements DataListener{
                     c = is.read();
                     if(c>20)
                         body.append( (char) c);
-                    //Log.i("JCD", "POST: " + ((char) c) + " " + c);
                 }
             }
-            //Charset.forName("utf-8").encode(body.toString());
             Log.i("POST: ", body.toString());
             notifies = body.toString();
 
@@ -109,17 +101,6 @@ public class HttpReceiverThread extends Thread implements DataListener{
             os.flush();
             socket.close();
 
-
-           /* msgLog += "Request of " + request
-                    + " from " + socket.getInetAddress().toString() + "\n";
-            MainActivity.this.runOnUiThread(new Runnable() {
-
-                @Override
-                public void run() {
-
-                    infoMsg.setText(msgLog);
-                }
-            }); */
 
         } catch (IOException e) {
 
@@ -162,7 +143,6 @@ public class HttpReceiverThread extends Thread implements DataListener{
                 else {
                     MainApplication.launchNotification();
                 }
-//                MainApplication.launchNotification();
                 Data.getNotification().setNotifies(n);
             }
 

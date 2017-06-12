@@ -6,8 +6,6 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -59,12 +57,10 @@ public class MessageParser {
     public static HashMap<String,String>[] analyzeMessageArray(String s,ArrayList<String> keys, String name) throws JSONException {
         JSONObject json = new JSONObject(s);
         JSONArray jsonArray = json.getJSONArray(name);
-//        messageElements = new HashMap<>();
         array = new HashMap[jsonArray.length()];
 
         JSONObject jsonobject;
 
-//        messageElements.clear();
         for (int i = 0; i < jsonArray.length(); i++) {
             jsonobject = jsonArray.getJSONObject(i);
             messageElements = new HashMap<>();

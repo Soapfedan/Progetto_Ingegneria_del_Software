@@ -13,7 +13,6 @@ import android.util.Log;
 import android.widget.Toast;
 import application.MainApplication;
 
-
 // Adapter per gestire i dispositivi identificati durante lo scanner.
 public class LeDeviceListAdapter {
         //beacon più vicino all'utente

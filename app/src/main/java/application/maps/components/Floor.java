@@ -1,7 +1,5 @@
 package application.maps.components;
 
-import android.widget.ImageView;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;

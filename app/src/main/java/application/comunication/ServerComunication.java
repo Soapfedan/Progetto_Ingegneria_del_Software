@@ -1,24 +1,17 @@
 package application.comunication;
 
-
-
-import android.os.AsyncTask;
 import android.util.Log;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
-
 import application.comunication.http.DeleteRequest;
 import application.comunication.http.GetRequest;
 import application.comunication.http.PostRequest;
 import application.comunication.http.PutRequest;
 import application.comunication.message.MessageBuilder;
 import application.comunication.message.MessageParser;
-import application.sharedstorage.UserPositions;
 import application.user.UserProfile;
 
 
@@ -27,7 +20,6 @@ import application.user.UserProfile;
  */
 
 public class ServerComunication{
-
 
     private static String hostname="172.23.159.153";
     private static String host2 = "192.168.1.102";

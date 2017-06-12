@@ -1,7 +1,6 @@
 package application.beacon;
 
 import android.util.Log;
-
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.UUID;

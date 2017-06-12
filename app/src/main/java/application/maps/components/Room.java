@@ -11,12 +11,9 @@ public class Room {
     private String floor;
     private double width;
 
-
-
     public Room(String cod, int[] crds, String floor, double width){
 
         this.cod = cod;
-
         this.coords = crds;
         this.floor = floor;
         this.width = width;

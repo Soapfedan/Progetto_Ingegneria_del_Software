@@ -26,7 +26,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.app.Dialog;
-
 import application.MainApplication;
 import application.comunication.ServerComunication;
 import application.comunication.http.GetReceiver;

@@ -1,6 +1,5 @@
 package application;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -10,24 +9,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.widget.Toast;
-
 import com.core.progettoingegneriadelsoftware.FullScreenMap;
 import com.core.progettoingegneriadelsoftware.Home;
 import com.core.progettoingegneriadelsoftware.R;
-
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
-
 import application.beacon.BeaconScanner;
 import application.comunication.ServerComunication;
 import application.comunication.http.GetReceiver;
@@ -37,11 +28,11 @@ import application.maps.components.Room;
 import application.sharedstorage.Data;
 import application.user.UserHandler;
 import application.utility.CSVHandler;
-
 import static android.content.Context.NOTIFICATION_SERVICE;
 
 /**
- * Created by Federico-PC on 05/12/2016.
+ * Questa classe gestisce alcuni elementi riguarda la logica dell'applicazione.
+ *
  */
 
 public class MainApplication {
@@ -467,25 +458,6 @@ public class MainApplication {
         Log.i("del","delete");
         notificationManager.cancel(0);
     }
-
-//    /**
-//     * Metodo che si occupa dell'attivazione del sistema di localizzazione del dispositivo
-//     * (questa funzionalità è necessaria per i dispositivi con installata una versione di Android
-//     * superiore alla 6.0, in quanto senza di essa non può funzionare il Bluetooth)
-//     */
-//    public static void activateLocation() {
-//        if (ContextCompat.checkSelfPermission(activity,
-//                Manifest.permission.ACCESS_COARSE_LOCATION)
-//                != PackageManager.PERMISSION_GRANTED) {
-//
-//            Log.i("activate","activate location");
-//
-//            ActivityCompat.requestPermissions(activity,
-//                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-//                    Home.MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
-//
-//        }
-//    }
 
     /**
      * Metodo all'interno del quale viene richiesta l'attivazione del bluetooth

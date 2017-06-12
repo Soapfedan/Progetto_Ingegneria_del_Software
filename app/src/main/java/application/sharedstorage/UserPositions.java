@@ -33,7 +33,7 @@ public class UserPositions extends SharedData {
     public void setPosition(int[] pos) {
         this.x = pos[0];
         this.y = pos[1];
-        //Vengono richiamate tutte le diverse retrive dei subscriber
+            //Vengono richiamate tutte le diverse retrive dei subscriber
         updateInformation();
     }
 }

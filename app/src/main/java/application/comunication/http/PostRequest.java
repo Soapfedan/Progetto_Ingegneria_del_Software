@@ -3,10 +3,7 @@ package application.comunication.http;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
-
-
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -15,7 +12,6 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-
 import application.MainApplication;
 
 /**
@@ -32,7 +28,6 @@ public class PostRequest extends AsyncTask<String,Void,String> {
     private static final String SERVER_ID = "RestfulServerTID";
 
     /**
-     *
      * La richiesta viene effettuata attraverso un oggetto HttpURLConnection che permette di costruire
      * una connessione utilizzando il protocollo HTTP.
      * @param urls
@@ -42,8 +37,6 @@ public class PostRequest extends AsyncTask<String,Void,String> {
     @Override
     protected String doInBackground(String... urls) {
 
-        //        String url = "http://" + urls[0] + ":" + PORT + "/" + SERVER_ID +"/" + urls[1];
-        // set the connection timeout value to 30 seconds (30000 milliseconds)
 
         URL url = null;
         try {
@@ -64,7 +57,6 @@ public class PostRequest extends AsyncTask<String,Void,String> {
         }
 
         connection.setConnectTimeout(5000);
-        //connection.setConnectTimeout(60000);
 
         try {
 
@@ -72,11 +64,7 @@ public class PostRequest extends AsyncTask<String,Void,String> {
             connection.setRequestMethod("POST");
                 //scritto header http del messaggio (per inviare json)
             connection.setRequestProperty("Content-Type", "application/json");
-            //connection.setRequestProperty("Accept", "application/json");
 
-//            connection.connect();
-            //vado a creare un writer che permette di iniettare il messaggio json (urls[2])all'interno del corpo
-            //del messaggio
 
             OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
             Log.i("json",urls[2]);

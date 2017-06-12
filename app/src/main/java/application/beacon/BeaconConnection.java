@@ -10,14 +10,9 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.widget.Toast;
-
-import org.json.JSONObject;
-
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
-
 import application.MainApplication;
 import application.comunication.ServerComunication;
 import application.comunication.message.MessageBuilder;

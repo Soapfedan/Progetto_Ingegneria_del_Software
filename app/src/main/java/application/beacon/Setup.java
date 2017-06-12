@@ -1,6 +1,6 @@
 package application.beacon;
-import android.util.Log;
 
+import android.util.Log;
 import application.MainApplication;
 
 /**

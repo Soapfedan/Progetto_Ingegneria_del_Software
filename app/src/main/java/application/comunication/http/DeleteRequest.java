@@ -3,14 +3,11 @@ package application.comunication.http;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 
@@ -30,7 +27,6 @@ public class DeleteRequest extends AsyncTask<String,Void,String> {
 
 
     /**
-     *
      * La richiesta viene effettuata attraverso un oggetto HttpURLConnection che permette di costruire
      * una connessione utilizzando il protocollo HTTP.
      * @param urls
@@ -58,23 +54,10 @@ public class DeleteRequest extends AsyncTask<String,Void,String> {
         }
 
         connection.setConnectTimeout(5000);
-        //connection.setConnectTimeout(60000);
 
         try {
 
-//            connection.setDoOutput(true);   //abilita la scrittura
             connection.setRequestMethod("DELETE");
-            //scritto header http del messaggio (per inviare json)
-//            connection.setRequestProperty("Content-Type", "application/json");
-//            connection.setRequestProperty("Accept", "application/json");
-//
-////            connection.connect();
-//
-//            OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
-//            wr.write(urls[2]);
-//            wr.flush();
-//            wr.close();
-
 
         }catch (IOException e) {
             e.printStackTrace();

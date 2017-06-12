@@ -3,7 +3,6 @@ package application.comunication.http;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -30,7 +29,6 @@ public class PutRequest extends AsyncTask<String,Void,String> {
     private static final String SERVER_ID = "RestfulServerTID";
 
     /**
-     *
      * La richiesta viene effettuata attraverso un oggetto HttpURLConnection che permette di costruire
      * una connessione utilizzando il protocollo HTTP.
      * @param urls
@@ -63,19 +61,17 @@ public class PutRequest extends AsyncTask<String,Void,String> {
         }
 
         connection.setConnectTimeout(5000);
-        //connection.setConnectTimeout(60000);
 
         try {
 
             connection.setDoOutput(true);   //abilita la scrittura
             connection.setRequestMethod("PUT");
-            //scritto header http del messaggio (per inviare json)
+                //scritto header http del messaggio (per inviare json)
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setRequestProperty("Accept", "application/json");
 
-//            connection.connect();
-            //vado a creare un writer che permette di iniettare il messaggio json (urls[2])all'interno del corpo
-            //del messaggio
+                //vado a creare un writer che permette di iniettare il messaggio json (urls[2])all'interno del corpo
+                //del messaggio
             OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
             wr.write(urls[2]);
             wr.flush();

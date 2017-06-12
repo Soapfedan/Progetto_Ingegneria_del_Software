@@ -35,10 +35,10 @@ public class UserHandler {
     private static String nome;
     private static String cognome;
     private static UserProfile profile;
-    //variabile di tipo sessione
+        //variabile di tipo sessione
     private static SharedPreferences pref;
     private static Editor editor;
-    //private ArrayList<Beacon> beacons;
+        //private ArrayList<Beacon> beacons;
     private static String ipAddress;
 
     public static void init(){

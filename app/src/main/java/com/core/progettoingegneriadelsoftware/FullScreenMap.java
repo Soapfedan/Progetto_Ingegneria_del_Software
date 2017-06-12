@@ -128,7 +128,7 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
         else {
             MainApplication.initializeScanner(this,"SEARCHING");
         }
-
+        if(Data.getUserPosition().getPosition()[0]!=0) retrive();
     }
 
 
@@ -275,6 +275,7 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
         }
         else {//se la posizione dell'utente non è stata settata ed è ancora quella di default [0,0]
             image.setImageBitmap(mutableBitmap);
+            currentFloor="145";
             int[] coords = MainApplication.getFloors().get(selectedFloor).getRooms().get(selectedRoom).getCoords();
             canvas.drawBitmap(destination,coords[0],coords[1],null);
             //canvas.drawCircle(coords[0],coords[1],30,new Paint(Color.BLUE));
@@ -338,7 +339,15 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
             map = "m".concat(currentFloor).concat("_color");
         }
         else {
-            map = "m".concat(MainApplication.getFloors().get(0).getFloorName()).concat("_color");
+            String flo;
+            if(notifies!=null && !notifies.isEmpty()){
+                flo = notifies.get(0).getFloor();
+            }else{
+                flo = "145";
+            }
+
+
+            map = "m".concat(flo).concat("_color");
         }
 
         resID = getResources().getIdentifier(map , "drawable", getPackageName());

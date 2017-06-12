@@ -299,13 +299,22 @@ public class WelcomeActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), " La versione del file CSV non è aggiornata, la sto richiedendo", Toast.LENGTH_SHORT).show();
                         String building = prefer.getString(buildingID,"");
 
-                            //scarica i file aggiornati
-                        boolean beaconFile = downloadCSV(building,BEACONLISTFILE);
-                        boolean roomFile = downloadCSV(building,ROOMLISTFILE);
-                            //aggiorna la versione in memoria
+                        boolean beaconFile = false;
+                        boolean roomFile = false;
+
                         int currentVersion = ServerComunication.checkVersion();
+
+                        if(currentVersion!=-1) {
+                            //scarica i file aggiornati
+                            beaconFile = downloadCSV(building,BEACONLISTFILE);
+                            roomFile = downloadCSV(building,ROOMLISTFILE);
+                            //aggiorna la versione in memoria
+
+                            MainApplication.setOnlineMode(true);
+                        }
+
                         version = currentVersion;
-                        MainApplication.setOnlineMode(true);
+
                         if(beaconFile && roomFile) {
                             if(beaconFile && roomFile) {
                                 SharedPreferences.Editor edit = prefer.edit();

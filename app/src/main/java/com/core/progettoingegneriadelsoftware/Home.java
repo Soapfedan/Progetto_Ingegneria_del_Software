@@ -112,6 +112,9 @@ public class Home extends AppCompatActivity
             //caso in cui l'activity sia creata per un'emergenza
         if(extras!=null) {
             if(extras.getString("MESSAGE").equals("EMERGENCY")) {
+                if (MainApplication.getScanner().getConnection()!=null)
+                    Toast.makeText(getApplicationContext(), " La mappa sta per essere caricata," +
+                            " un attimo di attesa ", Toast.LENGTH_SHORT).show();
                 MainApplication.setEmergency(true);
                 finish();
             }
@@ -171,7 +174,6 @@ public class Home extends AppCompatActivity
                     MainApplication.closeApp(httpServerThread);
                 }
 
-//                finish();
 
             }
         }

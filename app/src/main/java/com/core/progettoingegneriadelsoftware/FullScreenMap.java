@@ -76,7 +76,8 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
 
     private Handler handler;
     private ArrayList<Notify> notifies;
-
+        //flag per permettere di capire quando ci si trova in uno stato di emergenza e l'app viene messa in background
+    private boolean backgroundEmergency;
     int resID;
 
     private int[] coords;
@@ -138,6 +139,7 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
         if(!MainApplication.controlBluetooth()) MainApplication.activateBluetooth();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(EXIT_MAPS);
+        backgroundEmergency = false;
         notifies = Data.getNotification().getNotifies();
         String floor = Data.getUserPosition().getFloor();
         if (floor!=null) {
@@ -167,12 +169,14 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
         super.onPause();
         stopTimer();
         MainApplication.setVisible(false);
-        if(broadcastReceiver!=null) getBaseContext().unregisterReceiver(broadcastReceiver);
     }
 
     protected void onStop() {
         super.onStop();
-
+        if(!MainApplication.getEmergency() && broadcastReceiver!=null)
+            getBaseContext().unregisterReceiver(broadcastReceiver);
+        else
+            backgroundEmergency = true;
     }
 
     private void startTimer() {
@@ -373,7 +377,6 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
 
             if (backpress>1) {
                 MainApplication.getScanner().suspendScan();
-//                MainApplication.setEmergency(false);
             }
         }
         else {
@@ -381,13 +384,20 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
         }
     }
 
+
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.i("ACTIVTY MAPS","ricevuto broadcast: " + intent.getAction());
             if(intent.getAction().equals(EXIT_MAPS)) {
-
+                Log.e("finish","finish");
+                    //nel caso in cui l'app sia stata messa in background durante l'emergenza
+                    //il broadcastreceiver non è stato cancellata, quindi cancellato ora
+                if(backgroundEmergency==true) {
+                    getBaseContext().unregisterReceiver(broadcastReceiver);
+                }
                 finish();
+
             }
         }
     };

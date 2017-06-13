@@ -455,7 +455,7 @@ public class MainApplication {
      * l'emergenza sia terminata
      */
     public static void deleteNotification() {
-        notificationManager.cancel(0);
+        if (notificationManager!=null) notificationManager.cancel(0);
     }
 
     /**

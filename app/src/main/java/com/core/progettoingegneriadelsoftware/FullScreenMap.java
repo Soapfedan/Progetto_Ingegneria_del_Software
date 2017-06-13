@@ -390,7 +390,6 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
         public void onReceive(Context context, Intent intent) {
             Log.i("ACTIVTY MAPS","ricevuto broadcast: " + intent.getAction());
             if(intent.getAction().equals(EXIT_MAPS)) {
-                Log.e("finish","finish");
                     //nel caso in cui l'app sia stata messa in background durante l'emergenza
                     //il broadcastreceiver non è stato cancellata, quindi cancellato ora
                 if(backgroundEmergency==true) {

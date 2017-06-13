@@ -260,7 +260,8 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
                 image.setImageBitmap(mutableBitmap);
                 if(MainApplication.getEmergency()){
                     String emergency = currentFloor.concat("EMERGENCY");
-                    coords = MainApplication.getFloors().get(selectedFloor).getRooms().get(emergency).getCoords();
+                    Log.e("emergency",""+emergency);
+                    coords = MainApplication.getFloors().get(currentFloor).getRooms().get(emergency).getCoords();
                 }else {
                     coords = MainApplication.getFloors().get(currentFloor).getRooms().get(str).getCoords();
                 }

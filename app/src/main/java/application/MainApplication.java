@@ -101,6 +101,9 @@ public class MainApplication {
             //creata struttura dati legata alle stanze nell'edificio, leggendo dal file salvato in memoria intera
         ArrayList<String[]> roomsList = CSVHandler.readCSV("roomlist",activity.getBaseContext());
         loadRooms(roomsList);
+        if(MainApplication.getOnlineMode()){
+            UserHandler.initializePosition();
+        }
 
         isFinishing = false;
     }
@@ -307,14 +310,15 @@ public class MainApplication {
         scanner.suspendScan();
 
 
-        if (httpServerThread.status()) {
-            try {
-                httpServerThread.closeConnection();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+
         if(MainApplication.getOnlineMode()) {
+            if (httpServerThread.status()) {
+                try {
+                    httpServerThread.closeConnection();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
             try {
                 ServerComunication.deletePosition(UserHandler.getIpAddress());
             } catch (ExecutionException e) {

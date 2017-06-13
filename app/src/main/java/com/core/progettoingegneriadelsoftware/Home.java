@@ -83,10 +83,12 @@ public class Home extends AppCompatActivity
         View headerView = navigationView.inflateHeaderView(R.layout.nav_header_home);
         tv = (TextView)headerView.findViewById(R.id.text_logName);
 
-            //thread con il compito di ascoltare le notifiche provenienti dal server
-        httpServerThread = new GetReceiver();
-        httpServerThread.start();
 
+            //thread con il compito di ascoltare le notifiche provenienti dal server
+        if(MainApplication.getOnlineMode()) {
+            httpServerThread = new GetReceiver();
+            httpServerThread.start();
+        }
             //prefer permette l'accesso ai dati salvati nella memoria interna del dispositivo
         prefer = getApplicationContext().getSharedPreferences("SessionPref", 0); // 0 - for private mode
         Editor edi = prefer.edit();
@@ -163,7 +165,7 @@ public class Home extends AppCompatActivity
             backpress = (backpress + 1);
             Toast.makeText(getApplicationContext(), " Press Back again to Exit ", Toast.LENGTH_SHORT).show();
 
-            if (backpress>1) {
+            if (backpress==2 || backpress >2) {
                 Toast.makeText(getApplicationContext(), " Arrivederci ", Toast.LENGTH_SHORT).show();
                     //cliccato due volte il bottone, l'applicazione si prepara per essere spenta
                 MainApplication.setIsFinishing(true);

@@ -82,6 +82,13 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
 
     private int[] coords;
 
+    private Bitmap curr_pos;
+    private Bitmap destination;
+    private Bitmap gas;
+    private Bitmap fire;
+    private Bitmap earthquake;
+    private Bitmap danger;
+
     private static final String EXIT_MAPS = "EXIT_MAPS";
 
     @Override
@@ -92,6 +99,13 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
         handler = new Handler();
         notifies = new ArrayList<>();
 
+        //Carico le differenti immagini da visualizzare sulla mappa
+        curr_pos = BitmapFactory.decodeResource(getResources(), R.drawable.current_position);
+        destination = BitmapFactory.decodeResource(getResources(), R.drawable.destination);
+        danger = BitmapFactory.decodeResource(getResources(), R.drawable.danger);
+        gas = BitmapFactory.decodeResource(getResources(), R.drawable.gas);
+        fire = BitmapFactory.decodeResource(getResources(), R.drawable.fire);
+        earthquake = BitmapFactory.decodeResource(getResources(), R.drawable.earthquake);
 
         s = 0;
         position = new int[2];
@@ -217,13 +231,6 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
         Bitmap workingBitmap = Bitmap.createBitmap(bitmap);
         Bitmap mutableBitmap = workingBitmap.copy(Bitmap.Config.ARGB_8888, true);
 
-        //Carico le differenti immagini da visualizzare sulla mappa
-        Bitmap curr_pos = BitmapFactory.decodeResource(getResources(), R.drawable.current_position);
-        Bitmap destination = BitmapFactory.decodeResource(getResources(), R.drawable.destination);
-        Bitmap danger = BitmapFactory.decodeResource(getResources(), R.drawable.danger);
-        Bitmap gas = BitmapFactory.decodeResource(getResources(), R.drawable.gas);
-        Bitmap fire = BitmapFactory.decodeResource(getResources(), R.drawable.fire);
-        Bitmap earthquake = BitmapFactory.decodeResource(getResources(), R.drawable.earthquake);
 
         Canvas canvas = new Canvas(mutableBitmap);
 
@@ -238,14 +245,25 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
             //se mi trovo sullo stesso piano della destinazione visualizzo l'immagine della destinazione
             if(selectedFloor.equals(currentFloor)) {
                 image.setImageBitmap(mutableBitmap);
-                coords = MainApplication.getFloors().get(selectedFloor).getRooms().get(selectedRoom).getCoords();
+                if(MainApplication.getEmergency()){
+                    String emergency = selectedFloor.concat("EMERGENCY");
+                    coords = MainApplication.getFloors().get(selectedFloor).getRooms().get(emergency).getCoords();
+                }else{
+                    coords = MainApplication.getFloors().get(selectedFloor).getRooms().get(selectedRoom).getCoords();
+                }
+
                 canvas.drawBitmap(destination,coords[0],coords[1],null);
                 //canvas.drawCircle(coords[0],coords[1],30,new Paint(Color.BLUE));
             }
             else {
                 String str = currentFloor.concat("A3");
                 image.setImageBitmap(mutableBitmap);
-                coords = MainApplication.getFloors().get(currentFloor).getRooms().get(str).getCoords();
+                if(MainApplication.getEmergency()){
+                    String emergency = currentFloor.concat("EMERGENCY");
+                    coords = MainApplication.getFloors().get(selectedFloor).getRooms().get(emergency).getCoords();
+                }else {
+                    coords = MainApplication.getFloors().get(currentFloor).getRooms().get(str).getCoords();
+                }
                 canvas.drawBitmap(destination,coords[0],coords[1],null);
             }
 
@@ -280,7 +298,13 @@ public class FullScreenMap extends AppCompatActivity implements DataListener{
         else {//se la posizione dell'utente non è stata settata ed è ancora quella di default [0,0]
             image.setImageBitmap(mutableBitmap);
             currentFloor="145";
-            int[] coords = MainApplication.getFloors().get(selectedFloor).getRooms().get(selectedRoom).getCoords();
+            int[] coords;
+            if(MainApplication.getEmergency()){
+                String emergency = selectedFloor.concat("EMERGENCY");
+                coords = MainApplication.getFloors().get(selectedFloor).getRooms().get(emergency).getCoords();
+            }else{
+                coords = MainApplication.getFloors().get(selectedFloor).getRooms().get(selectedRoom).getCoords();
+            }
             canvas.drawBitmap(destination,coords[0],coords[1],null);
             //canvas.drawCircle(coords[0],coords[1],30,new Paint(Color.BLUE));
             if(!notifies.isEmpty()){//se ci sono delle notifiche scorro l'array e le visualizzo sulla mappa
